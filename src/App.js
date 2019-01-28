@@ -5,7 +5,6 @@ import * as d3 from 'd3';
 import { withFauxDOM } from 'react-faux-dom';
 import data from './data.csv';
 import parseData from './parser';
-
 import Calendar from './Calendar';
 
 class App extends Component {
@@ -21,10 +20,10 @@ class App extends Component {
   }
 
   componentDidMount () {
-    d3.csv(data).then(function(data) {
-      console.log(parseData(data));
-      // this.setState({ data: parseData(data) });
-    }).catch(function(err) {
+    d3.csv(data).then(data => {
+      // console.log(parseData(data));
+      this.setState({ data: parseData(data) });
+    }).catch(err => {
       throw err;
     });
   }
@@ -38,25 +37,31 @@ class App extends Component {
   render () {
     return (
       <div className='app'>
-        <div className='column' id='left'>
-          <div className='topLeft'>
-            <i className="fas fa-clock" />
-          </div>
-          <div className='bottom'>
-          </div>
-        </div>
+        {/*<div className='column' id='left'>*/}
+          {/*<div className='topLeft'>*/}
+            {/*<i className="fas fa-clock" />*/}
+          {/*</div>*/}
+          {/*<div className='bottom'>*/}
+          {/*</div>*/}
+        {/*</div>*/}
         <div className='column' id='right'>
-          <div className='up' />
+          <header className='header'>
+            <div className='title'> Visualizing Time-Series Data </div>
+          </header>
           {/*<div className='topRight'>*/}
           {/*</div>*/}
           {/*<div className='bottom'>*/}
           {/*</div>*/}
           <div>
             <button onClick={this.changeData}>Change data</button>
-            <Calendar
+            {/*<div id="calendar" />*/}
+            {
+              Object.keys(this.state.data).length > 0 && <Calendar
+              dataArr ={this.state.data}
               data={this.state['dataArray' + this.state.dataIndex]}
               title={'dataset ' + this.state.dataIndex}
             />
+            }
           </div>
         </div>
       </div>

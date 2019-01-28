@@ -32,3 +32,23 @@ circle {
   fill: #555;
   font-family: sans-serif;
 }
+
+#calendar {
+  margin: 20px;
+}
+.month {
+  margin-right: 8px;
+}
+.month-name {
+  font-size: 85%;
+  fill: #777;
+  font-family: Arial, Helvetica;
+}
+.day.hover {
+  stroke: #6d6E70;
+  stroke-width: 2;
+}
+.day.focus {
+  stroke: #ffff33;
+  stroke-width: 2;
+}
