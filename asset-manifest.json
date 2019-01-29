@@ -1,15 +1,15 @@
 {
-  "main.css": "/Time-Series-Visualization/static/css/main.afc21240.chunk.css",
-  "main.js": "/Time-Series-Visualization/static/js/main.b6036837.chunk.js",
-  "main.js.map": "/Time-Series-Visualization/static/js/main.b6036837.chunk.js.map",
-  "static/js/1.e68c503b.chunk.js": "/Time-Series-Visualization/static/js/1.e68c503b.chunk.js",
-  "static/js/1.e68c503b.chunk.js.map": "/Time-Series-Visualization/static/js/1.e68c503b.chunk.js.map",
+  "main.css": "/Time-Series-Visualization/static/css/main.cc7d63c4.chunk.css",
+  "main.js": "/Time-Series-Visualization/static/js/main.84d22a07.chunk.js",
+  "main.js.map": "/Time-Series-Visualization/static/js/main.84d22a07.chunk.js.map",
+  "static/js/1.eaaaef3c.chunk.js": "/Time-Series-Visualization/static/js/1.eaaaef3c.chunk.js",
+  "static/js/1.eaaaef3c.chunk.js.map": "/Time-Series-Visualization/static/js/1.eaaaef3c.chunk.js.map",
   "runtime~main.js": "/Time-Series-Visualization/static/js/runtime~main.1baeb39e.js",
   "runtime~main.js.map": "/Time-Series-Visualization/static/js/runtime~main.1baeb39e.js.map",
   "static/media/data.csv": "/Time-Series-Visualization/static/media/data.2340907b.csv",
   "static/media/logo.svg": "/Time-Series-Visualization/static/media/logo.5d5d9eef.svg",
-  "static/css/main.afc21240.chunk.css.map": "/Time-Series-Visualization/static/css/main.afc21240.chunk.css.map",
+  "static/css/main.cc7d63c4.chunk.css.map": "/Time-Series-Visualization/static/css/main.cc7d63c4.chunk.css.map",
   "index.html": "/Time-Series-Visualization/index.html",
-  "precache-manifest.c4ae27db50a78002a80f44513400d6cb.js": "/Time-Series-Visualization/precache-manifest.c4ae27db50a78002a80f44513400d6cb.js",
+  "precache-manifest.58090863b2dcdb5188de3e2a1e33b982.js": "/Time-Series-Visualization/precache-manifest.58090863b2dcdb5188de3e2a1e33b982.js",
   "service-worker.js": "/Time-Series-Visualization/service-worker.js"
 }
