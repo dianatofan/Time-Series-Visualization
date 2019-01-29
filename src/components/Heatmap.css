@@ -1,0 +1,53 @@
+#calendar {
+  margin: 20px;
+}
+
+.month {
+  /*margin-right: 8px;*/
+}
+
+.month-name {
+  fill: #777;
+}
+
+.tooltip {
+  background: white;
+  border-radius: 10px;
+  border: solid 1px #e8e8e8;
+  display: block;
+  font-size: 85%;
+  font-weight: bold;
+  line-height: 30px;
+  opacity: .8;
+  overflow: hidden;
+  padding: 10px 20px;
+  position: fixed;
+}
+
+#calendar svg {
+  height: auto;
+  width: auto;
+}
+
+#calendar g {
+  font-size: 85%;
+  line-height: 1.5em;
+  position: absolute;
+}
+
+#calendar .day {
+  cursor: pointer;
+}
+
+.dayLabels {
+  color: #777;
+  display: block;
+}
+
+.months {
+  margin-left: 40px;
+}
+
+.tooltip .text {
+  font-weight: 400 !important;
+}

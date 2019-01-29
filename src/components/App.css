@@ -5,124 +5,23 @@
 }
 
 .app {
-  text-align: center;
-}
-
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 40vmin;
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-  background: #212E3F;
-  text-transform: uppercase;
-  color: white;
-  font-weight: bold;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-html {
-  height: 100%;
-}
-
-.app {
-  height: 100%;
-  overflow: hidden;  /*makes the body non-scrollable (we will add scrolling to the sidebar and main content containers)*/
-  margin: 0;  /*removes default style*/
-  display: flex;  /*enables flex content for its children*/
-  box-sizing: border-box;
-}
-
-.column {
-  height: 100%;  /*allows both columns to span the full height of the browser window*/
-  display: flex;
-  flex-direction: column;  /*places the left and right headers above the bottom content*/
-}
-
-#left {
-  /*background: #604f6d;*/
-  border-right: solid 1px #efefef;
   height: 100vh;
-  /*box-shadow: 2px -1px 5px 0 rgba(184,184,184,1);*/
-  flex-shrink: 0;  /*makes sure that content is not cut off in a smaller browser window*/
-  width: 80px;
-  /*background-color: #7f53ac;*/
-  /*background-image: linear-gradient(315deg, #7f53ac 0%, #647dee 74%);*/
-}
-
-#right {
-  /*background: #f9f9f9;*/
-  height: 100vh;
+  margin: 0;
+  overflow: hidden;
+  text-align: center;
   width: 100vw;
 }
 
-#right .up {
-  width: 100%;
-  height: 70px;
-  background: white;
-  margin-bottom: 50px;
-  border-bottom: solid 1px #efefef;
-}
-
-.topLeft {
-  flex-shrink: 0;
-  height: 70px;
-  border-bottom: solid 1px #efefef;
-}
-
-.topRight {
-  flex-shrink: 0;
-  display: inline-flex;
-}
-
-ul {
-  display: inline-flex;
-  list-style: none;
-}
-
-.bottom {
-  flex-grow: 1;  /*ensures that the container will take up the full height of the parent container*/
-  overflow-y: auto;  /*adds scroll to this container*/
-}
-
-.fa-clock {
-  font-size: 40px;
-  margin-top: 15px;
-  color: #6f5873;
-  background: -webkit-gradient(linear, left top, left bottom, from(#8e3667), to(#4d2a8a));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  /*#373a4c*/
-}
-
 .header {
-  height: 60px;
-  background: white;
-  display: flex;
   align-items: center;
+  background: white;
   border-bottom: 1px solid #E1ECF5;
-  text-transform: uppercase;
+  display: flex;
   font-weight: bold;
+  height: 60px;
+  text-transform: uppercase;
 }
 
 .header .title {
@@ -130,14 +29,14 @@ ul {
   margin-left: 5em;
 }
 
-.container {
+.content {
   margin: 2em 5em;
   text-align: left;
 }
 
 p {
-  font-weight: 400;
-  font-size: 1.2em;
-  margin-bottom: 1.5em;
   color: #777;
+  font-size: 1.2em;
+  font-weight: 400;
+  margin-bottom: 1.5em;
 }

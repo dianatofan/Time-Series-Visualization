@@ -1,84 +1,47 @@
 import React, { Component } from 'react';
-import logo from '../logo.svg';
 import './App.css';
 import * as d3 from 'd3';
-import { withFauxDOM } from 'react-faux-dom';
 import data from '../data/data.csv';
 import parseData from '../helpers/parser';
-import Calendar from './Calendar';
 import Heatmap from './Heatmap';
 
 class App extends Component {
   constructor () {
     super();
     this.state = {
-      data: [],
-      dataArray0: [30, 35, 45, 55, 70],
-      dataArray1: [50, 55, 45, 35, 20, 25, 25, 40],
-      dataIndex: 0
+      data: []
     };
-    this.changeData = this.changeData.bind(this);
   }
 
   componentDidMount () {
     d3.csv(data).then(data => {
-      // console.log(parseData(data));
-      this.setState({ data: parseData(data) });
+      this.setState({ data: parseData(data), rawData: data });
     }).catch(err => {
       throw err;
     });
   }
 
-  changeData () {
-    this.setState(state => ({
-      dataIndex: (state.dataIndex + 1) % 2
-    }))
-  }
-
   render () {
     return (
       <div className='app'>
-        {/*<div className='column' id='left'>*/}
-          {/*<div className='topLeft'>*/}
-            {/*<i className="fas fa-clock" />*/}
-          {/*</div>*/}
-          {/*<div className='bottom'>*/}
-          {/*</div>*/}
-        {/*</div>*/}
-        <div className='column' id='right'>
-          <header className='header'>
-            <div className='title'> Visualizing Time-Series Data </div>
-          </header>
-          {/*<div className='topRight'>*/}
-          {/*</div>*/}
-          {/*<div className='bottom'>*/}
-          {/*</div>*/}
-          <div className='container'>
-            {/*<button onClick={this.changeData}>Change data</button>*/}
-            {/*<div id="calendar" />*/}
-            {/*{*/}
-              {/*Object.keys(this.state.data).length > 0 && <Calendar*/}
-              {/*dataArr ={this.state.data}*/}
-              {/*data={this.state['dataArray' + this.state.dataIndex]}*/}
-              {/*title={'dataset ' + this.state.dataIndex}*/}
-            {/*/>*/}
-            {/*}*/}
+        <header className='header'>
+          <div className='title'> Visualizing Time-Series Data </div>
+        </header>
+        <div className='content'>
+          <section>
             <p>Calendar heatmap</p>
             {
               Object.keys(this.state.data).length > 0 &&
               <Heatmap
                 data={this.state.data}
+                rawData={this.state.rawData}
               />
             }
-          </div>
-        </div>
+          </section>
+      </div>
       </div>
     );
   }
 }
-
-App.defaultProps = {
-  chart: 'loading'
-};
 
 export default App;

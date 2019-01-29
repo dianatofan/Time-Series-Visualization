@@ -8,6 +8,7 @@
     "d3": "^5.7.0",
     "moment": "^2.23.0",
     "react": "^16.7.0",
+    "react-d3-components": "^0.9.1",
     "react-dom": "^16.7.0",
     "react-faux-dom": "^4.2.0",
     "react-redux": "^6.0.0",
