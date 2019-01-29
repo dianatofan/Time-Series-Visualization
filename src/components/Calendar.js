@@ -62,8 +62,6 @@ class Calendar extends  Component {
     const monthName = d3.timeFormat("%B"),
       months = d3.timeMonth.range(d3.timeMonth.floor(new Date(minDate)), d3.timeMonth.ceil(new Date(maxDate)));
 
-    debugger;
-
     const svg = d3.select("#calendar").selectAll("svg")
       .data(months)
       .enter().append("svg")

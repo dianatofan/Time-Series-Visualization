@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import logo from '../logo.svg';
 import './App.css';
 import * as d3 from 'd3';
 import { withFauxDOM } from 'react-faux-dom';
-import data from './data.csv';
-import parseData from './parser';
+import data from '../data/data.csv';
+import parseData from '../helpers/parser';
 import Calendar from './Calendar';
+import Heatmap from './Heatmap';
 
 class App extends Component {
   constructor () {
@@ -52,15 +53,22 @@ class App extends Component {
           {/*</div>*/}
           {/*<div className='bottom'>*/}
           {/*</div>*/}
-          <div>
-            <button onClick={this.changeData}>Change data</button>
+          <div className='container'>
+            {/*<button onClick={this.changeData}>Change data</button>*/}
             {/*<div id="calendar" />*/}
+            {/*{*/}
+              {/*Object.keys(this.state.data).length > 0 && <Calendar*/}
+              {/*dataArr ={this.state.data}*/}
+              {/*data={this.state['dataArray' + this.state.dataIndex]}*/}
+              {/*title={'dataset ' + this.state.dataIndex}*/}
+            {/*/>*/}
+            {/*}*/}
+            <p>Calendar heatmap</p>
             {
-              Object.keys(this.state.data).length > 0 && <Calendar
-              dataArr ={this.state.data}
-              data={this.state['dataArray' + this.state.dataIndex]}
-              title={'dataset ' + this.state.dataIndex}
-            />
+              Object.keys(this.state.data).length > 0 &&
+              <Heatmap
+                data={this.state.data}
+              />
             }
           </div>
         </div>
@@ -73,4 +81,4 @@ App.defaultProps = {
   chart: 'loading'
 };
 
-export default withFauxDOM(App);
+export default App;
