@@ -51,3 +51,8 @@
 .tooltip .text {
   font-weight: 400 !important;
 }
+
+#calendar {
+  width: calc(100vw - 100px);
+  display: inline-block;
+}

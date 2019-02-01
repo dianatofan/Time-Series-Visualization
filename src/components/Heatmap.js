@@ -13,6 +13,26 @@ class Heatmap extends React.Component {
       style: {}
     };
     this.renderChart = this.renderChart.bind(this);
+    this.updateDimensions = this.updateDimensions.bind(this);
+  }
+
+  updateDimensions() {
+    this.setState({
+      cellSize: window.innerWidth / 100,
+      cellMargin: window.innerWidth / 400
+    });
+  }
+
+  componentWillMount() {
+    this.updateDimensions();
+  }
+
+  componentDidMount() {
+    window.addEventListener("resize", this.updateDimensions);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateDimensions);
   }
 
   render() {
@@ -50,8 +70,10 @@ class Heatmap extends React.Component {
     const minDate = d3.min(Object.keys(dateData));
     const maxDate = d3.max(Object.keys(dateData));
 
-    const cellMargin = 4,
-      cellSize = 16;
+    const cellMargin = this.state.cellMargin,
+      cellSize = this.state.cellSize;
+    // const cellMargin = 4,
+    //   cellSize = 16;
 
     const day = d => (d.getDay() + 6) % 7,
       week = d3.timeFormat('%W');
