@@ -25,7 +25,7 @@ class Heatmap extends React.Component {
 
   updateDimensions() {
     this.setState({
-      cellSize: window.innerWidth / 120,
+      cellSize: window.innerWidth / 125,
       cellMargin: window.innerWidth / 400
     });
   }
@@ -168,6 +168,10 @@ class Heatmap extends React.Component {
   renderDay(d, month, dateData) {
     const cellMargin = this.state.cellMargin,
       cellSize = this.state.cellSize;
+    let isCurrentDay = false;
+    if (moment(d).format('DD-MM-YY') === moment().format('DD-MM-YY')) {
+      isCurrentDay = true;
+    }
 
     const day = d => (d.getDay() + 6) % 7,
       week = d3.timeFormat('%W');
@@ -184,11 +188,11 @@ class Heatmap extends React.Component {
     const item = Object.keys(dateData).find(key =>
       new Date(key).setHours(0,0,0,0) === d.setHours(0,0,0,0));
     const value = !!dateData[item] && normalize(dateData[item], Math.max(...count), Math.min(...count));
-    const fillColor = !!dateData[item] ? d3.interpolatePurples(value) : '#eaeaea';
+    const fillColor = !!dateData[item] ? d3.interpolatePurples(value) : '#ececec';
     return (
       <rect
         key={d}
-        className='day'
+        className={classNames('day', {'current-day': isCurrentDay})}
         width={cellSize}
         height={cellSize}
         rx={50}

@@ -1,4 +1,5 @@
 #calendar {
+  font-family: 'Montserrat', sans-serif;
   margin: 20px;
 }
 
@@ -30,10 +31,11 @@
 }
 
 #calendar g {
-  font-size: 75%;
+  font-size: 74%;
   line-height: 1.5em;
   position: absolute;
-  top: 260px;
+  top: 312px;
+  margin-left: 20px;
 }
 
 #calendar .day {
@@ -46,7 +48,7 @@
 }
 
 .months {
-  margin-left: 40px;
+  margin-left: 60px;
 }
 
 .tooltip .text {
@@ -54,8 +56,12 @@
 }
 
 #calendar {
-  width: calc(100vw - 100px);
+  width: calc(100vw - 200px);
   display: inline-block;
+  border-radius: 30px;
+  -webkit-box-shadow: 0 0 5px 0 #e8e8e8;
+  -moz-box-shadow: 0 0 5px 0 #e8e8e8;
+  box-shadow: 0 0 5px 0 #e8e8e8;
 }
 
 .overlay {
@@ -78,9 +84,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: calc(100vw - 200px);
-  border: solid 1px #eaeaea;
-  border-radius: 40px;
+  width: 100%;
+  border-bottom: solid 1px #f1f1f1;
+  /*border-radius: 40px;*/
   margin-bottom: 24px;
   color: #777;
 }
@@ -99,4 +105,13 @@
 
 .yearLabel i {
   cursor: pointer;
+}
+
+.year {
+  margin: 26px 0;
+}
+
+.current-day {
+  stroke: #777;
+  stroke-width: 2px;
 }
