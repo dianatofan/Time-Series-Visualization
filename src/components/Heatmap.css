@@ -30,9 +30,10 @@
 }
 
 #calendar g {
-  font-size: 85%;
+  font-size: 75%;
   line-height: 1.5em;
   position: absolute;
+  top: 260px;
 }
 
 #calendar .day {
@@ -55,4 +56,47 @@
 #calendar {
   width: calc(100vw - 100px);
   display: inline-block;
+}
+
+.overlay {
+  text-align: center;
+  position: relative;
+  z-index: 4;
+  font-size: 40px;
+  top: 60px;
+  color: purple;
+  width: calc(100vw - 40px);
+}
+
+.hoveredMonths {
+  filter: blur(3px);
+}
+
+.yearLabel {
+  font-size: 1.2em;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: calc(100vw - 200px);
+  border: solid 1px #eaeaea;
+  border-radius: 40px;
+  margin-bottom: 24px;
+  color: #777;
+}
+
+.fa-chevron-left {
+  margin-left: 1.2em;
+}
+
+.fa-chevron-right {
+  margin-right: 1.2em;
+}
+
+.hidden {
+  display: none;
+}
+
+.yearLabel i {
+  cursor: pointer;
 }

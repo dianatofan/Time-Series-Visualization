@@ -1,5 +1,6 @@
 import React from 'react';
 import * as d3 from 'd3';
+import classNames from 'classnames';
 import moment from 'moment';
 import { getDayInsights } from '../helpers/parser';
 import './Heatmap.css';
@@ -10,15 +11,21 @@ class Heatmap extends React.Component {
     this.state = {
       showTooltip: false,
       renderBarChart: false,
-      style: {}
+      style: {},
+      currentYear: 2018,
+      i: 0
     };
     this.renderChart = this.renderChart.bind(this);
     this.updateDimensions = this.updateDimensions.bind(this);
+    this.changeYear = this.changeYear.bind(this);
+    this.renderYear = this.renderYear.bind(this);
+    this.renderMonth = this.renderMonth.bind(this);
+    this.renderDay = this.renderDay.bind(this);
   }
 
   updateDimensions() {
     this.setState({
-      cellSize: window.innerWidth / 100,
+      cellSize: window.innerWidth / 120,
       cellMargin: window.innerWidth / 400
     });
   }
@@ -28,11 +35,11 @@ class Heatmap extends React.Component {
   }
 
   componentDidMount() {
-    window.addEventListener("resize", this.updateDimensions);
+    // window.addEventListener("resize", this.updateDimensions);
   }
 
   componentWillUnmount() {
-    window.removeEventListener("resize", this.updateDimensions);
+    // window.removeEventListener("resize", this.updateDimensions);
   }
 
   render() {
@@ -48,11 +55,23 @@ class Heatmap extends React.Component {
               </div>
             </div>
         }
+        <div className='yearLabel'>
+          <i className="fas fa-chevron-left" onClick={() => this.changeYear(-1)} />
+          { this.state.currentYear }
+          <i className="fas fa-chevron-right" onClick={() => this.changeYear(+1)} />
+        </div>
         <div className='months'>
-          { this.drawCalendar(this.props.data) }
+          { this.drawCalendar(this.props.data, this.state.i) }
         </div>
       </div>
     );
+  }
+
+  changeYear(value) {
+    this.setState({
+      currentYear: this.state.currentYear+value,
+      i: this.state.i+value
+    });
   }
 
   renderChart(d) {
@@ -61,93 +80,137 @@ class Heatmap extends React.Component {
     console.log(dayInsights[day]);
   }
 
-  drawCalendar(dateData) {
+  drawCalendar(dateData, i) {
+    // const monthName = d3.timeFormat('%B'),
+    // months = d3.timeMonth.range(new Date(parseInt(`${minDate.split('-')[0]}`), 0, 1),
+    //   new Date(parseInt(`${maxDate.split('-')[0]}`), 11, 31));
+
+    const minDate = new Date(2018, 0, 1);
+    const maxDate = new Date(2020, 11, 31);
+
+    const months = d3.timeMonth.range(minDate, maxDate);
+    const years = d3.timeYear.range(minDate, maxDate);
+
+    const yearsArr = years.map(year => moment(year).format('YYYY'));
+    const chunk = (target, size) => {
+      return target.reduce((memo, value, index) => {
+        // Here it comes the only difference
+        if (index % (target.length / size) === 0 && index !== 0) memo.push([]);
+        memo[memo.length - 1].push(value);
+        return memo
+      }, [[]])
+    };
+    const monthsArr = chunk(months, months.length / 12);
+
+    // render only first year
+    return this.renderYear(yearsArr, years[0], months, dateData, monthsArr);
+  }
+
+  renderYear(years, year, months, dateData, monthsArr) {
+    const previousYear = moment(year).subtract(1, 'years').format('YYYY');
+    const nextYear = moment(year).add(1, 'years').format('YYYY');
+    const showPreviousArrow = years.includes(previousYear);
+    const showNextArrow = years.includes(nextYear);
+    return (
+      <div>
+          {
+            monthsArr.map((months, i) =>
+              <div className={classNames('year', {'hidden': i !== this.state.i})} key={year}>
+                { months.map(month => this.renderMonth(month, dateData)) }
+              </div>
+            )
+          }
+      </div>
+      );
+  }
+
+  renderMonth(month, dateData) {
     const weeksInMonth = month => {
       const m = d3.timeMonth.floor(month);
       return d3.timeWeeks(d3.timeWeek.floor(m), d3.timeMonth.offset(m,1)).length;
     };
 
-    const minDate = d3.min(Object.keys(dateData));
-    const maxDate = d3.max(Object.keys(dateData));
-
     const cellMargin = this.state.cellMargin,
       cellSize = this.state.cellSize;
-    // const cellMargin = 4,
-    //   cellSize = 16;
+
+    const monthName = d3.timeFormat('%B');
+    const yearName = d3.timeFormat('%Y');
+
+    const days = d3.timeDays(month, new Date(month.getFullYear(), month.getMonth()+1, 1));
+    const lastDay = moment(month).endOf('month').format('ddd'); // last day of current month
+    const firstDay = moment(month).add(1, 'months').startOf('month').format('ddd'); // first day of next month
+    let extraSpace = 0;
+    if ((lastDay === 'Mon' && firstDay === 'Tue') || (lastDay === 'Tue' && firstDay === 'Wed')) {
+      extraSpace += 10;
+    }
+    return (
+      <svg
+        className='month'
+        height={((cellSize * 7) + (cellMargin * 8) + 20)}
+        width={(cellSize * weeksInMonth(month)) + (cellMargin * (weeksInMonth(month) + 5)) + extraSpace}
+        key={month}
+      >
+        <g>
+          <text
+            className='month-name'
+            y={(cellSize * 7) + (cellMargin * 8) + 15}
+            x={((cellSize * weeksInMonth(month)) + (cellMargin * (weeksInMonth(month) + 1))) / 2}
+            textAnchor='middle'
+          >
+            { monthName(month) }
+          </text>
+          { days.map(d => this.renderDay(d, month, dateData)) }
+        </g>
+      </svg>
+    );
+  }
+
+  renderDay(d, month, dateData) {
+    const cellMargin = this.state.cellMargin,
+      cellSize = this.state.cellSize;
 
     const day = d => (d.getDay() + 6) % 7,
       week = d3.timeFormat('%W');
-    const monthName = d3.timeFormat('%B'),
-      // months = d3.timeMonth.range(d3.timeMonth.floor(new Date(`01-01-${minDate.split('-')[0]}`)),
-      //   d3.timeMonth.ceil(new Date(`31-12-${maxDate.split('-')[0]}`)));
-    months = d3.timeMonth.range(new Date(parseInt(`${minDate.split('-')[0]}`), 0, 1),
-      new Date(parseInt(`${maxDate.split('-')[0]}`), 11, 31));
 
     const normalize = (val, max, min) => (1 - 0.25) * ((val - min) / (max - min)) + 0.25;
 
-    return months.map(month => {
-      const days = d3.timeDays(month, new Date(month.getFullYear(), month.getMonth()+1, 1));
-      let filters = days.map(d =>
-        Object.keys(dateData).find(key =>
-          new Date(key).setHours(0,0,0,0) === d.setHours(0,0,0,0))
-      );
-      const count = filters.map(i => !!i && dateData[i]).filter(j => !!j);
-      return (
-          <svg
-            className='month'
-            height={((cellSize * 7) + (cellMargin * 8) + 20)}
-            width={(cellSize * weeksInMonth(month)) + (cellMargin * (weeksInMonth(month) + 1))}
-            key={month}
-          >
-            <g>
-              <text
-                className='month-name'
-                y={(cellSize * 7) + (cellMargin * 8) + 15}
-                x={((cellSize * weeksInMonth(month)) + (cellMargin * (weeksInMonth(month) + 1))) / 2}
-                textAnchor='middle'
-              >
-                {monthName(month)}
-              </text>
-              {
-                days.map(d => {
-                    const item = Object.keys(dateData).find(key =>
-                      new Date(key).setHours(0,0,0,0) === d.setHours(0,0,0,0));
-                    const value = !!dateData[item] && normalize(dateData[item], Math.max(...count), Math.min(...count));
-                    const fillColor = !!dateData[item] ? d3.interpolatePurples(value) : '#eaeaea';
-                    return (
-                    <rect
-                      key={d}
-                      className='day'
-                      width={cellSize}
-                      height={cellSize}
-                      rx={50}
-                      ry={50}
-                      fill={fillColor}
-                      y={(day(d) * cellSize) + (day(d) * cellMargin) + cellMargin}
-                      x={((week(d) - week(new Date(d.getFullYear(),d.getMonth(),1))) * cellSize) + ((week(d) - week(new Date(d.getFullYear(),d.getMonth(),1))) * cellMargin) + cellMargin}
-                      onMouseOver={(ev) => this.setState({
-                        showTooltip: d,
-                        count: !!dateData[item] ? dateData[item] : 0,
-                        style: {
-                          top: ev.clientY + 10,
-                          left: ev.clientX + 10
-                        }
-                      })}
-                      onMouseOut={() => this.setState({
-                        showTooltip: false
-                      })}
-                      onClick={() => this.renderChart(d)}
-                    >
-                    </rect>
-                  )
-                }
-                )
-              }
-            </g>
-          </svg>
-        );
-      }
+    const days = d3.timeDays(month, new Date(month.getFullYear(), month.getMonth()+1, 1));
+    let filters = days.map(d =>
+      Object.keys(dateData).find(key =>
+        new Date(key).setHours(0,0,0,0) === d.setHours(0,0,0,0))
     );
+    const count = filters.map(i => !!i && dateData[i]).filter(j => !!j);
+
+    const item = Object.keys(dateData).find(key =>
+      new Date(key).setHours(0,0,0,0) === d.setHours(0,0,0,0));
+    const value = !!dateData[item] && normalize(dateData[item], Math.max(...count), Math.min(...count));
+    const fillColor = !!dateData[item] ? d3.interpolatePurples(value) : '#eaeaea';
+    return (
+      <rect
+        key={d}
+        className='day'
+        width={cellSize}
+        height={cellSize}
+        rx={50}
+        ry={50}
+        fill={fillColor}
+        y={(day(d) * cellSize) + (day(d) * cellMargin) + cellMargin}
+        x={((week(d) - week(new Date(d.getFullYear(),d.getMonth(),1))) * cellSize) + ((week(d) - week(new Date(d.getFullYear(),d.getMonth(),1))) * cellMargin) + cellMargin}
+        onMouseOver={(ev) => this.setState({
+          showTooltip: d,
+          count: !!dateData[item] ? dateData[item] : 0,
+          style: {
+            top: ev.clientY + 10,
+            left: ev.clientX + 10
+          }
+        })}
+        onMouseOut={() => this.setState({
+          showTooltip: false
+        })}
+        onClick={() => this.renderChart(d)}
+      >
+      </rect>
+    )
   }
 
   drawDayLabels() {
