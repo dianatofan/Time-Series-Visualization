@@ -4,8 +4,7 @@ import * as d3 from 'd3';
 import data from '../data/data.csv';
 import parseData from '../helpers/parser';
 import classNames from 'classnames';
-import Heatmap from './Heatmap';
-import 'filepond/dist/filepond.min.css';
+import Heatmap from './calendar/Heatmap';
 import Dropzone from 'react-dropzone'
 
 class App extends Component {
@@ -15,10 +14,6 @@ class App extends Component {
       data: [],
       files: []
     };
-  }
-
-  handleInit() {
-    console.log('FilePond instance has initialised', this.pond);
   }
 
   // componentDidMount () {
@@ -36,7 +31,6 @@ class App extends Component {
       reader.onload = () => {
         const data = reader.result;
         const parsed = d3.csvParse(data);
-        // do whatever you want with the file content
         this.setState({ data: parseData(parsed), rawData: parsed });
       };
       reader.onabort = () => console.log('file reading was aborted');
@@ -47,14 +41,21 @@ class App extends Component {
   };
 
   render () {
+    const bytesToSize = bytes => {
+      const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+      if (bytes === 0) return '0 Byte';
+      const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+      return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+    };
+
     const files = this.state.files.map(file => (
       <span>
          <b key={file.name}>
            {file.name}
          </b>
-         <span>
-           {file.size} bytes
-         </span>
+         <div className='file-size'>
+           {bytesToSize(file.size)}
+         </div>
       </span>
     ));
 
@@ -71,12 +72,12 @@ class App extends Component {
                 return (
                   <div
                     {...getRootProps()}
-                    className={classNames('dropzone', {'dropzone--isActive': isDragActive})}
+                    className={classNames('dropzone', {'dropzone--isActive': isDragActive, 'dropzone--isDone': !!files.length})}
                   >
                     <input {...getInputProps()} />
                     {
                       !!files.length
-                        ? <span>
+                        ? <span className='file-name'>
                             <i className="fa fa-remove" />
                           {files}
                           </span>
@@ -90,16 +91,16 @@ class App extends Component {
               }}
             </Dropzone>
           </section>
-          <section>
-            <p>Calendar heatmap</p>
-            {
-              Object.keys(this.state.data).length > 0 &&
+          {
+            !!Object.keys(this.state.data).length &&
+            <section>
+              <p>Calendar heatmap</p>
               <Heatmap
                 data={this.state.data}
                 rawData={this.state.rawData}
               />
-            }
-          </section>
+            </section>
+          }
       </div>
       </div>
     );

@@ -2,8 +2,13 @@ import React from 'react';
 import * as d3 from 'd3';
 import classNames from 'classnames';
 import moment from 'moment';
-import { getDayInsights } from '../helpers/parser';
+import { getDayInsights } from '../../helpers/parser';
 import './Heatmap.css';
+
+import DayLabels from './DayLabels';
+import Tooltip from './Tooltip';
+import YearLabel from './YearLabel';
+import Year from './Year';
 
 class Heatmap extends React.Component {
   constructor (props) {
@@ -12,7 +17,7 @@ class Heatmap extends React.Component {
       showTooltip: false,
       renderBarChart: false,
       style: {},
-      currentYear: 2018,
+      currentYear: null,
       i: 0
     };
     this.renderChart = this.renderChart.bind(this);
@@ -31,6 +36,13 @@ class Heatmap extends React.Component {
   }
 
   componentWillMount() {
+    const moments = Object.keys(this.props.data).map(d => moment(d));
+    this.setState({
+      currentYear: moment.min(moments).format('YYYY'),
+      maxYear: moment.max(moments).format('YYYY'),
+      minDate: moment.min(moments),
+      maxDate: moment.max(moments)
+    });
     this.updateDimensions();
   }
 
@@ -45,21 +57,16 @@ class Heatmap extends React.Component {
   render() {
     return (
       <div id='calendar'>
-        { this.drawDayLabels() }
-        {
-          this.state.showTooltip &&
-            <div className='tooltip' style={this.state.style}>
-              {moment(this.state.showTooltip).format('dddd, MMMM DD YYYY')}
-              <div className='text'>
-                Count: {this.state.count}
-              </div>
-            </div>
-        }
-        <div className='yearLabel'>
-          <i className="fas fa-chevron-left" onClick={() => this.changeYear(-1)} />
-          { this.state.currentYear }
-          <i className="fas fa-chevron-right" onClick={() => this.changeYear(+1)} />
-        </div>
+        <DayLabels />
+        <Tooltip
+          style={this.state.style}
+          showTooltip={this.state.showTooltip}
+          count={this.state.count}
+        />
+        <YearLabel
+          currentYear={this.state.currentYear}
+          changeYear={this.changeYear}
+        />
         <div className='months'>
           { this.drawCalendar(this.props.data, this.state.i) }
         </div>
@@ -69,7 +76,7 @@ class Heatmap extends React.Component {
 
   changeYear(value) {
     this.setState({
-      currentYear: this.state.currentYear+value,
+      currentYear: parseInt(this.state.currentYear)+value,
       i: this.state.i+value
     });
   }
@@ -85,11 +92,14 @@ class Heatmap extends React.Component {
     // months = d3.timeMonth.range(new Date(parseInt(`${minDate.split('-')[0]}`), 0, 1),
     //   new Date(parseInt(`${maxDate.split('-')[0]}`), 11, 31));
 
-    const minDate = new Date(2018, 0, 1);
-    const maxDate = new Date(2020, 11, 31);
+    const minDate = this.state.minDate.format('YYYY-MM-DD'); // new Date(2016, 0, 1);
+    const maxDate = this.state.maxDate.format('YYYY-MM-DD'); // new Date(2020, 11, 31);
 
-    const months = d3.timeMonth.range(minDate, maxDate);
-    const years = d3.timeYear.range(minDate, maxDate);
+    const months = d3.timeMonth.range(new Date(parseInt(`${minDate.split('-')[0]}`), 0, 1),
+      new Date(parseInt(`${maxDate.split('-')[0]}`), 11, 31));
+
+    // const months = d3.timeMonth.range(minDate, maxDate);
+    const years = d3.timeYear.range(new Date(minDate), new Date(maxDate));
 
     const yearsArr = years.map(year => moment(year).format('YYYY'));
     const chunk = (target, size) => {
@@ -109,13 +119,14 @@ class Heatmap extends React.Component {
   renderYear(years, year, months, dateData, monthsArr) {
     const previousYear = moment(year).subtract(1, 'years').format('YYYY');
     const nextYear = moment(year).add(1, 'years').format('YYYY');
-    const showPreviousArrow = years.includes(previousYear);
-    const showNextArrow = years.includes(nextYear);
+    const showPreviousArrow = previousYear >= this.state.minDate.format('YYYY');
+    const showNextArrow = nextYear <= this.state.maxDate.format('YYYY');
+    console.log('prev: ', showPreviousArrow, ' next: ', showNextArrow);
     return (
-      <div>
+      <div key={year}>
           {
             monthsArr.map((months, i) =>
-              <div className={classNames('year', {'hidden': i !== this.state.i})} key={year}>
+              <div className={classNames('year', {'hidden': i !== this.state.i})} key={i}>
                 { months.map(month => this.renderMonth(month, dateData)) }
               </div>
             )
@@ -215,24 +226,6 @@ class Heatmap extends React.Component {
       >
       </rect>
     )
-  }
-
-  drawDayLabels() {
-    const weekArray = Array.apply(null, Array(7)).map(function (_, i) {
-      return moment(i, 'e').startOf('week').isoWeekday(i+1).format('ddd');
-    });
-    return (<g>
-      {
-        weekArray.map(day =>
-          <text
-            key={day}
-            className='dayLabels'
-          >
-            {day}
-          </text>
-        )
-      }
-    </g>);
   }
 }
 

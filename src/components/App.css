@@ -135,3 +135,16 @@ p {
 span {
   font-family: 'Montserrat', sans-serif;
 }
+
+.dropzone--isDone {
+  /*justify-content: space-between;*/
+}
+
+.file-name {
+  margin-left: 20px;
+}
+
+.file-size {
+  font-size: .8em;
+  text-align: center;
+}

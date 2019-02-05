@@ -8,10 +8,10 @@ const parseTimestamp = timeStamp => {
 
 const parseTime = timeStamp => {
   const timeString = timeStamp.split('T')[1].slice(0, -1);
-  return moment(`${timeString}`, 'HHmmss').format("HH:mm:ss");
+  return moment(`${timeString}`, 'HHmmss').utc().format("HH:mm:ss");
 };
 
-const parseDate = timeStamp => moment(`${timeStamp.split('T')[0]}`, 'YYYYMMDD')//.toDate()
+const parseDate = timeStamp => moment(`${timeStamp.split('T')[0]}`, 'YYYYMMDDxxx')//.toDate()
   .format('YYYY-MM-DD').split('T')[0];
 
 const countOccurrences = arr => arr.reduce(function(obj, item) {
@@ -20,7 +20,8 @@ const countOccurrences = arr => arr.reduce(function(obj, item) {
 }, {});
 
 const parseData = data => {
-  let newData = data.map(item => ({ timestamp: parseDate(item[data.columns[0]]) }));
+  const cleanedData = data.map(item => (item[data.columns[0]]).replace(/[-:.]/g, ''));
+  let newData = cleanedData.map(item => ({ timestamp: parseDate(item) }));
   newData.push({ timestamp: parseDate(data.columns[0]) });
   const x = newData.map(item => item.timestamp);
   return countOccurrences(x);
