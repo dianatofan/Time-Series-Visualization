@@ -64,7 +64,8 @@ class Heatmap extends React.Component {
           count={this.state.count}
         />
         <YearLabel
-          currentYear={this.state.currentYear}
+          minDate={this.state.minDate}
+          maxDate={this.state.maxDate}
           changeYear={this.changeYear}
         />
         <div className='months'>
@@ -117,11 +118,10 @@ class Heatmap extends React.Component {
   }
 
   renderYear(years, year, months, dateData, monthsArr) {
-    const previousYear = moment(year).subtract(1, 'years').format('YYYY');
-    const nextYear = moment(year).add(1, 'years').format('YYYY');
+    const previousYear = moment(this.state.currentYear).subtract(1, 'years').format('YYYY');
+    const nextYear = moment(this.state.currentYear).add(1, 'years').format('YYYY');
     const showPreviousArrow = previousYear >= this.state.minDate.format('YYYY');
     const showNextArrow = nextYear <= this.state.maxDate.format('YYYY');
-    console.log('prev: ', showPreviousArrow, ' next: ', showNextArrow);
     return (
       <div key={year}>
           {

@@ -81,7 +81,7 @@ class App extends Component {
                             <i className="fa fa-remove" />
                           {files}
                           </span>
-                        : <span>
+                        : <span className='upload-message'>
                             <i className="fa fa-upload" />
                               Drag & Drop your file or <u>Browse</u>
                           </span>

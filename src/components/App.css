@@ -1,8 +1,7 @@
-@import url('https://fonts.googleapis.com/css?family=Rubik');
 @import url('https://fonts.googleapis.com/css?family=Montserrat');
 @import url('https://fonts.googleapis.com/css?family=Quicksand:400,500,700');
 
-*:not(#calendar, span) {
+* {
   font-family: 'Quicksand', sans-serif;
 }
 
@@ -18,18 +17,23 @@
 
 .header {
   align-items: center;
+  /*background: #484158;*/
   background: white;
-  border-bottom: 1px solid #E1ECF5;
+  /*border-bottom: 1px solid #E1ECF5;*/
   display: flex;
   font-weight: bold;
   height: 60px;
   text-transform: uppercase;
+  -webkit-box-shadow: 0 0 5px 0 #e8e8e8;
+  -moz-box-shadow: 0 0 5px 0 #e8e8e8;
+  box-shadow: 0 0 5px 0 #e8e8e8;
 }
 
 .header .title {
-  color: #9CB0C0;
+  /*color: white;*/
+  /*color: #9CB0C0;*/
+  color: #394752;
   margin-left: 5em;
-  font-family: 'Quicksand', sans-serif;
   font-weight: bold;
 }
 
@@ -40,7 +44,6 @@
 
 p {
   color: #9CB0C0;
-  font-family: 'Quicksand', sans-serif;
   font-size: 1.1em;
   font-weight: 600;
   margin: 0 0 0 20px;
@@ -61,7 +64,6 @@ p {
 }
 
 .inputFile+label {
-  font-family: 'Montserrat', sans-serif;
   font-size: .9em;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -95,7 +97,6 @@ p {
 }
 
 .filepond--wrapper .filepond--root {
-  font-family: 'Montserrat', sans-serif;
   margin-top: 20px;
   /*width: 26vw;*/
 }
@@ -111,9 +112,9 @@ p {
   background: white !important;
   opacity: 1 !important;
   /*box-shadow: 0 0 5px 0 #e8e8e8 !important;*/
-  border: dashed 2px #E1ECF5 !important;
+  border: dotted 2px #E1ECF5 !important;
   margin: 20px !important;
-  border-radius: 30px !important;
+  /*border-radius: 30px !important;*/
   outline: none;
   height: 50px;
   cursor: pointer;
@@ -128,12 +129,8 @@ p {
 }
 
 .dropzone:hover {
-  border: dashed 2px #9CB0C0 !important;
+  border: dotted 2px #9CB0C0 !important;
   color: #9CB0C0 !important;
-}
-
-span {
-  font-family: 'Montserrat', sans-serif;
 }
 
 .dropzone--isDone {
@@ -147,4 +144,16 @@ span {
 .file-size {
   font-size: .8em;
   text-align: center;
+}
+
+p {
+  color: #7888BF;
+}
+
+.upload-message {
+  font-weight: 400;
+}
+
+span {
+  color: #777;
 }
