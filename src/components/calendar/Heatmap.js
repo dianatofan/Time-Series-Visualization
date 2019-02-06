@@ -1,7 +1,9 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import * as d3 from 'd3';
 import classNames from 'classnames';
 import moment from 'moment';
+import { showRadialChart, selectDay } from '../../reducers/radialChart';
 import { getDayInsights } from '../../helpers/parser';
 import './Heatmap.css';
 
@@ -85,7 +87,10 @@ class Heatmap extends React.Component {
   renderChart(d) {
     const day = moment(d).format('YYYY-MM-DD');
     const dayInsights = getDayInsights(this.props.rawData);
-    console.log(dayInsights[day]);
+    console.log(dayInsights)
+    this.props.showRadialChart(true);
+    this.props.selectDay(day);
+    // console.log(dayInsights[day]);
   }
 
   drawCalendar(dateData, i) {
@@ -229,4 +234,9 @@ class Heatmap extends React.Component {
   }
 }
 
-export default Heatmap;
+const mapDispatchToProps = dispatch => ({
+  showRadialChart: val => dispatch(showRadialChart(val)),
+  selectDay: val => dispatch(selectDay(val)),
+});
+
+export default connect(null, mapDispatchToProps)(Heatmap);
