@@ -38,12 +38,16 @@
   font-size: 74%;
   line-height: 1.5em;
   position: absolute;
-  top: 331px;
+  top: 80px;
   margin-left: 20px;
 }
 
 #calendar .day {
   cursor: pointer;
+}
+
+.dayLabelsContainer {
+  position: relative;
 }
 
 .dayLabels {

@@ -1,13 +1,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import classNames from 'classnames';
+import Dropzone from 'react-dropzone';
+import * as d3 from 'd3';
+
 import { setData, uploadFile } from '../reducers/app';
 import { showCalendar } from '../reducers/calendar';
-import './App.css';
-import * as d3 from 'd3';
-import classNames from 'classnames';
+
 import Heatmap from './calendar/Heatmap';
 import RadialChart from './radial-chart/RadialChart';
-import Dropzone from 'react-dropzone'
+
+import './App.css';
 
 const App = props => {
   const onDrop = (acceptedFiles, rejectedFiles) => {
@@ -85,7 +88,7 @@ const App = props => {
             <p>Calendar heatmap</p>
             <Heatmap
               data={props.data}
-              rawData={props.rawData}
+              dayInsights={props.dayInsights}
             />
           </section>
         }
@@ -105,7 +108,7 @@ const App = props => {
 
 const mapStateToProps = state => ({
   data: state.app.data,
-  rawData: state.app.rawData,
+  dayInsights: state.app.dayInsights,
   files: state.app.files,
   isCalendarVisible: state.calendar.isCalendarVisible,
   isRadialChartVisible: state.radialChart.isRadialChartVisible

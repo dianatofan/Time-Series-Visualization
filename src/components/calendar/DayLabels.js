@@ -6,17 +6,19 @@ const weekArray = Array.apply(null, Array(7)).map(function (_, i) {
 });
 
 const DayLabels = () =>
-  <g>
-    {
-      weekArray.map(day =>
-        <text
-          key={day}
-          className='dayLabels'
-        >
-          {day}
-        </text>
-      )
-    }
-  </g>;
+  <div className='dayLabelsContainer'>
+    <g>
+      {
+        weekArray.map(day =>
+          <text
+            key={day}
+            className='dayLabels'
+          >
+            {day}
+          </text>
+        )
+      }
+    </g>
+  </div>;
 
 export default DayLabels;

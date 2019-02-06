@@ -1,5 +1,3 @@
-import { getDayInsights } from '../helpers/parser';
-
 const SHOW_RADIAL_CHART = 'SHOW_RADIAL_CHART';
 const SELECT_DAY = 'SELECT_DAY';
 

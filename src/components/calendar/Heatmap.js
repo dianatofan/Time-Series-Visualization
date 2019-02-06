@@ -4,8 +4,6 @@ import * as d3 from 'd3';
 import classNames from 'classnames';
 import moment from 'moment';
 import { showRadialChart, selectDay } from '../../reducers/radialChart';
-import { getDayInsights } from '../../helpers/parser';
-import './Heatmap.css';
 
 import DayLabels from './DayLabels';
 import Tooltip from './Tooltip';
@@ -86,11 +84,8 @@ class Heatmap extends React.Component {
 
   renderChart(d) {
     const day = moment(d).format('YYYY-MM-DD');
-    const dayInsights = getDayInsights(this.props.rawData);
-    console.log(dayInsights)
     this.props.showRadialChart(true);
     this.props.selectDay(day);
-    // console.log(dayInsights[day]);
   }
 
   drawCalendar(dateData, i) {
@@ -130,11 +125,11 @@ class Heatmap extends React.Component {
     return (
       <div key={year}>
           {
-            monthsArr.map((months, i) =>
-              <div className={classNames('year', {'hidden': i !== this.state.i})} key={i}>
-                { months.map(month => this.renderMonth(month, dateData)) }
+            monthsArr.map((months, i) => {
+              return <div className={classNames('year', {'hidden': i !== this.state.i})} key={i}>
+                {months.map(month => this.renderMonth(month, dateData))}
               </div>
-            )
+            })
           }
       </div>
       );

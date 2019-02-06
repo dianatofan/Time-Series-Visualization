@@ -1,6 +1,9 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat');
 @import url('https://fonts.googleapis.com/css?family=Quicksand:400,500,700');
 
+@import url('./calendar/Heatmap.css');
+@import url('./radial-chart/RadialChart.css');
+
 * {
   font-family: 'Quicksand', sans-serif;
 }
@@ -10,9 +13,9 @@
   flex-direction: column;
   height: 100vh;
   margin: 0;
-  overflow: hidden;
   text-align: center;
   width: 100vw;
+  overflow: auto;
 }
 
 .header {

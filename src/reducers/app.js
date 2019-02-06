@@ -1,11 +1,11 @@
-import parseData from '../helpers/parser';
+import parseData, { getDayInsights } from '../helpers/parser';
 
 const SET_DATA = 'SET_DATA';
 const UPLOAD_FILE = 'UPLOAD_FILE';
 
 const initialState = {
   data: [],
-  rawData: [],
+  dayInsights: [],
   files: []
 };
 
@@ -15,7 +15,7 @@ export default (state = initialState, action) => {
       return {
         ...state,
         data: parseData(action.val),
-        rawData: action.val
+        dayInsights: getDayInsights(action.val)
       };
     case UPLOAD_FILE:
       return {
