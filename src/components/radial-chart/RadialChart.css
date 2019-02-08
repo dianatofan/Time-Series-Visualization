@@ -22,3 +22,24 @@
   stroke-width: 1px;
   /*transform: translate(50%, 50%);*/
 }
+
+.butterflyChart {
+  text-align: center;
+}
+
+.butterflyChart .label {
+  fill: #777;
+}
+
+.axisLabel {
+  font-size: .8em;
+  font-weight: bold;
+}
+
+.axis line {
+  stroke: #f1f1f1;
+}
+
+.noDataRecorded {
+  display: inherit;
+}

@@ -58,11 +58,11 @@ class Heatmap extends React.Component {
     return (
       <div id='calendar'>
         <DayLabels />
-        <Tooltip
+        {this.state.showTooltip && <Tooltip
           style={this.state.style}
           showTooltip={this.state.showTooltip}
           count={this.state.count}
-        />
+        />}
         <YearLabel
           minDate={this.state.minDate}
           maxDate={this.state.maxDate}

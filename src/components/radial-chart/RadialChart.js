@@ -3,8 +3,12 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import * as d3 from 'd3';
 
+import ButterflyChart from '../butterfly-chart/ButterflyChart';
+
 const RadialChart = props => {
   const dayInsights = props.dayInsights[props.selectedDay];
+
+  console.log(dayInsights);
 
   const width = 960,
     height = 600,
@@ -44,7 +48,7 @@ const RadialChart = props => {
     }
   );
 
-  const occurrences = roundedHours.reduce((acc, item) => {
+  const occurrences = roundedHours && roundedHours.reduce((acc, item) => {
     acc[item] = (acc[item] || 0) + 1;
     return acc;
   }, {});
@@ -70,80 +74,33 @@ const RadialChart = props => {
      11: 2
    };
    const numBars = 12;
-
-   const extent = d3.extent(Object.values(occurrences), d => d);
-
-  const barScale = extent && d3.scaleLinear()
-    .domain(extent)
-    .range([0, barHeight]);
-
-  // const numBars = dayInsights && dayInsights.length;
-
-  const x = extent && d3.scaleLinear()
-    .domain(extent)
-    .range([0, -barHeight]);
-
-  const xAxis = d3.axisLeft()
-    .ticks(3)
-    .tickFormat(formatNumber);
+  //
+  //  const extent = d3.extent(Object.values(occurrences), d => d);
+  //
+  // const barScale = extent && d3.scaleLinear()
+  //   .domain(extent)
+  //   .range([0, barHeight]);
+  //
+  // // const numBars = dayInsights && dayInsights.length;
+  //
+  // const x = extent && d3.scaleLinear()
+  //   .domain(extent)
+  //   .range([0, -barHeight]);
+  //
+  // const xAxis = d3.axisLeft()
+  //   .ticks(3)
+  //   .tickFormat(formatNumber);
 
   return (
-    <div className='container'>
-      <div className='dayLabel'>
-        { moment(props.selectedDay).format('dddd, MMMM DD YYYY') }
+    dayInsights ? <ButterflyChart /> :
+      <div className='container'>
+        <div className='dayLabel'>
+          { moment(props.selectedDay).format('dddd, MMMM DD YYYY') }
+        </div>
+        <span className='noDataRecorded'>
+          No data recorded
+        </span>
       </div>
-      <div className='dayOverview'>
-        {
-          dayInsights
-            ? <svg
-              className='radialBarChart'
-              width={width}
-              height={height}
-            >
-            <g transform={transform}>
-                <circle
-                  r={barHeight}
-                  className='circle'
-                >
-                </circle>
-                <g className='labels'>
-                  <def>
-                    <path
-                      id='labelPath'
-                      d={d}
-                    />
-                  </def>
-                {
-                  temp.map((key,i) =>
-                    <text textAnchor='middle'>
-                      <textPath
-                        startOffset={`${i * 100 / numBars + 50 / numBars}%`}
-                        xlinkHref='#labelPath'
-                      >
-                        {key+1}
-                      </textPath>
-                    </text>
-                  )
-                }
-                </g>
-                {
-                  Object.values(obj).map((item, i) => {
-                    return (
-                      <path
-                        d={`${arc(item, i)}`}
-                      />
-                    )
-                  }
-                  )
-                }
-                </g>
-              </svg>
-            : <span>
-                No data recorded
-              </span>
-        }
-      </div>
-    </div>
   )
 };
 
