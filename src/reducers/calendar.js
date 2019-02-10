@@ -1,11 +1,11 @@
 const SHOW_CALENDAR = 'SHOW_CALENDAR';
-const SHOW_TOOLTIP = 'SHOW_TOOLTIP';
 const CHANGE_YEAR = 'CHANGE_YEAR';
 
 const initialState = {
   isCalendarVisible: false,
-  showTooltip: false,
-  yearIndex: 0
+  yearIndex: 0,
+  cellSize: window.innerWidth / 125,
+  cellMargin: window.innerWidth / 400
 };
 
 export default (state = initialState, action) => {
@@ -15,15 +15,9 @@ export default (state = initialState, action) => {
         ...state,
         isCalendarVisible: action.val
       };
-    case SHOW_TOOLTIP:
-      return {
-        ...state,
-        showTooltip: action.val
-      };
     case CHANGE_YEAR:
       return {
         ...state,
-        currentYear: parseInt(state.currentYear) + action.val,
         yearIndex: state.yearIndex + action.val
       };
     default:
@@ -32,4 +26,4 @@ export default (state = initialState, action) => {
 }
 
 export const showCalendar = val => ({ type: SHOW_CALENDAR, val });
-export const showTooltip = val => ({ type: SHOW_TOOLTIP, val });
+export const changeYear = val => ({ type: CHANGE_YEAR, val });

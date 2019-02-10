@@ -36,8 +36,8 @@ const App = props => {
     return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
   };
 
-  const files = props.files.map(file => (
-    <span>
+  const files = props.files.map((file, i) => (
+    <span key={i}>
          <b key={file.name}>
            {file.name}
          </b>
@@ -120,7 +120,4 @@ const mapDispatchToProps = dispatch => ({
   setData: val => dispatch(setData(val))
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(App);

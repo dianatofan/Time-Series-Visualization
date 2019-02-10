@@ -1,6 +1,8 @@
 import React from 'react';
-import moment from 'moment';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
+import moment from 'moment';
+import { changeYear } from '../../reducers/calendar';
 
 const YearLabel = props => {
   const previousYear = moment(props.minDate).subtract(1, 'years').format('YYYY');
@@ -23,4 +25,13 @@ const YearLabel = props => {
   )
 };
 
-export default YearLabel;
+const mapStateToProps = state => ({
+  minDate: state.app.minDate,
+  maxDate: state.app.maxDate
+});
+
+const mapDispatchToProps = dispatch => ({
+  changeYear: val => dispatch(changeYear(val))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(YearLabel);

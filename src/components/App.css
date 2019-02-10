@@ -20,9 +20,7 @@
 
 .header {
   align-items: center;
-  /*background: #484158;*/
   background: white;
-  /*border-bottom: 1px solid #E1ECF5;*/
   display: flex;
   font-weight: bold;
   height: 60px;
@@ -33,8 +31,6 @@
 }
 
 .header .title {
-  /*color: white;*/
-  /*color: #9CB0C0;*/
   color: #394752;
   margin-left: 5em;
   font-weight: bold;
@@ -83,7 +79,6 @@ p {
 .inputFile:focus+label,
 .inputFile+label:hover {
   border: solid 1px #9CB0C0;
-  /*color: #9CB0C0;*/
 }
 
 .inputFile+label svg {
@@ -99,25 +94,11 @@ p {
   margin-right: 10px;
 }
 
-.filepond--wrapper .filepond--root {
-  margin-top: 20px;
-  /*width: 26vw;*/
-}
-
-.filepond--panel-top,
-.filepond--panel-center,
-.filepond--panel-bottom {
-  background: transparent !important;
-}
-
-.filepond--drip,
 .dropzone {
   background: white !important;
   opacity: 1 !important;
-  /*box-shadow: 0 0 5px 0 #e8e8e8 !important;*/
   border: dotted 2px #E1ECF5 !important;
   margin: 20px !important;
-  /*border-radius: 30px !important;*/
   outline: none;
   height: 50px;
   cursor: pointer;
@@ -127,17 +108,9 @@ p {
   justify-content: center;
 }
 
-.filepond--file {
-  color: #777 !important;
-}
-
 .dropzone:hover {
   border: dotted 2px #9CB0C0 !important;
   color: #9CB0C0 !important;
-}
-
-.dropzone--isDone {
-  /*justify-content: space-between;*/
 }
 
 .file-name {
@@ -157,6 +130,16 @@ p {
   font-weight: 400;
 }
 
-span {
-  color: #777;
+.tooltipx {
+  opacity: 1 !important;
+  color: white !important;
+  background-color: #394752 !important;
+}
+
+.place-top::after {
+  border-top-color: #394752 !important;
+}
+
+.tooltipx::first-line {
+  font-weight: bold !important;
 }

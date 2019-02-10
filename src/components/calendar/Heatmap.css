@@ -1,10 +1,5 @@
 #calendar {
-  /*font-family: 'Montserrat', sans-serif;*/
   margin: 20px;
-}
-
-.month {
-  /*margin-right: 8px;*/
 }
 
 .month-name,
@@ -13,27 +8,12 @@
   font-weight: 500;
 }
 
-.tooltip {
-  background: #394752;
-  color: white;
-  /*background: white;*/
-  border-radius: 10px;
-  /*border: solid 1px #e8e8e8;*/
-  display: block;
-  font-size: 85%;
-  font-weight: bold;
-  line-height: 30px;
-  /*opacity: .8;*/
-  overflow: hidden;
-  padding: 10px 20px;
-  position: fixed;
-}
-
-#calendar svg {
+.month svg {
   height: auto;
   width: auto;
 }
 
+.dayLabelsContainer span,
 #calendar g {
   font-size: 74%;
   line-height: 1.5em;
@@ -59,14 +39,9 @@
   margin-left: 60px;
 }
 
-.tooltip .text {
-  font-weight: 400 !important;
-}
-
 #calendar {
   width: calc(100vw - 200px);
   display: inline-block;
-  /*border-radius: 30px;*/
   -webkit-box-shadow: 0 0 5px 0 #e8e8e8;
   -moz-box-shadow: 0 0 5px 0 #e8e8e8;
   box-shadow: 0 0 5px 0 #e8e8e8;
@@ -96,7 +71,6 @@
   justify-content: space-between;
   width: 100%;
   border-bottom: solid 1px #f1f1f1;
-  /*border-radius: 40px;*/
   margin-bottom: 24px;
   color: #777;
 }

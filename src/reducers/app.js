@@ -1,21 +1,29 @@
 import parseData, { getDayInsights } from '../helpers/parser';
+import moment from 'moment';
 
 const SET_DATA = 'SET_DATA';
 const UPLOAD_FILE = 'UPLOAD_FILE';
 
 const initialState = {
   data: [],
+  minDate: null,
+  maxDate: null,
   dayInsights: [],
-  files: []
+  files: [],
+  showTooltip: false
 };
 
 export default (state = initialState, action) => {
   switch (action.type) {
     case SET_DATA:
+      const data = parseData(action.val);
+      const moments = Object.keys(data).map(d => moment(d));
       return {
         ...state,
-        data: parseData(action.val),
-        dayInsights: getDayInsights(action.val)
+        data,
+        dayInsights: getDayInsights(action.val),
+        minDate: moment.min(moments),
+        maxDate: moment.max(moments)
       };
     case UPLOAD_FILE:
       return {

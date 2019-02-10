@@ -3,7 +3,6 @@ import moment from 'moment';
 import { connect } from 'react-redux';
 import * as d3 from 'd3';
 import ReactTooltip from 'react-tooltip';
-import Tooltip from "../calendar/Tooltip";
 
 class ButterflyChart extends React.Component {
   constructor(props) {

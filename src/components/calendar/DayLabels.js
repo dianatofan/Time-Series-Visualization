@@ -7,7 +7,7 @@ const weekArray = Array.apply(null, Array(7)).map(function (_, i) {
 
 const DayLabels = () =>
   <div className='dayLabelsContainer'>
-    <g>
+    <span>
       {
         weekArray.map(day =>
           <text
@@ -18,7 +18,7 @@ const DayLabels = () =>
           </text>
         )
       }
-    </g>
+    </span>
   </div>;
 
 export default DayLabels;
