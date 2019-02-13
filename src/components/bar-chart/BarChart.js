@@ -5,11 +5,14 @@ import * as d3 from 'd3';
 import ReactTooltip from 'react-tooltip';
 
 class BarChart extends React.Component {
-  renderAxis = () => {
-    let hours = [];
-    for (let i = 0; i < 25; i++) {
-      hours.unshift(moment().subtract(i, 'hours').format('hh'));
+  constructor(props) {
+    super(props);
+    this.state = {
+      xScale: null,
+      yScale: null
     }
+  }
+  renderAxis = () => {
     const dayInsights = this.props.dayInsights[this.props.selectedDay];
     const roundedHours = dayInsights && dayInsights.map(hour => {
         const m = moment(`${this.props.selectedDay} ${hour}`);
@@ -29,7 +32,6 @@ class BarChart extends React.Component {
     const height = this.refs.barChart.clientHeight - margin.top - margin.bottom;
     const parseTime = d3.timeParse("%H:%M");
     const midnight = parseTime("00:00"); // "Mon, 01 Jan 1900 00:00:00 GMT"
-
     const xScale = d3.scaleTime()
       .domain([midnight, d3.timeDay.offset(midnight, 1)])
       .range([0, width]);
@@ -42,6 +44,9 @@ class BarChart extends React.Component {
       .call(xAxis);
     d3.select(this.refs.yAxis)
       .call(yAxis);
+    if (!this.state.width) {
+      this.setState({ width, height, xScale, yScale });
+    }
   };
 
   componentDidMount() {
@@ -53,26 +58,55 @@ class BarChart extends React.Component {
   }
 
   render() {
-    // let hours = [...Array(24)];
-    // hours = hours.map((hour, i) => moment().subtract(i, 'hours').format('HH'));
-    let hours = [];
-    for (let i = 0; i < 25; i++) {
-      hours.unshift(moment().subtract(i, 'hours').format('HH'));
+    const margin = { top: 20, right: 20, bottom: 30, left: 40 };
+
+    const dayInsights = this.props.dayInsights[this.props.selectedDay];
+    const roundedHours = dayInsights && dayInsights.map(hour => {
+        const m = moment(`${this.props.selectedDay} ${hour}`);
+        return m.minute() || m.second() || m.millisecond()
+          ? parseInt(m.add(1, 'hour').startOf('hour').format('HH'))
+          : parseInt(m.startOf('hour').format('HH'))
+      }
+    );
+    const occurrences = roundedHours && roundedHours.reduce((acc, item) => {
+      acc[item] = (acc[item] || 0) + 1;
+      return acc;
+    }, {});
+    let obj = {};
+    for (let i = 1; i <= 24; i++) {
+      obj[i] = occurrences[i] || 0
     }
-    const margin = { top: 20, right: 20, bottom: 30, left: 40 },
-      x = d3.scaleBand().padding(0.1),
-      y = d3.scaleLinear();
     const transform = `translate(${margin.left},${margin.top})`;
+    const timeFormat = d3.timeFormat('%H');
+    const parseTime = d3.timeParse("%H:%M");
+
+    const svgHeight = 300;
+
     return (
       <div className='container'>
         <div className='dayLabel'>
           { moment(this.props.selectedDay).format('dddd, MMMM DD YYYY') }
         </div>
         <div className='barChart'>
-          <svg width='100%' height={500} ref='barChart'>
+          <svg width='100%' height={svgHeight} ref='barChart'>
             <g transform={transform}>
-              <g className='axis axis-x' transform='translate(0,450)' ref='xAxis' fill='none' fontSize={10} textAnchor='middle' />
+              <g className='axis axis-x' transform={`translate(0,${svgHeight - 50})`} ref='xAxis' fill='none' fontSize={10} textAnchor='middle' />
               <g className='axis axis-y' ref='yAxis' />
+              {
+                this.state.width && Object.keys(occurrences).map(item => {
+                  return (
+                    <rect
+                      className='bar'
+                      x={this.state.xScale(parseTime(`${item}:00`))}
+                      y={this.state.yScale(occurrences[item])}
+                      width={this.state.width / 24 * 0.8}
+                      height={this.state.height - this.state.yScale(occurrences[item])}
+                      fill="#6595ec"
+                    />
+                  )
+                }
+                )
+              }
              </g>
           </svg>
         </div>
