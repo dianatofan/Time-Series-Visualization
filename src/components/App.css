@@ -143,3 +143,7 @@ p {
 .tooltipx::first-line {
   font-weight: bold !important;
 }
+
+.dropdown {
+  margin: 20px;
+}

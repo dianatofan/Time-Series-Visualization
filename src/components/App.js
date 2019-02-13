@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import Dropzone from 'react-dropzone';
+import Dropdown from 'react-dropdown';
 import * as d3 from 'd3';
 
 import { setData, uploadFile } from '../reducers/app';
@@ -10,7 +11,10 @@ import { showCalendar } from '../reducers/calendar';
 import Heatmap from './calendar/Heatmap';
 import RadialChart from './radial-chart/RadialChart';
 
+import 'react-dropdown/style.css';
 import './App.css';
+
+import dataset1 from '../data/data.csv';
 
 const App = props => {
   const onDrop = (acceptedFiles, rejectedFiles) => {
@@ -46,6 +50,17 @@ const App = props => {
          </div>
       </span>
   ));
+  const options = ['Dataset_1.csv', 'Dataset_2.csv', 'Dataset_3.csv', 'Dataset_4.csv'];
+  const onSelect = item => {
+    if (item.value === 'Dataset_1.csv') {
+      d3.csv(dataset1).then(data => {
+        props.setData(data);
+        props.showCalendar(true);
+      }).catch(err => {
+        throw err;
+      });
+    }
+  };
 
   return (
     <div className='app'>
@@ -81,6 +96,15 @@ const App = props => {
               )
             }}
           </Dropzone>
+        </section>
+        <section>
+          <p>Select dataset</p>
+          <Dropdown
+            className='dropdown'
+            options={options}
+            placeholder='Choose...'
+            onChange={onSelect}
+          />
         </section>
         {
           props.isCalendarVisible &&
