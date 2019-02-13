@@ -1,7 +1,9 @@
 @import url("https://fonts.googleapis.com/css?family=Montserrat");
 @import url("https://fonts.googleapis.com/css?family=Quicksand:400,500,700");
+@import "../helpers/colors.scss";
 @import url("calendar/Heatmap.scss");
 @import url("radial-chart/RadialChart.scss");
+
 * {
   font-family: 'Quicksand', sans-serif; }
 
@@ -16,17 +18,17 @@
 
 .header {
   align-items: center;
-  background: #FFF;
+  background: $white;
   display: flex;
   font-weight: bold;
   height: 60px;
   text-transform: uppercase;
-  -webkit-box-shadow: 0 0 5px 0 #E8E8E8;
-  -moz-box-shadow: 0 0 5px 0 #E8E8E8;
-  box-shadow: 0 0 5px 0 #E8E8E8; }
+  -webkit-box-shadow: 0 0 5px 0 $lightGray;
+  -moz-box-shadow: 0 0 5px 0 $lightGray;
+  box-shadow: 0 0 5px 0 $lightGray; }
 
 .header .title {
-  color: #394752;
+  color: $navyGray;
   margin-left: 5em;
   font-weight: bold; }
 
@@ -35,7 +37,7 @@
   text-align: left; }
 
 p {
-  color: #7888BF;
+  color: $purple;
   font-size: 1.1em;
   font-weight: 600;
   margin: 0 0 0 20px; }
@@ -60,14 +62,14 @@ p {
   display: inline-block;
   overflow: hidden;
   padding: 0.625rem 1.25rem;
-  color: #777;
-  border: solid 1px #E8E8E8;
+  color: $mediumGray;
+  border: solid 1px $lightGray;
   border-radius: 18px;
   margin: 10px 0 20px 20px; }
 
 .inputFile:focus + label,
 .inputFile + label:hover {
-  border: solid 1px #7888BF; }
+  border: solid 1px $purple; }
 
 .inputFile + label svg {
   width: 1em;
@@ -81,50 +83,51 @@ p {
   margin-right: 10px; }
 
 .dropzone {
-  background: #FFF !important;
+  background: $white !important;
   opacity: 1 !important;
-  border: dotted 2px #E1ECF5 !important;
+  border: dotted 2px $lightBlue !important;
   margin: 20px !important;
   outline: none;
   height: 50px;
   cursor: pointer;
-  color: #777 !important;
+  color: $mediumGray !important;
   display: flex;
   align-items: center;
   justify-content: center; }
 
 .dropzone:hover {
-  border: dotted 2px #7888BF !important;
-  color: #7888BF !important; }
+  border: dotted 2px $purple !important;
+  color: $purple !important; }
 
 .file-name {
   margin-left: 20px; }
 
 .file-size {
   font-size: .8em;
-  text-align: center; }
+  text-align: center;
+}
 
 p {
-  color: #7888BF; }
+  color: $purple;
+}
 
 .upload-message {
-  font-weight: 400; }
+  font-weight: 400;
+}
 
 .tooltipx {
   opacity: 1 !important;
-  color: #FFF !important;
-  background-color: #394752 !important; }
+  color: $white !important;
+  background-color: $navyGray !important; }
 
 .place-top::after {
-  border-top-color: #394752 !important; }
+  border-top-color: $navyGray !important; }
 
 .tooltipx::first-line {
   font-weight: bold !important; }
 
 .dropdown {
   margin: 20px;
-  border: solid 1px #F1F1F1; }
-
-/*# sourceMappingURL=App.css.map */
+  border: solid 1px $whiteGray; }
 
 /*# sourceMappingURL=App.css.map */

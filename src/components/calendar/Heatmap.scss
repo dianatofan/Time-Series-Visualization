@@ -1,10 +1,12 @@
+@import '../../helpers/colors';
+
 #calendar {
   margin: 20px;
 }
 
 .month-name,
 #calendar g {
-  fill: #777;
+  fill: $mediumGray;
   font-weight: 500;
 }
 
@@ -31,7 +33,7 @@
 }
 
 .dayLabels {
-  color: #777;
+  color: $mediumGray;
   display: block;
 }
 
@@ -42,10 +44,10 @@
 #calendar {
   width: calc(100vw - 200px);
   display: inline-block;
-  -webkit-box-shadow: 0 0 5px 0 #e8e8e8;
-  -moz-box-shadow: 0 0 5px 0 #e8e8e8;
-  box-shadow: 0 0 5px 0 #e8e8e8;
-  background: white;
+  -webkit-box-shadow: 0 0 5px 0 $lightGray;
+  -moz-box-shadow: 0 0 5px 0 $lightGray;
+  box-shadow: 0 0 5px 0 $lightGray;
+  background: $white;
 }
 
 .overlay {
@@ -54,7 +56,7 @@
   z-index: 4;
   font-size: 40px;
   top: 60px;
-  color: purple;
+  color: $purple;
   width: calc(100vw - 40px);
 }
 
@@ -70,9 +72,9 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  border-bottom: solid 1px #f1f1f1;
+  border-bottom: solid 1px $whiteGray;
   margin-bottom: 24px;
-  color: #777;
+  color: $mediumGray;
 }
 
 .fa-chevron-left {
@@ -96,11 +98,11 @@
 }
 
 .current-day {
-  stroke: #777;
+  stroke: $mediumGray;
   stroke-width: 2px;
 }
 
 .yearLabel .disabled {
-  color: #f1f1f1;
+  color: $whiteGray;
   cursor: not-allowed;
 }

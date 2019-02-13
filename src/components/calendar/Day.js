@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import moment from 'moment';
 import * as d3 from 'd3';
-import { selectDay, showRadialChart } from '../../reducers/radialChart';
+import { selectDay, showBarChart } from '../../reducers/barChart';
 
 const Day = props => {
   const cellMargin = props.cellMargin,
@@ -33,6 +33,11 @@ const Day = props => {
     new Date(key).setHours(0,0,0,0) === d.setHours(0,0,0,0));
   const value = !!props.data[item] && normalize(props.data[item], Math.max(...count), Math.min(...count));
   const fillColor = !!props.data[item] ? d3.interpolatePurples(value) : '#ececec';
+
+  const showBarChart = () => {
+    props.selectDay(d);
+    props.showBarChart(true);
+  };
   return (
     <rect
       key={d}
@@ -44,6 +49,7 @@ const Day = props => {
       fill={fillColor}
       y={(day(d) * cellSize) + (day(d) * cellMargin) + cellMargin}
       x={((week(d) - week(new Date(d.getFullYear(),d.getMonth(),1))) * cellSize) + ((week(d) - week(new Date(d.getFullYear(),d.getMonth(),1))) * cellMargin) + cellMargin}
+      onClick={showBarChart}
       data-tip={`${moment(d).format('dddd, DD MMM YYYY')}<br>Count: ${props.data[item] || 0}`}
       data-for='svgTooltip'
     >
@@ -58,7 +64,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  showRadialChart: val => dispatch(showRadialChart(val)),
+  showBarChart: val => dispatch(showBarChart(val)),
   selectDay: val => dispatch(selectDay(val))
 });
 

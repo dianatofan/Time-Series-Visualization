@@ -5,16 +5,20 @@ import Dropzone from 'react-dropzone';
 import Dropdown from 'react-dropdown';
 import * as d3 from 'd3';
 
-import { setData, uploadFile } from '../reducers/app';
+import { setData, uploadFile, setDatasetName, showSpinner } from '../reducers/app';
 import { showCalendar } from '../reducers/calendar';
+import { showBarChart } from '../reducers/barChart';
 
 import Heatmap from './calendar/Heatmap';
-import RadialChart from './radial-chart/RadialChart';
+import BarChart from './bar-chart/BarChart';
 
 import 'react-dropdown/style.css';
-import './App.css';
+import './App.scss';
 
-import dataset1 from '../data/data.csv';
+import dataset1 from '../data/itching_in_nose_tbc.csv';
+import dataset2 from '../data/itch_tbc.csv';
+import dataset3 from '../data/ptsd.csv';
+import dataset4 from '../data/data.csv';
 
 const App = props => {
   const onDrop = (acceptedFiles, rejectedFiles) => {
@@ -51,14 +55,29 @@ const App = props => {
       </span>
   ));
   const options = ['Dataset_1.csv', 'Dataset_2.csv', 'Dataset_3.csv', 'Dataset_4.csv'];
+  const renderHeatmap = dataset => {
+    d3.csv(dataset).then(data => {
+      props.setData(data);
+      props.showCalendar(true);
+      props.showSpinner(false);
+    }).catch(err => {
+      throw err;
+    });
+  };
   const onSelect = item => {
-    if (item.value === 'Dataset_1.csv') {
-      d3.csv(dataset1).then(data => {
-        props.setData(data);
-        props.showCalendar(true);
-      }).catch(err => {
-        throw err;
-      });
+    const value = item.value;
+    props.setDatasetName(value);
+    if (value === 'Dataset_1.csv') {
+      renderHeatmap(dataset1);
+    }
+    if (value === 'Dataset_2.csv') {
+      renderHeatmap(dataset2);
+    }
+    if (value === 'Dataset_3.csv') {
+      renderHeatmap(dataset3);
+    }
+    if (value === 'Dataset_4.csv') {
+      renderHeatmap(dataset4);
     }
   };
 
@@ -103,6 +122,7 @@ const App = props => {
             className='dropdown'
             options={options}
             placeholder='Choose...'
+            value={props.datasetName}
             onChange={onSelect}
           />
         </section>
@@ -117,10 +137,10 @@ const App = props => {
           </section>
         }
         {
-          props.isRadialChartVisible &&
+          props.isBarChartVisible &&
           <section>
             <p>Day overview</p>
-            <RadialChart
+            <BarChart
               key={props.data}
             />
           </section>
@@ -132,16 +152,20 @@ const App = props => {
 
 const mapStateToProps = state => ({
   data: state.app.data,
+  datasetName: state.app.datasetName,
   dayInsights: state.app.dayInsights,
   files: state.app.files,
   isCalendarVisible: state.calendar.isCalendarVisible,
-  isRadialChartVisible: state.radialChart.isRadialChartVisible
+  isBarChartVisible: state.barChart.isBarChartVisible
 });
 
 const mapDispatchToProps = dispatch => ({
   uploadFile: val => dispatch(uploadFile(val)),
   showCalendar: val => dispatch(showCalendar(val)),
-  setData: val => dispatch(setData(val))
+  setData: val => dispatch(setData(val)),
+  setDatasetName: val => dispatch(setDatasetName(val)),
+  showSpinner: val => dispatch(showSpinner(val)),
+  showBarChart: val => dispatch(showBarChart(val))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

@@ -3,14 +3,18 @@ import moment from 'moment';
 
 const SET_DATA = 'SET_DATA';
 const UPLOAD_FILE = 'UPLOAD_FILE';
+const SET_DATASET_NAME = 'SET_DATASET_NAME';
+const SHOW_SPINNER = 'SHOW_SPINNER';
 
 const initialState = {
   data: [],
   minDate: null,
   maxDate: null,
   dayInsights: [],
+  datasetName: '',
   files: [],
-  showTooltip: false
+  showTooltip: false,
+  isSpinnerVisible: false
 };
 
 export default (state = initialState, action) => {
@@ -30,6 +34,16 @@ export default (state = initialState, action) => {
         ...state,
         files: action.val
       };
+    case SET_DATASET_NAME:
+      return {
+        ...state,
+        datasetName: action.val
+      };
+    case SHOW_SPINNER:
+      return {
+        ...state,
+        isSpinnerVisible: action.val
+      };
     default:
       return state;
   }
@@ -37,3 +51,5 @@ export default (state = initialState, action) => {
 
 export const setData = val => ({ type: SET_DATA, val });
 export const uploadFile = val => ({ type: UPLOAD_FILE, val });
+export const setDatasetName = val => ({ type: SET_DATASET_NAME, val });
+export const showSpinner = val => ({ type: SHOW_SPINNER, val });
