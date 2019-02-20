@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import moment from 'moment';
 import * as d3 from 'd3';
+import { showEmptyContainer } from '../../reducers/app';
 import { selectDay, showBarChart } from '../../reducers/barChart';
 
 const Day = props => {
@@ -11,7 +12,7 @@ const Day = props => {
   const d = props.day;
 
   let isCurrentDay = false;
-  if (moment(d).format('DD-MM-YY') === moment().format('DD-MM-YY')) {
+  if (moment(d).format('DD-MM-YY') === moment(props.selectedDay).format('DD-MM-YY')) {
     isCurrentDay = true;
   }
 
@@ -34,22 +35,29 @@ const Day = props => {
   const value = !!props.data[item] && normalize(props.data[item], Math.max(...count), Math.min(...count));
   const fillColor = !!props.data[item] ? d3.interpolatePurples(value) : '#ececec';
 
-  const showBarChart = () => {
+  const onDayClick = () => {
     props.selectDay(d);
-    props.showBarChart(true);
+    const formattedDay = moment(d).format('YYYY-MM-DD');
+    if (!!props.dayInsights[formattedDay]) {
+      props.showEmptyContainer(false);
+      props.showBarChart(true);
+    } else {
+      props.showBarChart(false);
+      props.showEmptyContainer(true);
+    }
   };
   return (
     <rect
       key={d}
-      className={classNames('day', {'current-day': isCurrentDay})}
+      className='day'
       width={cellSize}
       height={cellSize}
       rx={50}
       ry={50}
-      fill={fillColor}
+      fill={isCurrentDay ? '#CCFF19' : fillColor}
       y={(day(d) * cellSize) + (day(d) * cellMargin) + cellMargin}
       x={((week(d) - week(new Date(d.getFullYear(),d.getMonth(),1))) * cellSize) + ((week(d) - week(new Date(d.getFullYear(),d.getMonth(),1))) * cellMargin) + cellMargin}
-      onClick={showBarChart}
+      onClick={onDayClick}
       data-tip={`${moment(d).format('dddd, DD MMM YYYY')}<br>Count: ${props.data[item] || 0}`}
       data-for='svgTooltip'
     >
@@ -59,13 +67,16 @@ const Day = props => {
 
 const mapStateToProps = state => ({
   data: state.app.data,
+  selectedDay: state.barChart.selectedDay,
+  dayInsights: state.app.dayInsights,
   cellSize: state.calendar.cellSize,
   cellMargin: state.calendar.cellMargin
 });
 
 const mapDispatchToProps = dispatch => ({
   showBarChart: val => dispatch(showBarChart(val)),
-  selectDay: val => dispatch(selectDay(val))
+  selectDay: val => dispatch(selectDay(val)),
+  showEmptyContainer: val => dispatch(showEmptyContainer(val))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Day);

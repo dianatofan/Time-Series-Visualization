@@ -1,11 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
+import moment from 'moment';
 import Dropzone from 'react-dropzone';
 import Dropdown from 'react-dropdown';
 import * as d3 from 'd3';
 
-import { setData, uploadFile, setDatasetName, showSpinner } from '../reducers/app';
+import { setData, uploadFile, setDatasetName, showSpinner, showEmptyContainer } from '../reducers/app';
 import { showCalendar } from '../reducers/calendar';
 import { showBarChart } from '../reducers/barChart';
 
@@ -14,6 +15,7 @@ import BarChart from './bar-chart/BarChart';
 
 import 'react-dropdown/style.css';
 import './App.scss';
+import './Spinner.scss';
 
 import dataset1 from '../data/itching_in_nose_tbc.csv';
 import dataset2 from '../data/itch_tbc.csv';
@@ -59,14 +61,20 @@ const App = props => {
     d3.csv(dataset).then(data => {
       props.setData(data);
       props.showCalendar(true);
-      props.showSpinner(false);
     }).catch(err => {
       throw err;
     });
   };
+  const removeCharts = () => {
+    props.showBarChart(false);
+    props.showEmptyContainer(false);
+    props.showCalendar(false);
+  };
   const onSelect = item => {
+    removeCharts();
     const value = item.value;
     props.setDatasetName(value);
+    props.showSpinner(true);
     if (value === 'Dataset_1.csv') {
       renderHeatmap(dataset1);
     }
@@ -81,13 +89,17 @@ const App = props => {
     }
   };
 
+  const showDropzone = false;
+
   return (
     <div className='app'>
       <header className='header'>
         <div className='title'> Visualizing Time-Series Data </div>
       </header>
       <div className='content'>
-        <section>
+        {
+          showDropzone &&
+          <section>
           <p>Upload file</p>
           <Dropzone
             accept='text/csv'
@@ -116,6 +128,7 @@ const App = props => {
             }}
           </Dropzone>
         </section>
+        }
         <section>
           <p>Select dataset</p>
           <Dropdown
@@ -145,6 +158,25 @@ const App = props => {
             />
           </section>
         }
+        {
+          props.isEmptyContainerVisible &&
+          <section>
+            <p>Day overview</p>
+            <div className='container'>
+              <div className='dayLabel'>
+                { moment(props.selectedDay).format('dddd, MMMM DD YYYY') }
+              </div>
+              <div className='emptyString'>No data recorded</div>
+            </div>
+          </section>
+        }
+        {
+          props.isSpinnerVisible &&
+          <div className='spinner'>
+            <div className="double-bounce1" />
+            <div className="double-bounce2" />
+          </div>
+        }
       </div>
     </div>
   )
@@ -154,9 +186,12 @@ const mapStateToProps = state => ({
   data: state.app.data,
   datasetName: state.app.datasetName,
   dayInsights: state.app.dayInsights,
+  selectedDay: moment(state.barChart.selectedDay).format('YYYY-MM-DD'),
   files: state.app.files,
   isCalendarVisible: state.calendar.isCalendarVisible,
-  isBarChartVisible: state.barChart.isBarChartVisible
+  isBarChartVisible: state.barChart.isBarChartVisible,
+  isEmptyContainerVisible: state.app.isEmptyContainerVisible,
+  isSpinnerVisible: state.app.isSpinnerVisible
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -164,8 +199,9 @@ const mapDispatchToProps = dispatch => ({
   showCalendar: val => dispatch(showCalendar(val)),
   setData: val => dispatch(setData(val)),
   setDatasetName: val => dispatch(setDatasetName(val)),
-  showSpinner: val => dispatch(showSpinner(val)),
-  showBarChart: val => dispatch(showBarChart(val))
+  showBarChart: val => dispatch(showBarChart(val)),
+  showEmptyContainer: val => dispatch(showEmptyContainer(val)),
+  showSpinner: val => dispatch(showSpinner(val))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

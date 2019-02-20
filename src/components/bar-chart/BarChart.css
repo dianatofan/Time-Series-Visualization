@@ -1,0 +1,13 @@
+.bar {
+  z-index: 0; }
+
+.line {
+  fill: none;
+  stroke: #7888BF;
+  stroke-width: 2px; }
+
+.dot {
+  stroke: #7888BF;
+  stroke-width: 2px; }
+
+/*# sourceMappingURL=BarChart.css.map */

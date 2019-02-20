@@ -22,7 +22,7 @@ const countOccurrences = arr => arr.reduce(function(obj, item) {
 const parseData = data => {
   const cleanedData = data.map(item => (item[data.columns[0]]).replace(/[-:.]/g, ''));
   let newData = cleanedData.map(item => ({ timestamp: parseDate(item) }));
-  newData.push({ timestamp: parseDate(data.columns[0]) });
+  // newData.push({ timestamp: parseDate(data.columns[0]) });
   const x = newData.map(item => item.timestamp);
   return countOccurrences(x);
 };
@@ -31,11 +31,11 @@ const groupBy = arr => arr.reduce(function (r, a) {
   r[a.date] = r[a.date] || [];
   r[a.date].push(a.time);
   return r;
-}, Object.create(null));
+}, {});
 
 export const getDayInsights = data => {
   let newData = data.map(item => ({ date: parseDate(item[data.columns[0]]), time: parseTime(item[data.columns[0]]) }));
-  newData.push({ date: parseDate(data.columns[0]), time: parseTimestamp(data.columns[0]) });
+  // newData.push({ date: parseDate(data.columns[0]), time: parseTimestamp(data.columns[0]) });
   return groupBy(newData);
 };
 

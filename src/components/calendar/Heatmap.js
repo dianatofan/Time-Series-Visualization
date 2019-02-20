@@ -7,29 +7,29 @@ import YearLabel from './YearLabel';
 import Year from './Year';
 
 import '../Spinner.scss';
+import { showSpinner } from '../../reducers/app';
 
 class Heatmap extends React.Component {
+  componentDidMount() {
+    this.props.showSpinner(false);
+  }
+
   render () {
     return (
-      this.props.isSpinnerVisible
-        ? <div className='spinner'>
-            <div className="double-bounce1" />
-            <div className="double-bounce2" />
+      <div id='calendar' ref='calendar'>
+          <DayLabels />
+          <YearLabel />
+          <div className='months'>
+            <Year />
           </div>
-        : <div id='calendar' ref='calendar'>
-            <DayLabels />
-            <YearLabel />
-            <div className='months'>
-              <Year />
-            </div>
-            <ReactTooltip id='svgTooltip' multiline class='tooltipx'/>
-          </div>
+          <ReactTooltip id='svgTooltip' multiline class='tooltipx'/>
+        </div>
     )
   }
 }
 
-const mapStateToProps = state => ({
-  isSpinnerVisible: state.app.isSpinnerVisible
+const mapDispatchToProps = dispatch => ({
+  showSpinner: val => dispatch(showSpinner(val))
 });
 
-export default connect(mapStateToProps)(Heatmap);
+export default connect(null, mapDispatchToProps)(Heatmap);
