@@ -17,7 +17,18 @@ class DayLabel extends React.Component {
     const showNextArrow = nextDay.isBefore(maxDate.endOf('year'));
 
     return (
-      <div className='yearLabel'>
+      <div className='yearLabel dayTitle'
+           tabIndex={0}
+           onKeyDown={ev => {
+             if (ev) {
+               if (ev.key === 'ArrowLeft') {
+                 selectDay(moment(selectedDay).add(-1, 'days'));
+               }
+               if (ev.key === 'ArrowRight') {
+                 selectDay(moment(selectedDay).add(1, 'days'));
+               }
+             }
+      }}>
         <i
           className={classNames('fas fa-chevron-left', {'disabled': !showPreviousArrow})}
           onClick={() => {showPreviousArrow && selectDay(moment(selectedDay).add(-1, 'days'))}}

@@ -10,14 +10,25 @@
   stroke: #7888BF;
   stroke-width: 2px; }
 
-.dayLabel .checkbox {
-  cursor: pointer;
-  float: right; }
+.dayTitle {
+  font-size: 1em !important; }
 
 .barChart {
   width: 100%; }
 
-.bar.hover {
+.hovered-bar {
+  cursor: pointer;
   fill: #5455D6; }
+
+.card .footer {
+  border-top: solid 1px #F1F1F1; }
+
+.card .footer .checkbox {
+  cursor: pointer;
+  margin: 0 1.2em;
+  font-size: 0.8em; }
+
+.checkbox.bold {
+  font-weight: bold; }
 
 /*# sourceMappingURL=BarChart.css.map */

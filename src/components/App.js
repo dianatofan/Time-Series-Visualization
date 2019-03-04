@@ -160,7 +160,7 @@ const App = props => {
               data={props.allDays[props.selectedDay]}
               margin={{ top: 20, right: 20, bottom: 30, left: 40 }}
               height={300}
-              paddingInner={0.1}
+              paddingInner={0.2}
               paddingOuter={0.1}
             />
           </section>

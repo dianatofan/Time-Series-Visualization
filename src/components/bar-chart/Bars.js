@@ -33,9 +33,6 @@ class Bars extends React.PureComponent {
       .append('rect')
       .attr('height', 0)
       .attr('transform', d => `translate(${d.x}, ${this.props.plotHeight})`)
-      .attr('data-tip', d => `Time - ${d.data}:00 <br> Occurrences - ${d.occurrences}`)
-      .attr('data-for', 'rectTooltip')
-      .classed('hover', (d, i) => i === this.state.hoverIndex)
       .on('mouseover', (d, i) => this.setState({ hoverIndex: i }))
       .on('mouseleave', () => this.setState({ hoverIndex: -1 }));
 
@@ -47,10 +44,13 @@ class Bars extends React.PureComponent {
       .attr('opacity', 0)
       .remove();
 
-    const rect = current
+    current
       .merge(enter)
       .select('rect')
       .attr('width', d => d.width)
+      .attr('data-tip', d => `Time - ${d.data}:00 <br> Occurrences - ${d.occurrences}`)
+      .attr('data-for', 'rectTooltip')
+      .classed('hovered-bar', (d, i) => i === this.state.hoverIndex)
       .transition()
       .duration(1000)
       .attr('transform', d => `translate(${d.x}, ${d.y})`)
