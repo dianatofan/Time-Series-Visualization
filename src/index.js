@@ -8,9 +8,17 @@ import './index.scss';
 import App from './components/App';
 import * as serviceWorker from './serviceWorker';
 
+const actionSanitizer = (action) => (
+  action.type === 'FILE_DOWNLOAD_SUCCESS' && action.data ?
+    { ...action, data: '<<LONG_BLOB>>' } : action
+);
+
 const store = createStore(
   rootReducer,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__({
+    actionSanitizer: actionSanitizer,
+    stateSanitizer: (state) => state.data ? { ...state, data: '<<LONG_BLOB>>' } : state
+  })
 );
 
 ReactDOM.render(

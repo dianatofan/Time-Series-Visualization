@@ -156,7 +156,13 @@ const App = props => {
           props.isBarChartVisible &&
           <section>
             <p>Day overview</p>
-            <BarChart />
+            <BarChart
+              data={props.allDays[props.selectedDay]}
+              margin={{ top: 20, right: 20, bottom: 30, left: 40 }}
+              height={300}
+              paddingInner={0.1}
+              paddingOuter={0.1}
+            />
           </section>
         }
         {
@@ -184,6 +190,7 @@ const App = props => {
 };
 
 const mapStateToProps = state => ({
+  allDays: state.app.allDays,
   data: state.app.data,
   datasetName: state.app.datasetName,
   dayInsights: state.app.dayInsights,

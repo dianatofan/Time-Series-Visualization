@@ -6,12 +6,12 @@ import * as d3 from 'd3';
 import { showEmptyContainer } from '../../reducers/app';
 import { selectDay, showBarChart } from '../../reducers/barChart';
 
-class Day extends React.PureComponent {
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   const props = this.props;
-  //   const d = props.day;
-  //   return moment(d).format('DD-MM-YY') === moment(props.selectedDay).format('DD-MM-YY');
-  // }
+class Day extends React.Component {
+  shouldComponentUpdate(nextProps, nextState) {
+    const formatDate = date => moment(date).format('DD-MM-YY');
+    return formatDate(this.props.day) === formatDate(nextProps.selectedDay) ||
+      formatDate(nextProps.day) === formatDate(this.props.selectedDay);
+  }
 
   render() {
     const props = this.props;
@@ -43,7 +43,9 @@ class Day extends React.PureComponent {
     const value = !!props.data[item] && normalize(props.data[item], Math.max(...count), Math.min(...count));
     const fillColor = !!props.data[item] ? d3.interpolatePurples(value) : '#ececec';
 
-    const onDayClick = () => {
+    const onDayClick = ev => {
+      ev.preventDefault();
+      ev.stopPropagation();
       props.selectDay(d);
       const formattedDay = moment(d).format('YYYY-MM-DD');
       if (!!props.dayInsights[formattedDay]) {

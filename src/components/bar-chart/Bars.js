@@ -1,4 +1,5 @@
 import React from 'react';
+import * as d3 from "d3";
 
 class Bars extends React.PureComponent {
   constructor(props) {
@@ -7,6 +8,49 @@ class Bars extends React.PureComponent {
       hoverIndex: -1
     }
   }
+
+  componentDidMount() {
+    this.renderBars();
+  }
+
+  componentDidUpdate() {
+    this.renderBars();
+  }
+
+  renderBars = () => {
+    const parent = d3.select(this.refs.anchor).datum(this.props.plotData);
+
+    const current = parent.selectAll(".bar").data(d => d);
+
+    current.interrupt();
+
+    current.transition().attr("fill", "green");
+
+    const enter = current.enter().append("g").classed("bar", true);
+    enter.attr("fill", "blue");
+
+    enter
+      .append("rect")
+      .attr("height", 0)
+      .attr("transform", d => `translate(${d.x}, ${this.props.plotHeight})`);
+
+    const exit = current.exit().classed("bar", false);
+    exit
+      .attr("fill", "red")
+      .attr("opacity", 1)
+      .transition()
+      .attr("opacity", 0)
+      .remove();
+
+    const rect = current
+      .merge(enter)
+      .select("rect")
+      .attr("width", d => d.width)
+      .transition()
+      .duration(1000)
+      .attr("transform", d => `translate(${d.x}, ${d.y})`)
+      .attr("height", d => d.height);
+  };
 
   render() {
     const { xScale, yScale, occurrences, height } = this.props;
