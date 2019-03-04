@@ -17,4 +17,7 @@
 .barChart {
   width: 100%; }
 
+.bar.hover {
+  fill: #5455D6; }
+
 /*# sourceMappingURL=BarChart.css.map */

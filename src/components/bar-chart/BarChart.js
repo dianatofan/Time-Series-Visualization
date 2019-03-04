@@ -21,7 +21,7 @@ class BarChart extends React.PureComponent {
       isChecked: false,
       width: document.getElementById('card').clientWidth - props.margin.left - props.margin.right
     };
-    window.addEventListener("resize", this.resize().bind(this));
+    window.addEventListener('resize', this.resize().bind(this));
   }
 
   resize() {
@@ -221,25 +221,26 @@ class BarChart extends React.PureComponent {
       plotHeight,
       nrOfTicks
     };
-    // const plotData = {
-    //   plotData: this.props.data.map((d, i) => {
-    //     return {
-    //       id: i,
-    //       data: d,
-    //       x: xScale(this.props.xFn(d)),
-    //       y: yScale(this.props.yFn(d)),
-    //       width: xScale.bandwidth(),
-    //       height: plotHeight - yScale(this.props.yFn(d))
-    //     };
-    //   })
-    // };
+    const plotData = {
+      plotData: Object.keys(this.props.data).map((item, i) => {
+        return {
+          id: i,
+          data: item,
+          x: xScale(item),
+          y: yScale(this.props.data[item]),
+          width: xScale.bandwidth(),
+          height: plotHeight - yScale(this.props.data[item]) - this.props.margin.top - this.props.margin.bottom,
+          occurrences: this.props.data[item]
+        };
+      })
+    };
     const transform = `translate(${this.props.margin.left},${this.props.margin.top})`;
     return (
       <Card>
         <DayLabel selectedDay={this.props.selectedDay} />
           /*
           <span className='checkbox' onClick={onCheckboxChange}>
-            Show week overview <input type="checkbox" checked={this.state.isChecked} defaultChecked={false} onChange={onCheckboxChange}/>
+            Show week overview <input type='checkbox' checked={this.state.isChecked} defaultChecked={false} onChange={onCheckboxChange}/>
           </span>
           */
         <div className='barChart'>
@@ -247,6 +248,7 @@ class BarChart extends React.PureComponent {
             <g transform={transform} width={plotWidth} height={plotHeight}>
               <XAxis {...metaData} transform={`translate(0,${plotHeight})`}/>
               <YAxis {...metaData} />
+              <Bars {...metaData} {...plotData} />
             </g>
           </svg>
           <ReactTooltip id='rectTooltip' multiline class='tooltipx'/>
