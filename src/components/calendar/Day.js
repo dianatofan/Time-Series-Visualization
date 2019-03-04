@@ -6,64 +6,73 @@ import * as d3 from 'd3';
 import { showEmptyContainer } from '../../reducers/app';
 import { selectDay, showBarChart } from '../../reducers/barChart';
 
-const Day = props => {
-  const cellMargin = props.cellMargin,
-    cellSize = props.cellSize;
-  const d = props.day;
+class Day extends React.PureComponent {
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   const props = this.props;
+  //   const d = props.day;
+  //   return moment(d).format('DD-MM-YY') === moment(props.selectedDay).format('DD-MM-YY');
+  // }
 
-  let isCurrentDay = false;
-  if (moment(d).format('DD-MM-YY') === moment(props.selectedDay).format('DD-MM-YY')) {
-    isCurrentDay = true;
-  }
+  render() {
+    const props = this.props;
+    const cellMargin = props.cellMargin,
+      cellSize = props.cellSize;
+    const d = props.day;
 
-  const day = d => (d.getDay() + 6) % 7,
-    week = d3.timeFormat('%W');
-
-  const normalize = (val, max, min) => (1 - 0.25) * ((val - min) / (max - min)) + 0.25;
-
-  const month = props.month;
-
-  const days = d3.timeDays(month, new Date(month.getFullYear(), month.getMonth()+1, 1));
-  let filters = days.map(d =>
-    Object.keys(props.data).find(key =>
-      new Date(key).setHours(0,0,0,0) === d.setHours(0,0,0,0))
-  );
-  const count = filters.map(i => !!i && props.data[i]).filter(j => !!j);
-
-  const item = Object.keys(props.data).find(key =>
-    new Date(key).setHours(0,0,0,0) === d.setHours(0,0,0,0));
-  const value = !!props.data[item] && normalize(props.data[item], Math.max(...count), Math.min(...count));
-  const fillColor = !!props.data[item] ? d3.interpolatePurples(value) : '#ececec';
-
-  const onDayClick = () => {
-    props.selectDay(d);
-    const formattedDay = moment(d).format('YYYY-MM-DD');
-    if (!!props.dayInsights[formattedDay]) {
-      props.showEmptyContainer(false);
-      props.showBarChart(true);
-    } else {
-      props.showBarChart(false);
-      props.showEmptyContainer(true);
+    let isCurrentDay = false;
+    if (moment(d).format('DD-MM-YY') === moment(props.selectedDay).format('DD-MM-YY')) {
+      isCurrentDay = true;
     }
-  };
-  return (
-    <rect
-      key={d}
-      className='day'
-      width={cellSize}
-      height={cellSize}
-      rx={50}
-      ry={50}
-      fill={isCurrentDay ? '#CCFF19' : fillColor}
-      y={(day(d) * cellSize) + (day(d) * cellMargin) + cellMargin}
-      x={((week(d) - week(new Date(d.getFullYear(),d.getMonth(),1))) * cellSize) + ((week(d) - week(new Date(d.getFullYear(),d.getMonth(),1))) * cellMargin) + cellMargin}
-      onClick={onDayClick}
-      data-tip={`${moment(d).format('dddd, DD MMM YYYY')}<br>Count: ${props.data[item] || 0}`}
-      data-for='svgTooltip'
-    >
-    </rect>
-  )
-};
+
+    const day = d => (d.getDay() + 6) % 7,
+      week = d3.timeFormat('%W');
+
+    const normalize = (val, max, min) => (1 - 0.25) * ((val - min) / (max - min)) + 0.25;
+
+    const month = props.month;
+
+    const days = d3.timeDays(month, new Date(month.getFullYear(), month.getMonth()+1, 1));
+    let filters = days.map(d =>
+      Object.keys(props.data).find(key =>
+        new Date(key).setHours(0,0,0,0) === d.setHours(0,0,0,0))
+    );
+    const count = filters.map(i => !!i && props.data[i]).filter(j => !!j);
+
+    const item = Object.keys(props.data).find(key =>
+      new Date(key).setHours(0,0,0,0) === d.setHours(0,0,0,0));
+    const value = !!props.data[item] && normalize(props.data[item], Math.max(...count), Math.min(...count));
+    const fillColor = !!props.data[item] ? d3.interpolatePurples(value) : '#ececec';
+
+    const onDayClick = () => {
+      props.selectDay(d);
+      const formattedDay = moment(d).format('YYYY-MM-DD');
+      if (!!props.dayInsights[formattedDay]) {
+        props.showEmptyContainer(false);
+        props.showBarChart(true);
+      } else {
+        props.showBarChart(false);
+        props.showEmptyContainer(true);
+      }
+    };
+    return (
+      <rect
+        key={d}
+        className={classNames('day', {'fill': isCurrentDay})}
+        width={cellSize}
+        height={cellSize}
+        rx={50}
+        ry={50}
+        fill={fillColor}
+        y={(day(d) * cellSize) + (day(d) * cellMargin) + cellMargin}
+        x={((week(d) - week(new Date(d.getFullYear(),d.getMonth(),1))) * cellSize) + ((week(d) - week(new Date(d.getFullYear(),d.getMonth(),1))) * cellMargin) + cellMargin}
+        onClick={onDayClick}
+        data-tip={`${moment(d).format('dddd, DD MMM YYYY')}<br>Count: ${props.data[item] || 0}`}
+        data-for='svgTooltip'
+      >
+      </rect>
+    )
+  }
+}
 
 const mapStateToProps = state => ({
   data: state.app.data,

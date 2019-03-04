@@ -8,13 +8,16 @@
   stroke-width: 2px;
 }
 
-.area {
-  //fill: lightsteelblue;
-  //opacity: .5;
-  //z-index: 1;
-}
-
 .dot {
   stroke: #7888BF;
   stroke-width: 2px;
+}
+
+.dayLabel .checkbox {
+  cursor: pointer;
+  float: right;
+}
+
+.barChart {
+  width: 100%;
 }

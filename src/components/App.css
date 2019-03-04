@@ -8,7 +8,6 @@
 .app {
   display: flex;
   flex-direction: column;
-  height: 100vh;
   margin: 0;
   text-align: center;
   width: 100vw;
@@ -27,18 +26,19 @@
 
 .header .title {
   color: #394752;
-  margin-left: 5em;
+  margin-left: 6%;
   font-weight: bold; }
 
 .content {
-  margin: 2em 5em;
+  height: 100vh;
+  margin: 3% 6%;
   text-align: left; }
 
 p {
   color: #7888BF;
   font-size: 1.1em;
   font-weight: 600;
-  margin: 0 0 0 20px; }
+  margin: 0; }
 
 .button-group {
   display: flex;
@@ -122,8 +122,9 @@ p {
   font-weight: bold !important; }
 
 .dropdown {
-  margin: 20px;
-  border: solid 1px #F1F1F1; }
+  margin: 20px 0 20px 0;
+  border: solid 1px #F1F1F1;
+  width: 100%; }
 
 .emptyString {
   text-align: center;

@@ -10,6 +10,8 @@ import { setData, uploadFile, setDatasetName, showSpinner, showEmptyContainer } 
 import { showCalendar } from '../reducers/calendar';
 import { showBarChart } from '../reducers/barChart';
 
+import { parseDayInsights } from '../helpers/parser';
+
 import Heatmap from './calendar/Heatmap';
 import BarChart from './bar-chart/BarChart';
 
@@ -21,6 +23,8 @@ import dataset1 from '../data/itching_in_nose_tbc.csv';
 import dataset2 from '../data/itch_tbc.csv';
 import dataset3 from '../data/ptsd.csv';
 import dataset4 from '../data/data.csv';
+
+import { whyDidYouUpdate } from 'why-did-you-update';
 
 const App = props => {
   const onDrop = (acceptedFiles, rejectedFiles) => {
@@ -91,6 +95,8 @@ const App = props => {
 
   const showDropzone = false;
 
+  // whyDidYouUpdate(React);
+
   return (
     <div className='app'>
       <header className='header'>
@@ -143,19 +149,14 @@ const App = props => {
           props.isCalendarVisible &&
           <section>
             <p>Calendar heatmap</p>
-            <Heatmap
-              data={props.data}
-              dayInsights={props.dayInsights}
-            />
+            <Heatmap />
           </section>
         }
         {
           props.isBarChartVisible &&
           <section>
             <p>Day overview</p>
-            <BarChart
-              key={props.data}
-            />
+            <BarChart />
           </section>
         }
         {

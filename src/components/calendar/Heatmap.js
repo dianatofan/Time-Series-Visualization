@@ -5,25 +5,26 @@ import ReactTooltip from 'react-tooltip';
 import DayLabels from './DayLabels';
 import YearLabel from './YearLabel';
 import Year from './Year';
+import Card from '../widget/Card';
 
 import '../Spinner.scss';
 import { showSpinner } from '../../reducers/app';
 
-class Heatmap extends React.Component {
+class Heatmap extends React.PureComponent {
   componentDidMount() {
     this.props.showSpinner(false);
   }
 
   render () {
     return (
-      <div id='calendar' ref='calendar'>
-          <DayLabels />
-          <YearLabel />
-          <div className='months'>
-            <Year />
-          </div>
-          <ReactTooltip id='svgTooltip' multiline class='tooltipx'/>
+      <Card>
+        <DayLabels />
+        <YearLabel />
+        <div className='months'>
+          <Year />
         </div>
+        <ReactTooltip id='svgTooltip' multiline class='tooltipx'/>
+      </Card>
     )
   }
 }

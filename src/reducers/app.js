@@ -1,4 +1,4 @@
-import parseData, { getDayInsights } from '../helpers/parser';
+import parseData, { getDayInsights, parseDayInsights } from '../helpers/parser';
 import moment from 'moment';
 
 const SET_DATA = 'SET_DATA';
@@ -9,11 +9,13 @@ const SHOW_EMPTY_CONTAINER = 'SHOW_EMPTY_CONTAINER';
 
 const initialState = {
   data: [],
+  rawData: [],
   minDate: null,
   maxDate: null,
   dayInsights: [],
   datasetName: '',
   files: [],
+  allDays: [],
   showTooltip: false,
   isSpinnerVisible: false,
   isEmptyContainerVisible: false
@@ -26,10 +28,12 @@ export default (state = initialState, action) => {
       const moments = Object.keys(data).map(d => moment(d));
       return {
         ...state,
+        rawData: action.val,
         data,
         dayInsights: getDayInsights(action.val),
         minDate: moment.min(moments),
-        maxDate: moment.max(moments)
+        maxDate: moment.max(moments),
+        allDays: parseDayInsights(action.val)
       };
     case UPLOAD_FILE:
       return {

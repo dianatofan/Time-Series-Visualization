@@ -10,4 +10,11 @@
   stroke: #7888BF;
   stroke-width: 2px; }
 
+.dayLabel .checkbox {
+  cursor: pointer;
+  float: right; }
+
+.barChart {
+  width: 100%; }
+
 /*# sourceMappingURL=BarChart.css.map */
