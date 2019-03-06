@@ -28,9 +28,9 @@ class Year extends React.PureComponent {
           monthsArr.map((months, i) =>
             <div className={classNames('year', {'hidden': i !== props.yearIndex})} key={i}>
               {
-                months.map(month =>
+                months.map((month, i) =>
                   <Month
-                    key={month}
+                    key={i}
                     month={month}
                   />
                 )

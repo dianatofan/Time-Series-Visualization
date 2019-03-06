@@ -6,6 +6,30 @@ import { connect } from 'react-redux';
 import Day from './Day';
 
 class Month extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      count: 1
+    };
+  }
+
+  componentDidMount() {
+    this.showMoreData();
+  }
+
+  componentDidUpdate() {
+    this.showMoreData();
+  }
+
+  showMoreData = () => {
+    const { count } = this.state;
+    const { month } = this.props;
+    const days = d3.timeDays(month, new Date(month.getFullYear(), month.getMonth()+1, 1));
+    if (count < days.length) {
+      requestAnimationFrame(() => this.setState({ count: count+1 }));
+    }
+  };
+
   render() {
     const props = this.props;
 
@@ -29,6 +53,11 @@ class Month extends React.PureComponent {
       extraSpace += 10;
     }
 
+    const { count } = this.state;
+
+    const endReached = count >= days.length;
+    const renderList = endReached ? days : days.slice(0, count);
+
     return (
       <svg
         className='month'
@@ -45,7 +74,7 @@ class Month extends React.PureComponent {
           >
             { monthName(month) }
           </text>
-          { days.map(d => <Day day={d} month={month} key={d} />) }
+          { renderList.map(d => <Day day={d} month={month} key={d} />) }
         </g>
       </svg>
     )

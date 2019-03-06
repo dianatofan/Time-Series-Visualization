@@ -13,6 +13,38 @@ class Day extends React.Component {
       formatDate(nextProps.day) === formatDate(this.props.selectedDay);
   }
 
+  componentDidUpdate() {
+    this.renderDots();
+  }
+
+  renderDots = () => {
+    // let dots = d3.selectAll('.day')
+    //   .data(this.props.day, d => d);
+    //
+    // dots
+    //   .transition()
+    //   .duration(100)
+    //   .ease('ease-in')
+    //   .style('opacity', 1);
+    //
+    // dots.enter().append('rect')
+    //   .attr('class', 'day')
+    //   .attr('r', function(d) { return r(d.r); })
+    //   .attr('cx', function(d) { return x(d.x); })
+    //   .attr('cy', 0)
+    //   .style('stroke', '#3E6E9C')
+    //   .transition().duration(1000)
+    //   .attr('cy', function(d) { return y(d.y); })
+    //   .style('stroke', '#81E797');
+    //
+    // item.exit().filter(':not(.exiting)') // Don't select already exiting nodes
+    //   .classed('exiting', true)
+    //   .transition().duration(1000)
+    //   .attr('cy', height)
+    //   .style('stroke', '#3E6E9C')
+    //   .remove();
+  };
+
   render() {
     const props = this.props;
     const cellMargin = props.cellMargin,
