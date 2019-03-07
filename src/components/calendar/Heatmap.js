@@ -9,8 +9,16 @@ import Card from '../widget/Card';
 
 import '../Spinner.scss';
 import { showSpinner } from '../../reducers/app';
+import { onScreenResize } from '../../reducers/calendar';
 
 class Heatmap extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    window.addEventListener('resize', () => {
+      props.onScreenResize(window.innerWidth);
+    });
+  }
+
   componentDidMount() {
     this.props.showSpinner(false);
   }
@@ -30,7 +38,8 @@ class Heatmap extends React.PureComponent {
 }
 
 const mapDispatchToProps = dispatch => ({
-  showSpinner: val => dispatch(showSpinner(val))
+  showSpinner: val => dispatch(showSpinner(val)),
+  onScreenResize: val => dispatch(onScreenResize(val))
 });
 
 export default connect(null, mapDispatchToProps)(Heatmap);

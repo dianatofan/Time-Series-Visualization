@@ -27,6 +27,8 @@ class Month extends React.PureComponent {
     const days = d3.timeDays(month, new Date(month.getFullYear(), month.getMonth()+1, 1));
     if (count < days.length) {
       requestAnimationFrame(() => this.setState({ count: count+1 }));
+    } else {
+      console.log('now show day and month labels');
     }
   };
 

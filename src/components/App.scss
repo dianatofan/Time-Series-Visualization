@@ -133,6 +133,15 @@ p {
   width: 100%;
 }
 
+.dropdown .Dropdown-control,
+.dropdown .Dropdown-menu {
+  border: none;
+}
+
+.dropdown .Dropdown-menu {
+  box-shadow: 0 0 5px 0 $lightGray;
+}
+
 .emptyString {
   text-align: center;
   height: 60px;

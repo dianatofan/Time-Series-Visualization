@@ -126,6 +126,13 @@ p {
   border: solid 1px #F1F1F1;
   width: 100%; }
 
+.dropdown .Dropdown-control,
+.dropdown .Dropdown-menu {
+  border: none; }
+
+.dropdown .Dropdown-menu {
+  box-shadow: 0 0 5px 0 #E8E8E8; }
+
 .emptyString {
   text-align: center;
   height: 60px;

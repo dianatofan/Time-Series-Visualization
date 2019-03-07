@@ -3,8 +3,7 @@ const SELECT_DAY = 'SELECT_DAY';
 
 const initialState = {
   isBarChartVisible: false,
-  selectedDay: null,
-  dayInsights: []
+  selectedDay: null
 };
 
 export default (state = initialState, action) => {

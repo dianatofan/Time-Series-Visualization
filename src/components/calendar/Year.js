@@ -8,8 +8,8 @@ import Month from './Month';
 class Year extends React.PureComponent {
   render() {
     const props = this.props;
-    const minDate = props.minDate.format('YYYY-MM-DD'); // new Date(2016, 0, 1);
-    const maxDate = props.maxDate.format('YYYY-MM-DD'); // new Date(2020, 11, 31);
+    const minDate = props.minDate.format('YYYY-MM-DD');
+    const maxDate = props.maxDate.format('YYYY-MM-DD');
 
     const months = d3.timeMonth.range(new Date(parseInt(`${minDate.split('-')[0]}`), 0, 1),
       new Date(parseInt(`${maxDate.split('-')[0]}`), 11, 31));
