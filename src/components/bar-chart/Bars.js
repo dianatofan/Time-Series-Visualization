@@ -5,7 +5,8 @@ class Bars extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      hoverIndex: -1
+      hoverIndex: -1,
+      modalOpen: null
     }
   }
 
@@ -20,6 +21,11 @@ class Bars extends React.PureComponent {
   renderBars = () => {
     const parent = d3.select(this.refs.bars).datum(this.props.plotData);
     const current = parent.selectAll('.bar').data(d => d);
+    const openModal = d => {
+      this.setState({
+        modalOpen: d
+      });
+    };
 
     current.interrupt();
 
@@ -34,7 +40,8 @@ class Bars extends React.PureComponent {
       .attr('height', 0)
       .attr('transform', d => `translate(${d.x}, ${this.props.plotHeight})`)
       .on('mouseover', (d, i) => this.setState({ hoverIndex: i }))
-      .on('mouseleave', () => this.setState({ hoverIndex: -1 }));
+      .on('mouseleave', () => this.setState({ hoverIndex: -1 }))
+      .on('click', d => openModal(d));
 
     const exit = current.exit().classed('bar', false);
     exit

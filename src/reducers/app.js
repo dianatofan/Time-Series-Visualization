@@ -5,6 +5,7 @@ const SET_DATA = 'SET_DATA';
 const UPLOAD_FILE = 'UPLOAD_FILE';
 const SET_DATASET_NAME = 'SET_DATASET_NAME';
 const SHOW_SPINNER = 'SHOW_SPINNER';
+const SET_MONTH_INSIGHTS = 'SET_MONTH_INSIGHTS';
 
 const initialState = {
   data: [],
@@ -12,6 +13,10 @@ const initialState = {
   minDate: null,
   maxDate: null,
   dayInsights: [],
+  monthInsights: [],
+  daysOfMonth: [],
+  selectedMonth: null,
+  weekdayInsights: [],
   datasetName: '',
   files: [],
   allDays: [],
@@ -48,6 +53,13 @@ export default (state = initialState, action) => {
         ...state,
         isSpinnerVisible: action.val
       };
+    case SET_MONTH_INSIGHTS:
+      return {
+        ...state,
+        monthInsights: action.val.monthInsights,
+        daysOfMonth: action.val.daysOfMonth,
+        selectedMonth: action.val.selectedMonth
+      };
     default:
       return state;
   }
@@ -57,3 +69,4 @@ export const setData = val => ({ type: SET_DATA, val });
 export const uploadFile = val => ({ type: UPLOAD_FILE, val });
 export const setDatasetName = val => ({ type: SET_DATASET_NAME, val });
 export const showSpinner = val => ({ type: SHOW_SPINNER, val });
+export const setMonthInsights = val => ({ type: SET_MONTH_INSIGHTS, val });

@@ -43,11 +43,7 @@ class BarChart extends React.PureComponent {
     };
   }
 
-  updateScale = props => {
-    const showBarChart = !!this.props.dayInsights[this.props.selectedDay];
-
-    const data = props.data;
-
+  updateScale = (props, data) => {
     const xScale = d3.scaleBand();
     const yScale = d3.scaleLinear().nice();
 
@@ -78,13 +74,15 @@ class BarChart extends React.PureComponent {
   }
 
   render() {
-    const showBarChart = !!this.props.dayInsights[this.props.selectedDay];
+    const showBarChart = !!this.props.dayInsights[this.props.selectedDay] || !!this.props.monthInsights.length;
 
     const renderBarChart = () => {
-      const { xScale, yScale } =  this.updateScale(this.props);
+      const data = !!this.props.monthInsights.length ? this.props.daysOfMonth : this.props.data;
+
+      const { xScale, yScale } =  this.updateScale(this.props, data);
       const { plotWidth, plotHeight } = this.updatePlotSize(this.props);
 
-      const max = d3.max(Object.values(this.props.data));
+      const max = d3.max(Object.values(data));
       const nrOfTicks = max < 10 ? max : max / 2;
 
       const metaData = {
@@ -95,14 +93,14 @@ class BarChart extends React.PureComponent {
         nrOfTicks
       };
       const plotData = {
-        plotData: Object.keys(this.props.data).map((item, i) => ({
+        plotData: Object.keys(data).map((item, i) => ({
           id: i,
           data: item,
           x: xScale(item),
-          y: yScale(this.props.data[item]),
+          y: yScale(data[item]),
           width: xScale.bandwidth(),
-          height: plotHeight - yScale(this.props.data[item]) - this.props.margin.top - this.props.margin.bottom,
-          occurrences: this.props.data[item]
+          height: plotHeight - yScale(data[item]) - this.props.margin.top - this.props.margin.bottom,
+          occurrences: data[item]
         }))
       };
       const transform = `translate(${this.props.margin.left},${this.props.margin.top})`;
@@ -121,7 +119,7 @@ class BarChart extends React.PureComponent {
                 plotHeight={plotHeight}
                 margin={this.props.margin}
                 selectedDay={this.props.selectedDay}
-                occurrences={this.props.data}
+                occurrences={data}
                 transform={transform}
               />
             }
@@ -164,6 +162,8 @@ class BarChart extends React.PureComponent {
 
 const mapStateToProps = state => ({
   dayInsights: state.app.dayInsights,
+  monthInsights: state.app.monthInsights,
+  daysOfMonth: state.app.daysOfMonth,
   selectedDay: moment(state.barChart.selectedDay).format('YYYY-MM-DD')
 });
 

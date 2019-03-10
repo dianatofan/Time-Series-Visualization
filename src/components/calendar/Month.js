@@ -1,9 +1,13 @@
 import React from 'react';
+import classNames from 'classnames';
 import * as d3 from 'd3';
 import moment from 'moment';
 import { connect } from 'react-redux';
 
 import Day from './Day';
+import { getMonthInsights } from '../../helpers/parser';
+import { setMonthInsights } from "../../reducers/app";
+import { showBarChart, selectDay } from "../../reducers/barChart";
 
 class Month extends React.PureComponent {
   constructor(props) {
@@ -60,6 +64,19 @@ class Month extends React.PureComponent {
     const endReached = count >= days.length;
     const renderList = endReached ? days : days.slice(0, count);
 
+    const renderMonthOverview = month => {
+      props.selectDay(null);
+      const monthInsights = getMonthInsights(moment().month(month).format('M'), props.dayInsights, props.allDays);
+      props.setMonthInsights({
+        selectedMonth: monthInsights.selectedMonth,
+        daysOfMonth: monthInsights.daysOfMonth,
+        monthInsights: monthInsights.monthInsights
+      });
+      props.showBarChart(true);
+    };
+
+    const isCurrentMonth = moment(this.props.selectedMonth, 'M').format('MMMM') === monthName(month);
+
     return (
       <svg
         className='month'
@@ -69,14 +86,15 @@ class Month extends React.PureComponent {
       >
         <g>
           <text
-            className='month-name'
+            className={classNames('month-name', {'bold': isCurrentMonth})}
             y={(cellSize * 7) + (cellMargin * 8) + 15}
             x={((cellSize * weeksInMonth(month)) + (cellMargin * (weeksInMonth(month) + 1))) / 2}
             textAnchor='middle'
+            onClick={() => renderMonthOverview(monthName(month))}
           >
             { monthName(month) }
           </text>
-          { renderList.map(d => <Day day={d} month={month} key={d} />) }
+          { renderList.map(d => <Day fill={isCurrentMonth} day={d} month={month} key={d} />) }
         </g>
       </svg>
     )
@@ -84,9 +102,18 @@ class Month extends React.PureComponent {
 }
 
 const mapStateToProps = state => ({
+  allDays: state.app.allDays,
   data: state.app.data,
+  dayInsights: state.app.dayInsights,
   cellSize: state.calendar.cellSize,
-  cellMargin: state.calendar.cellMargin
+  cellMargin: state.calendar.cellMargin,
+  selectedMonth: state.app.selectedMonth
 });
 
-export default connect(mapStateToProps)(Month);
+const mapDispatchToProps = dispatch => ({
+  setMonthInsights: val => dispatch(setMonthInsights(val)),
+  showBarChart: val => dispatch(showBarChart(val)),
+  selectDay: val => dispatch(selectDay(val))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Month);

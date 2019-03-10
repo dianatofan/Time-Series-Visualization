@@ -40,6 +40,40 @@ export const getDayInsights = data => {
   return groupBy(newData);
 };
 
+export const getMonthInsights = (month, dayInsights, allDays) => {
+  const monthInsights = Object.keys(dayInsights)
+    .filter(key => moment(key).format('M') === month)
+    .reduce((obj, key) => {
+      obj[key] = dayInsights[key];
+      return obj;
+    }, {});
+  const mergedData = Object.keys(monthInsights).reduce((acc, key) => {
+    acc.push(monthInsights[key]);
+    return acc;
+  }, []);
+  const allDaysOfMonth = Object.keys(allDays)
+    .filter(key => moment(key).format('M') === month)
+    .reduce((obj, key) => {
+      obj[key] = allDays[key];
+      return obj;
+    }, {});
+  const mergedDays = Object.values(allDaysOfMonth).reduce((acc, val) => {
+    Object.keys(val).map(key => {
+      if (acc.hasOwnProperty(key)) {
+        acc[key] += val[key];
+      } else {
+        acc[key] = val[key];
+      }
+    });
+    return acc;
+  }, {});
+  return {
+    selectedMonth: month,
+    daysOfMonth: mergedDays,
+    monthInsights: mergedData.flat()
+  };
+};
+
 export const parseDayInsights = data => {
   const dayInsights = getDayInsights(data);
   return Object.keys(dayInsights).reduce((acc, item) => {

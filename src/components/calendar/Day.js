@@ -4,12 +4,14 @@ import classNames from 'classnames';
 import moment from 'moment';
 import * as d3 from 'd3';
 import { selectDay, showBarChart } from '../../reducers/barChart';
+import { setMonthInsights } from '../../reducers/app';
 
 class Day extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
     const formatDate = date => moment(date).format('DD-MM-YY');
     return formatDate(this.props.day) === formatDate(nextProps.selectedDay) ||
-      formatDate(nextProps.day) === formatDate(this.props.selectedDay);
+      formatDate(nextProps.day) === formatDate(this.props.selectedDay) ||
+      this.props.fill !== nextProps.fill;
   }
 
   componentDidUpdate() {
@@ -72,18 +74,22 @@ class Day extends React.Component {
     const item = Object.keys(props.data).find(key =>
       new Date(key).setHours(0,0,0,0) === d.setHours(0,0,0,0));
     const value = !!props.data[item] && normalize(props.data[item], Math.max(...count), Math.min(...count));
-    const fillColor = !!props.data[item] ? d3.interpolatePurples(value) : '#ececec';
+    let fillColor = !!props.data[item] ? d3.interpolatePurples(value) : '#ececec';
 
     const onDayClick = ev => {
       ev.preventDefault();
       ev.stopPropagation();
+      props.setMonthInsights({
+        monthInsights: [],
+        daysOfMonth: []
+      });
       props.selectDay(d);
       props.showBarChart(true);
     };
     return (
       <rect
         key={d}
-        className={classNames('day', {'fill': isCurrentDay})}
+        className={classNames('day', {'fill': isCurrentDay || props.fill})}
         width={cellSize}
         height={cellSize}
         rx={50}
@@ -110,7 +116,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   showBarChart: val => dispatch(showBarChart(val)),
-  selectDay: val => dispatch(selectDay(val))
+  selectDay: val => dispatch(selectDay(val)),
+  setMonthInsights: val => dispatch(setMonthInsights(val))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Day);

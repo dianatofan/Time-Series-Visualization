@@ -11,6 +11,15 @@
   font-weight: 500;
 }
 
+.month-name {
+  cursor: pointer;
+}
+
+.month-name.bold {
+  fill: black;
+  font-weight: 900;
+}
+
 .month svg {
   height: auto;
   width: auto;
