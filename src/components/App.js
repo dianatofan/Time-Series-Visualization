@@ -6,7 +6,7 @@ import Dropzone from 'react-dropzone';
 import Dropdown from 'react-dropdown';
 import * as d3 from 'd3';
 
-import { setData, uploadFile, setDatasetName, showSpinner, showEmptyContainer } from '../reducers/app';
+import { setData, uploadFile, setDatasetName, showSpinner } from '../reducers/app';
 import { showCalendar } from '../reducers/calendar';
 import { showBarChart } from '../reducers/barChart';
 
@@ -71,7 +71,6 @@ const App = props => {
   };
   const removeCharts = () => {
     props.showBarChart(false);
-    props.showEmptyContainer(false);
     props.showCalendar(false);
   };
   const onSelect = item => {
@@ -166,18 +165,6 @@ const App = props => {
           </section>
         }
         {
-          props.isEmptyContainerVisible &&
-          <section>
-            <p>Day overview</p>
-            <div className='container'>
-              <div className='dayLabel'>
-                { moment(props.selectedDay).format('dddd, MMMM DD YYYY') }
-              </div>
-              <div className='emptyString'>No data recorded</div>
-            </div>
-          </section>
-        }
-        {
           props.isSpinnerVisible &&
           <div className='spinner'>
             <div className="double-bounce1" />
@@ -208,7 +195,6 @@ const mapDispatchToProps = dispatch => ({
   setData: val => dispatch(setData(val)),
   setDatasetName: val => dispatch(setDatasetName(val)),
   showBarChart: val => dispatch(showBarChart(val)),
-  showEmptyContainer: val => dispatch(showEmptyContainer(val)),
   showSpinner: val => dispatch(showSpinner(val))
 });
 

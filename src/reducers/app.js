@@ -5,7 +5,6 @@ const SET_DATA = 'SET_DATA';
 const UPLOAD_FILE = 'UPLOAD_FILE';
 const SET_DATASET_NAME = 'SET_DATASET_NAME';
 const SHOW_SPINNER = 'SHOW_SPINNER';
-const SHOW_EMPTY_CONTAINER = 'SHOW_EMPTY_CONTAINER';
 
 const initialState = {
   data: [],
@@ -18,7 +17,6 @@ const initialState = {
   allDays: [],
   showTooltip: false,
   isSpinnerVisible: false,
-  isEmptyContainerVisible: false
 };
 
 export default (state = initialState, action) => {
@@ -50,11 +48,6 @@ export default (state = initialState, action) => {
         ...state,
         isSpinnerVisible: action.val
       };
-    case SHOW_EMPTY_CONTAINER:
-      return {
-        ...state,
-        isEmptyContainerVisible: action.val
-      };
     default:
       return state;
   }
@@ -64,4 +57,3 @@ export const setData = val => ({ type: SET_DATA, val });
 export const uploadFile = val => ({ type: UPLOAD_FILE, val });
 export const setDatasetName = val => ({ type: SET_DATASET_NAME, val });
 export const showSpinner = val => ({ type: SHOW_SPINNER, val });
-export const showEmptyContainer = val => ({ type: SHOW_EMPTY_CONTAINER, val });

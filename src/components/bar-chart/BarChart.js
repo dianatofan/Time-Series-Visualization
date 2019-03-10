@@ -44,6 +44,8 @@ class BarChart extends React.PureComponent {
   }
 
   updateScale = props => {
+    const showBarChart = !!this.props.dayInsights[this.props.selectedDay];
+
     const data = props.data;
 
     const xScale = d3.scaleBand();
@@ -76,73 +78,92 @@ class BarChart extends React.PureComponent {
   }
 
   render() {
-    const onCheckboxChange = () => {
-      this.setState({
-        isChecked: !this.state.isChecked
-      })
+    const showBarChart = !!this.props.dayInsights[this.props.selectedDay];
+
+    const renderBarChart = () => {
+      const { xScale, yScale } =  this.updateScale(this.props);
+      const { plotWidth, plotHeight } = this.updatePlotSize(this.props);
+
+      const max = d3.max(Object.values(this.props.data));
+      const nrOfTicks = max < 10 ? max : max / 2;
+
+      const metaData = {
+        xScale,
+        yScale,
+        plotWidth,
+        plotHeight,
+        nrOfTicks
+      };
+      const plotData = {
+        plotData: Object.keys(this.props.data).map((item, i) => ({
+          id: i,
+          data: item,
+          x: xScale(item),
+          y: yScale(this.props.data[item]),
+          width: xScale.bandwidth(),
+          height: plotHeight - yScale(this.props.data[item]) - this.props.margin.top - this.props.margin.bottom,
+          occurrences: this.props.data[item]
+        }))
+      };
+      const transform = `translate(${this.props.margin.left},${this.props.margin.top})`;
+
+      return (
+        <svg width='100%' height={this.props.height} ref='barChart'>
+          <g transform={transform} width={plotWidth} height={plotHeight}>
+            <XAxis {...metaData} transform={`translate(0,${plotHeight})`}/>
+            <YAxis {...metaData} />
+            <Bars {...metaData} {...plotData} />
+            {
+              this.state.isChecked &&
+              <AreaChart
+                xScale={xScale}
+                yScale={yScale}
+                plotHeight={plotHeight}
+                margin={this.props.margin}
+                selectedDay={this.props.selectedDay}
+                occurrences={this.props.data}
+                transform={transform}
+              />
+            }
+          </g>
+        </svg>
+      )
     };
 
-    const { xScale, yScale } =  this.updateScale(this.props);
-    const { plotWidth, plotHeight } = this.updatePlotSize(this.props);
-
-    const max = d3.max(Object.values(this.props.data));
-    const nrOfTicks = max < 10 ? max : max / 2;
-
-    const metaData = {
-      xScale,
-      yScale,
-      plotWidth,
-      plotHeight,
-      nrOfTicks
-    };
-    const plotData = {
-      plotData: Object.keys(this.props.data).map((item, i) => ({
-        id: i,
-        data: item,
-        x: xScale(item),
-        y: yScale(this.props.data[item]),
-        width: xScale.bandwidth(),
-        height: plotHeight - yScale(this.props.data[item]) - this.props.margin.top - this.props.margin.bottom,
-        occurrences: this.props.data[item]
-      }))
-    };
-    const transform = `translate(${this.props.margin.left},${this.props.margin.top})`;
-    return (
-      <Card>
-        <DayLabel selectedDay={this.props.selectedDay} />
-        <div className='barChart'>
-          <svg width='100%' height={this.props.height} ref='barChart'>
-            <g transform={transform} width={plotWidth} height={plotHeight}>
-              <XAxis {...metaData} transform={`translate(0,${plotHeight})`}/>
-              <YAxis {...metaData} />
-              <Bars {...metaData} {...plotData} />
-              {
-                this.state.isChecked &&
-                <AreaChart
-                  xScale={xScale}
-                  yScale={yScale}
-                  plotHeight={plotHeight}
-                  margin={this.props.margin}
-                  selectedDay={this.props.selectedDay}
-                  occurrences={this.props.data}
-                  transform={transform}
-                />
-              }
-            </g>
-          </svg>
-          <ReactTooltip id='rectTooltip' multiline class='tooltipx'/>
-        </div>
+    const renderFooter = () => {
+      const onCheckboxChange = () => {
+        this.setState({
+          isChecked: !this.state.isChecked
+        })
+      };
+      return (
         <div className='footer yearLabel'>
          <span className={classNames('checkbox', {'bold': this.state.isChecked})} onClick={onCheckboxChange}>
            Show week overview <input type='checkbox' checked={this.state.isChecked} defaultChecked={false} onChange={onCheckboxChange} />
          </span>
         </div>
+      )
+    };
+
+    return (
+      <Card>
+        <DayLabel selectedDay={this.props.selectedDay} />
+        <div className='barChart'>
+            {
+              showBarChart
+              ? renderBarChart()
+              : <div className='emptyString'>No data recorded</div>
+            }
+          { showBarChart && <ReactTooltip id='rectTooltip' multiline class='tooltipx'/> }
+        </div>
+        { showBarChart &&  renderFooter() }
       </Card>
     )
   }
 }
 
 const mapStateToProps = state => ({
+  dayInsights: state.app.dayInsights,
   selectedDay: moment(state.barChart.selectedDay).format('YYYY-MM-DD')
 });
 

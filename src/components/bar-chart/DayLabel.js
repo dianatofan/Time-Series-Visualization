@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import moment from 'moment';
 import {selectDay, showBarChart} from '../../reducers/barChart';
-import {showEmptyContainer} from "../../reducers/app";
 
 class DayLabel extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
@@ -11,20 +10,14 @@ class DayLabel extends React.Component {
   }
 
   render() {
-    const { selectedDay, minDate, maxDate, selectDay, dayInsights, showBarChart, showEmptyContainer } = this.props;
+    const { selectedDay, minDate, maxDate, selectDay, dayInsights, showBarChart } = this.props;
     const previousDay = moment(selectedDay).subtract(1, 'days');
     const nextDay = moment(selectedDay).add(1, 'days');
     const showPreviousArrow = previousDay.isAfter(minDate.startOf('year'));
     const showNextArrow = nextDay.isBefore(maxDate.endOf('year'));
     const pickDay = day => {
       selectDay(day);
-      if (!!dayInsights[day.format('YYYY-MM-DD')]) {
-        showEmptyContainer(false);
-        showBarChart(true);
-      } else {
-        showEmptyContainer(true);
-        showBarChart(false);
-      }
+      showBarChart(true);
     };
     return (
       <div className='yearLabel dayTitle'
@@ -62,8 +55,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   selectDay: val => dispatch(selectDay(val)),
-  showBarChart: val => dispatch(showBarChart(val)),
-  showEmptyContainer: val => dispatch(showEmptyContainer(val))
+  showBarChart: val => dispatch(showBarChart(val))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DayLabel);

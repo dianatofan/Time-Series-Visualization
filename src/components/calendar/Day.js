@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import moment from 'moment';
 import * as d3 from 'd3';
-import { showEmptyContainer } from '../../reducers/app';
 import { selectDay, showBarChart } from '../../reducers/barChart';
 
 class Day extends React.Component {
@@ -79,14 +78,7 @@ class Day extends React.Component {
       ev.preventDefault();
       ev.stopPropagation();
       props.selectDay(d);
-      const formattedDay = moment(d).format('YYYY-MM-DD');
-      if (!!props.dayInsights[formattedDay]) {
-        props.showEmptyContainer(false);
-        props.showBarChart(true);
-      } else {
-        props.showBarChart(false);
-        props.showEmptyContainer(true);
-      }
+      props.showBarChart(true);
     };
     return (
       <rect
@@ -118,8 +110,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   showBarChart: val => dispatch(showBarChart(val)),
-  selectDay: val => dispatch(selectDay(val)),
-  showEmptyContainer: val => dispatch(showEmptyContainer(val))
+  selectDay: val => dispatch(selectDay(val))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Day);
