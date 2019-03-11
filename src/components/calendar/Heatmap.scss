@@ -11,11 +11,14 @@
   font-weight: 500;
 }
 
-.month-name {
+.month-name,
+.dayLabels {
   cursor: pointer;
 }
 
-.month-name.bold {
+.month-name.bold,
+.dayLabels.bold {
+  color: black;
   fill: black;
   font-weight: 900;
 }

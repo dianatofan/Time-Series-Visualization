@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 
 import Day from './Day';
 import { getMonthInsights } from '../../helpers/parser';
-import { setMonthInsights } from "../../reducers/app";
+import {setMonthInsights, setWeekdayInsights} from "../../reducers/app";
 import { showBarChart, selectDay } from "../../reducers/barChart";
 
 class Month extends React.PureComponent {
@@ -66,6 +66,11 @@ class Month extends React.PureComponent {
 
     const renderMonthOverview = month => {
       props.selectDay(null);
+      props.setWeekdayInsights({
+        selectedWeekday: null,
+        daysOfWeekday: [],
+        weekdayInsights: []
+      });
       const monthInsights = getMonthInsights(moment().month(month).format('M'), props.dayInsights, props.allDays);
       props.setMonthInsights({
         selectedMonth: monthInsights.selectedMonth,
@@ -76,7 +81,6 @@ class Month extends React.PureComponent {
     };
 
     const isCurrentMonth = moment(this.props.selectedMonth, 'M').format('MMMM') === monthName(month);
-
     return (
       <svg
         className='month'
@@ -94,7 +98,7 @@ class Month extends React.PureComponent {
           >
             { monthName(month) }
           </text>
-          { renderList.map(d => <Day fill={isCurrentMonth} day={d} month={month} key={d} />) }
+          { renderList.map(d => <Day fill={isCurrentMonth || moment(d).format('ddd') === props.selectedWeekday} day={d} month={month} key={d} />) }
         </g>
       </svg>
     )
@@ -107,11 +111,13 @@ const mapStateToProps = state => ({
   dayInsights: state.app.dayInsights,
   cellSize: state.calendar.cellSize,
   cellMargin: state.calendar.cellMargin,
-  selectedMonth: state.app.selectedMonth
+  selectedMonth: state.app.selectedMonth,
+  selectedWeekday: state.app.selectedWeekday
 });
 
 const mapDispatchToProps = dispatch => ({
   setMonthInsights: val => dispatch(setMonthInsights(val)),
+  setWeekdayInsights: val => dispatch(setWeekdayInsights(val)),
   showBarChart: val => dispatch(showBarChart(val)),
   selectDay: val => dispatch(selectDay(val))
 });

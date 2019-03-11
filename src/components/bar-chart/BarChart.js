@@ -74,11 +74,19 @@ class BarChart extends React.PureComponent {
   }
 
   render() {
-    const showBarChart = !!this.props.dayInsights[this.props.selectedDay] || !!this.props.monthInsights.length;
+    const showBarChart = !!this.props.dayInsights[this.props.selectedDay] ||
+      !!this.props.monthInsights.length ||
+      !!this.props.weekdayInsights.length;
 
     const renderBarChart = () => {
-      const data = !!this.props.monthInsights.length ? this.props.daysOfMonth : this.props.data;
-
+      let data = [];
+      if (!!this.props.monthInsights.length) {
+        data = this.props.daysOfMonth;
+      } else if (!!this.props.weekdayInsights.length) {
+        data = this.props.daysOfWeekday;
+      } else {
+        data = this.props.data;
+      }
       const { xScale, yScale } =  this.updateScale(this.props, data);
       const { plotWidth, plotHeight } = this.updatePlotSize(this.props);
 
@@ -163,7 +171,9 @@ class BarChart extends React.PureComponent {
 const mapStateToProps = state => ({
   dayInsights: state.app.dayInsights,
   monthInsights: state.app.monthInsights,
+  weekdayInsights: state.app.weekdayInsights,
   daysOfMonth: state.app.daysOfMonth,
+  daysOfWeekday: state.app.daysOfWeekday,
   selectedDay: moment(state.barChart.selectedDay).format('YYYY-MM-DD')
 });
 

@@ -6,9 +6,9 @@ import Dropzone from 'react-dropzone';
 import Dropdown from 'react-dropdown';
 import * as d3 from 'd3';
 
-import { setData, uploadFile, setDatasetName, showSpinner } from '../reducers/app';
+import {setData, uploadFile, setDatasetName, showSpinner, setMonthInsights, setWeekdayInsights} from '../reducers/app';
 import { showCalendar } from '../reducers/calendar';
-import { showBarChart } from '../reducers/barChart';
+import { showBarChart, selectDay } from '../reducers/barChart';
 
 import { parseDayInsights } from '../helpers/parser';
 
@@ -72,6 +72,16 @@ const App = props => {
   const removeCharts = () => {
     props.showBarChart(false);
     props.showCalendar(false);
+    props.setMonthInsights({
+      monthInsights: [],
+      daysOfMonth: []
+    });
+    props.setWeekdayInsights({
+      selectedWeekday: null,
+      daysOfWeekday: [],
+      weekdayInsights: []
+    });
+    props.selectDay(null);
   };
   const onSelect = item => {
     removeCharts();
@@ -195,7 +205,10 @@ const mapDispatchToProps = dispatch => ({
   setData: val => dispatch(setData(val)),
   setDatasetName: val => dispatch(setDatasetName(val)),
   showBarChart: val => dispatch(showBarChart(val)),
-  showSpinner: val => dispatch(showSpinner(val))
+  showSpinner: val => dispatch(showSpinner(val)),
+  setMonthInsights: val => dispatch(setMonthInsights(val)),
+  setWeekdayInsights: val => dispatch(setWeekdayInsights(val)),
+  selectDay: val => dispatch(selectDay(val))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

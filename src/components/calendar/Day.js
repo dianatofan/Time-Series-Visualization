@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import moment from 'moment';
 import * as d3 from 'd3';
 import { selectDay, showBarChart } from '../../reducers/barChart';
-import { setMonthInsights } from '../../reducers/app';
+import {setMonthInsights, setWeekdayInsights} from '../../reducers/app';
 
 class Day extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
@@ -83,6 +83,11 @@ class Day extends React.Component {
         monthInsights: [],
         daysOfMonth: []
       });
+      props.setWeekdayInsights({
+        selectedWeekday: null,
+        daysOfWeekday: [],
+        weekdayInsights: []
+      });
       props.selectDay(d);
       props.showBarChart(true);
     };
@@ -117,7 +122,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   showBarChart: val => dispatch(showBarChart(val)),
   selectDay: val => dispatch(selectDay(val)),
-  setMonthInsights: val => dispatch(setMonthInsights(val))
+  setMonthInsights: val => dispatch(setMonthInsights(val)),
+  setWeekdayInsights: val => dispatch(setWeekdayInsights(val))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Day);
