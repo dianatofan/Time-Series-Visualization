@@ -14,20 +14,34 @@ import YAxis from './YAxis';
 import AreaChart from './AreaChart';
 
 import './BarChart.scss';
-import {selectDay} from "../../reducers/barChart";
+import {selectDay, showWeekOverview, showMonthOverview, showWeekdayOverview, showBarChart} from "../../reducers/barChart";
+import {getCurrentWeekInsights, getCurrentMonthInsights, getWeekdayInsights} from "../../helpers/parser";
 
 class BarChart extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       circleHoverIndex: -1,
-      isChecked: false,
+      isWeekOverviewChecked: false,
+      isMonthOverviewChecked: false,
+      isWeekdayOverviewChecked: false,
       width: document.getElementById('card').clientWidth - props.margin.left - props.margin.right
     };
-    window.addEventListener('resize', this.resize().bind(this));
   }
 
-  resize() {
+  componentWillMount() {
+    this.resize();
+  }
+
+  componentDidMount() {
+    window.addEventListener('resize', this.resize());
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.resize());
+  }
+
+  resize = () => {
     let t;
 
     return event => {
@@ -41,14 +55,21 @@ class BarChart extends React.PureComponent {
         this.setState(state);
       }, 100);
     };
-  }
+  };
 
   updateScale = (props, data) => {
     const xScale = d3.scaleBand();
+    const newXScale = d3.scaleLinear();
     const yScale = d3.scaleLinear().nice();
 
+    const currentWeekInsights = this.state.isWeekOverviewChecked && getCurrentWeekInsights(this.props.dataArr, this.props.selectedDay, this.props.dayInsights);
+
+    const max = currentWeekInsights ?
+      Math.ceil(Math.max(d3.max(Object.values(currentWeekInsights)), d3.max(Object.values(data)))) :
+      d3.max(Object.values(data));
+
     const xDomain = [...Array(24).keys()];
-    const yDomain = [0, d3.max(Object.values(data))];
+    const yDomain = [0, max];
 
     xScale
       .domain(xDomain)
@@ -56,11 +77,15 @@ class BarChart extends React.PureComponent {
       .paddingInner(props.paddingInner)
       .paddingOuter(props.paddingOuter);
 
+    newXScale
+      .domain([0, 23])
+      .range([0, this.state.width - props.margin.right]);
+
     yScale
       .domain(yDomain)
       .range([props.height - props.margin.top - props.margin.bottom, 0]);
 
-    return {xScale, yScale};
+    return {xScale, yScale, newXScale};
   };
 
   updatePlotSize = props => {
@@ -87,7 +112,7 @@ class BarChart extends React.PureComponent {
       } else {
         data = this.props.data;
       }
-      const { xScale, yScale } =  this.updateScale(this.props, data);
+      const { xScale, yScale, newXScale } =  this.updateScale(this.props, data);
       const { plotWidth, plotHeight } = this.updatePlotSize(this.props);
 
       const max = d3.max(Object.values(data));
@@ -113,6 +138,20 @@ class BarChart extends React.PureComponent {
       };
       const transform = `translate(${this.props.margin.left},${this.props.margin.top})`;
 
+      const currentWeekInsights = this.state.isWeekOverviewChecked && getCurrentWeekInsights(this.props.dataArr, this.props.selectedDay, this.props.dayInsights);
+      const currentMonthInsights = this.state.isMonthOverviewChecked && getCurrentMonthInsights(this.props.dataArr, this.props.selectedDay, this.props.dayInsights);
+      const currentWeekdayInsights = this.state.isWeekdayOverviewChecked && getWeekdayInsights(moment(this.props.selectedDay).format('ddd'), this.props.dayInsights, this.props.allDays, this.props.currentWeekdays, this.props.dataArr);
+
+      let insights;
+      if (this.state.isWeekOverviewChecked) {
+        insights = currentWeekInsights;
+      }
+      if (this.state.isMonthOverviewChecked) {
+        insights = currentMonthInsights;
+      }
+      if (this.state.isWeekdayOverviewChecked) {
+        insights = currentWeekdayInsights.weekdayObj;
+      }
       return (
         <svg width='100%' height={this.props.height} ref='barChart'>
           <g transform={transform} width={plotWidth} height={plotHeight}>
@@ -120,13 +159,14 @@ class BarChart extends React.PureComponent {
             <YAxis {...metaData} />
             <Bars {...metaData} {...plotData} />
             {
-              this.state.isChecked &&
+              (this.state.isWeekOverviewChecked || this.state.isMonthOverviewChecked || this.state.isWeekdayOverviewChecked) &&
               <AreaChart
-                xScale={xScale}
+                xScale={newXScale}
                 yScale={yScale}
+                plotWidth={plotWidth}
                 plotHeight={plotHeight}
                 margin={this.props.margin}
-                selectedDay={this.props.selectedDay}
+                weekInsights={insights}
                 occurrences={data}
                 transform={transform}
               />
@@ -139,14 +179,60 @@ class BarChart extends React.PureComponent {
     const renderFooter = () => {
       const onCheckboxChange = () => {
         this.setState({
-          isChecked: !this.state.isChecked
-        })
+          isWeekOverviewChecked: !this.state.isWeekOverviewChecked,
+          isMonthOverviewChecked: false,
+          isWeekdayOverviewChecked: false
+        }, () => {
+          this.props.showWeekOverview(this.state.isWeekOverviewChecked);
+          this.props.showMonthOverview(false);
+          this.props.showWeekdayOverview(false);
+        });
+      };
+      const onMonthCheckboxChange = () => {
+        this.setState({
+          isMonthOverviewChecked: !this.state.isMonthOverviewChecked,
+          isWeekOverviewChecked: false,
+          isWeekdayOverviewChecked: false
+        }, () => {
+          this.props.showMonthOverview(this.state.isMonthOverviewChecked);
+          this.props.showWeekOverview(false);
+          this.props.showWeekdayOverview(false);
+        });
+      };
+      const onWeekdayCheckboxChange = () => {
+        this.setState({
+          isWeekdayOverviewChecked: !this.state.isWeekdayOverviewChecked,
+          isMonthOverviewChecked: false,
+          isWeekOverviewChecked: false
+        }, () => {
+          this.props.showWeekdayOverview(this.state.isWeekdayOverviewChecked);
+          this.props.showMonthOverview(false);
+          this.props.showWeekOverview(false);
+        });
+      };
+      const onRemoveClick = () => {
+        this.props.showBarChart(false);
+        this.props.selectDay(null);
+        this.props.showWeekOverview(false);
+        this.props.showMonthOverview(false);
+        this.props.showWeekdayOverview(false);
       };
       return (
         <div className='footer yearLabel'>
-         <span className={classNames('checkbox', {'bold': this.state.isChecked})} onClick={onCheckboxChange}>
-           Show week overview <input type='checkbox' checked={this.state.isChecked} defaultChecked={false} onChange={onCheckboxChange} />
-         </span>
+          <div className='checkboxes'>
+           <span className={classNames('checkbox', {'bold': this.state.isWeekOverviewChecked})} onClick={onCheckboxChange}>
+             Week overview <input type='checkbox' checked={this.state.isWeekOverviewChecked} defaultChecked={false} onChange={onCheckboxChange} />
+           </span>
+            <span className={classNames('checkbox', {'bold': this.state.isMonthOverviewChecked})} onClick={onMonthCheckboxChange}>
+             Month overview <input type='checkbox' checked={this.state.isMonthOverviewChecked} defaultChecked={false} onChange={onMonthCheckboxChange} />
+           </span>
+            <span className={classNames('checkbox', {'bold': this.state.isWeekdayOverviewChecked})} onClick={onWeekdayCheckboxChange}>
+             Weekdays <input type='checkbox' checked={this.state.isWeekdayOverviewChecked} defaultChecked={false} onChange={onWeekdayCheckboxChange} />
+           </span>
+          </div>
+          <button onClick={onRemoveClick}>
+            Remove charts
+          </button>
         </div>
       )
     };
@@ -174,11 +260,18 @@ const mapStateToProps = state => ({
   weekdayInsights: state.app.weekdayInsights,
   daysOfMonth: state.app.daysOfMonth,
   daysOfWeekday: state.app.daysOfWeekday,
-  selectedDay: moment(state.barChart.selectedDay).format('YYYY-MM-DD')
+  selectedDay: moment(state.barChart.selectedDay).format('YYYY-MM-DD'),
+  dataArr: state.app.data,
+  allDays: state.app.allDays,
+  currentWeekdays: state.barChart.currentWeekdays
 });
 
 const mapDispatchToProps = dispatch => ({
-  selectDay: val => dispatch(selectDay(val))
+  selectDay: val => dispatch(selectDay(val)),
+  showWeekOverview: val => dispatch(showWeekOverview(val)),
+  showMonthOverview: val => dispatch(showMonthOverview(val)),
+  showWeekdayOverview: val => dispatch(showWeekdayOverview(val)),
+  showBarChart: val => dispatch(showBarChart(val))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(BarChart);

@@ -1,50 +1,32 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
 import moment from 'moment';
 import * as d3 from 'd3';
-import { selectDay, showBarChart } from '../../reducers/barChart';
+import {selectDay, showBarChart, showMonthOverview, showWeekOverview} from '../../reducers/barChart';
 import {setMonthInsights, setWeekdayInsights} from '../../reducers/app';
 
 class Day extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
     const formatDate = date => moment(date).format('DD-MM-YY');
+    const isCurrentWeek = nextProps.currentWeek.includes(moment(this.props.day).format('DD-MM-YYYY')) ||
+      this.props.currentWeek.includes(moment(nextProps.day).format('DD-MM-YYYY'));
+    const isCurrentMonth = nextProps.currentMonth.includes(moment(this.props.day).format('DD-MM-YYYY')) ||
+      this.props.currentMonth.includes(moment(nextProps.day).format('DD-MM-YYYY'));
+    const isCurrentWeekday = nextProps.currentWeekdays.daysArr.includes(moment(this.props.day).format('DD-MM-YYYY')) ||
+      this.props.currentWeekdays.daysArr.includes(moment(nextProps.day).format('DD-MM-YYYY'));
     return formatDate(this.props.day) === formatDate(nextProps.selectedDay) ||
       formatDate(nextProps.day) === formatDate(this.props.selectedDay) ||
-      this.props.fill !== nextProps.fill;
+      this.props.fill !== nextProps.fill ||
+      isCurrentWeek ||
+      isCurrentMonth ||
+      isCurrentWeekday;
   }
 
   componentDidUpdate() {
-    this.renderDots();
+    d3.select('.day.fill')
+      .transition()
+      .duration(1000)
   }
-
-  renderDots = () => {
-    // let dots = d3.selectAll('.day')
-    //   .data(this.props.day, d => d);
-    //
-    // dots
-    //   .transition()
-    //   .duration(100)
-    //   .ease('ease-in')
-    //   .style('opacity', 1);
-    //
-    // dots.enter().append('rect')
-    //   .attr('class', 'day')
-    //   .attr('r', function(d) { return r(d.r); })
-    //   .attr('cx', function(d) { return x(d.x); })
-    //   .attr('cy', 0)
-    //   .style('stroke', '#3E6E9C')
-    //   .transition().duration(1000)
-    //   .attr('cy', function(d) { return y(d.y); })
-    //   .style('stroke', '#81E797');
-    //
-    // item.exit().filter(':not(.exiting)') // Don't select already exiting nodes
-    //   .classed('exiting', true)
-    //   .transition().duration(1000)
-    //   .attr('cy', height)
-    //   .style('stroke', '#3E6E9C')
-    //   .remove();
-  };
 
   render() {
     const props = this.props;
@@ -71,11 +53,18 @@ class Day extends React.Component {
     );
     const count = filters.map(i => !!i && props.data[i]).filter(j => !!j);
 
+    const isCurrentWeek = props.currentWeek.includes(moment(d).format('DD-MM-YYYY'));
+    const isCurrentMonth = props.currentMonth.includes(moment(d).format('DD-MM-YYYY'));
+    const isCurrentWeekday = props.currentWeekdays.daysArr.includes(moment(d).format('DD-MM-YYYY'));
+
     const item = Object.keys(props.data).find(key =>
       new Date(key).setHours(0,0,0,0) === d.setHours(0,0,0,0));
     const value = !!props.data[item] && normalize(props.data[item], Math.max(...count), Math.min(...count));
-    let fillColor = !!props.data[item] ? d3.interpolatePurples(value) : '#ececec';
+    const interpolateColor = ((isCurrentWeek && props.showWeekOverview) || (isCurrentMonth && props.showMonthOverview) || (isCurrentWeekday && props.showWeekdayOverview))
+      ? d3.interpolateReds(value) : d3.interpolatePurples(value);
+    let fillColor = !!props.data[item] ? (isCurrentDay ? d3.interpolateReds(value) : interpolateColor) : '#ececec';
 
+    // #af5159
     const onDayClick = ev => {
       ev.preventDefault();
       ev.stopPropagation();
@@ -90,11 +79,15 @@ class Day extends React.Component {
       });
       props.selectDay(d);
       props.showBarChart(true);
+      // props.showMonthOverviewFct(false);
+      // props.showWeekOverviewFct(false);
     };
     return (
       <rect
         key={d}
-        className={classNames('day', {'fill': isCurrentDay || props.fill})}
+        className='day'
+        stroke={isCurrentDay ? '#000' : ''}
+        strokeWidth={isCurrentDay ? 1 : 0}
         width={cellSize}
         height={cellSize}
         rx={50}
@@ -114,16 +107,26 @@ class Day extends React.Component {
 const mapStateToProps = state => ({
   data: state.app.data,
   selectedDay: state.barChart.selectedDay,
+  selectedWeekday: state.app.selectedWeekday,
+  showWeekOverview: state.barChart.showWeekOverview,
+  showMonthOverview: state.barChart.showMonthOverview,
+  showWeekdayOverview: state.barChart.showWeekdayOverview,
+  currentWeek: state.barChart.currentWeek,
+  currentMonth: state.barChart.currentMonth,
+  currentWeekdays: state.barChart.currentWeekdays,
   dayInsights: state.app.dayInsights,
   cellSize: state.calendar.cellSize,
-  cellMargin: state.calendar.cellMargin
+  cellMargin: state.calendar.cellMargin,
+  allDays: state.app.allDays
 });
 
 const mapDispatchToProps = dispatch => ({
   showBarChart: val => dispatch(showBarChart(val)),
   selectDay: val => dispatch(selectDay(val)),
   setMonthInsights: val => dispatch(setMonthInsights(val)),
-  setWeekdayInsights: val => dispatch(setWeekdayInsights(val))
+  setWeekdayInsights: val => dispatch(setWeekdayInsights(val)),
+  showWeekOverviewFct: val => dispatch(showWeekOverview(val)),
+  showMonthOverviewFct: val => dispatch(showMonthOverview(val))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Day);

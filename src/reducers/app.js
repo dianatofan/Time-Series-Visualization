@@ -24,7 +24,7 @@ const initialState = {
   files: [],
   allDays: [],
   showTooltip: false,
-  isSpinnerVisible: false,
+  isSpinnerVisible: false
 };
 
 export default (state = initialState, action) => {

@@ -147,4 +147,15 @@ p {
   padding-bottom: 20px;
 }
 
+.card .footer .checkboxes {
+  justify-content: flex-start;
+}
+
+.card .footer button {
+  margin: 0 1.2em;
+  border: solid 1px #777;
+  padding: .2em 0.75em;
+  outline: none;
+  cursor: pointer;
+}
 /*# sourceMappingURL=App.css.map */

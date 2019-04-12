@@ -8,7 +8,7 @@ import * as d3 from 'd3';
 
 import {setData, uploadFile, setDatasetName, showSpinner, setMonthInsights, setWeekdayInsights} from '../reducers/app';
 import { showCalendar } from '../reducers/calendar';
-import { showBarChart, selectDay } from '../reducers/barChart';
+import { showBarChart, selectDay, showWeekOverview, showMonthOverview, showWeekdayOverview } from '../reducers/barChart';
 
 import { parseDayInsights } from '../helpers/parser';
 
@@ -21,7 +21,7 @@ import './Spinner.scss';
 
 import dataset1 from '../data/itching_in_nose_tbc.csv';
 import dataset2 from '../data/itch_tbc.csv';
-import dataset3 from '../data/ptsd.csv';
+import dataset3 from '../data/ptsd_filtered.csv';
 import dataset4 from '../data/data.csv';
 
 import { whyDidYouUpdate } from 'why-did-you-update';
@@ -82,6 +82,9 @@ const App = props => {
       weekdayInsights: []
     });
     props.selectDay(null);
+    props.showWeekOverview(false);
+    props.showMonthOverview(false);
+    props.showWeekdayOverview(false);
   };
   const onSelect = item => {
     removeCharts();
@@ -208,7 +211,10 @@ const mapDispatchToProps = dispatch => ({
   showSpinner: val => dispatch(showSpinner(val)),
   setMonthInsights: val => dispatch(setMonthInsights(val)),
   setWeekdayInsights: val => dispatch(setWeekdayInsights(val)),
-  selectDay: val => dispatch(selectDay(val))
+  selectDay: val => dispatch(selectDay(val)),
+  showWeekOverview: val => dispatch(showWeekOverview(val)),
+  showMonthOverview: val => dispatch(showMonthOverview(val)),
+  showWeekdayOverview: val => dispatch(showWeekdayOverview(val))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

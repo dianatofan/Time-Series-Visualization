@@ -74,7 +74,7 @@ export const getMonthInsights = (month, dayInsights, allDays) => {
   };
 };
 
-export const getWeekdayInsights = (weekday, dayInsights, allDays) => {
+export const getWeekdayInsights = (weekday, dayInsights, allDays, currentWeekdays, data) => {
   const weekdayInsights = Object.keys(dayInsights)
     .filter(key => moment(key).isoWeekday() === moment(weekday, 'ddd').isoWeekday())
     .reduce((obj, key) => {
@@ -101,10 +101,19 @@ export const getWeekdayInsights = (weekday, dayInsights, allDays) => {
     });
     return acc;
   }, {});
+
+  const length = currentWeekdays.daysArr.filter(day => data[moment(day, 'DD-MM-YYYY').format('YYYY-MM-DD')]).length - 1;
+
+  let weekdayObj = {};
+  for (let i = 0; i < 24; i++) {
+    weekdayObj[i] = mergedDays[i] ? Number(mergedDays[i] / length).toFixed(2) : 0
+  }
+
   return {
     selectedWeekday: weekday,
     daysOfWeekday: mergedDays,
-    weekdayInsights: mergedData.flat()
+    weekdayInsights: mergedData.flat(),
+    weekdayObj
   };
 };
 
@@ -134,6 +143,140 @@ export const parseDayInsights = data => {
     // acc.push(occurrences);
     return acc;
   }, {});
+};
+
+export const getCurrentWeekInsights = (data, selectedDay, dayInsights) => {
+  const startDate = moment(selectedDay).isoWeekday(1);
+  const endDate = moment(selectedDay).isoWeekday(8);
+  let days = [];
+  let day = startDate;
+  while (day.isBefore(endDate)) {
+    days.push(day.toDate());
+    day = day.clone().add(1, 'd');
+  }
+  const formattedDays = days.map(day => moment(day).format('YYYY-MM-DD'));
+  const weekArray = Object.keys(data).filter(key => formattedDays.includes(key));
+  let weekInsights = weekArray.reduce((acc, item) => {
+    acc.push({ day: item, occurrences: dayInsights[item] });
+    return acc;
+  }, []);
+  weekInsights = weekInsights.map(week =>
+    week.occurrences.map(item => {
+      const m = moment(`${week.day} ${item}`);
+      return m.minute() || m.second() || m.millisecond()
+        ? parseInt(m.add(1, 'hour').startOf('hour').format('HH'))
+        : parseInt(m.startOf('hour').format('HH'))
+    })
+  );
+
+  const length = days.filter(day => data[moment(day).format('YYYY-MM-DD')]).length;
+
+  const weekOccurrences = [].concat.apply([], weekInsights).reduce((acc, item) => {
+    acc[item] = (acc[item] || 0) + 1;
+    return acc;
+  }, {});
+
+  let weekObj = {};
+  for (let i = 0; i < 24; i++) {
+    weekObj[i] = weekOccurrences[i] ? Number(weekOccurrences[i] / length).toFixed(2) : 0
+  }
+
+  return weekObj;
+};
+
+export const getCurrentMonthInsights = (data, selectedDay, dayInsights) => {
+  const startDate = moment(selectedDay).startOf('month');
+  const endDate = moment(selectedDay).endOf('month');
+  let days = [];
+  let day = startDate;
+  while (day.isBefore(endDate)) {
+    days.push(day.toDate());
+    day = day.clone().add(1, 'd');
+  }
+  const formattedDays = days.map(day => moment(day).format('YYYY-MM-DD'));
+  const monthArray = Object.keys(data).filter(key => formattedDays.includes(key));
+  let monthInsights = monthArray.reduce((acc, item) => {
+    acc.push({ day: item, occurrences: dayInsights[item] });
+    return acc;
+  }, []);
+  monthInsights = monthInsights.map(month =>
+    month.occurrences.map(item => {
+      const m = moment(`${month.day} ${item}`);
+      return m.minute() || m.second() || m.millisecond()
+        ? parseInt(m.add(1, 'hour').startOf('hour').format('HH'))
+        : parseInt(m.startOf('hour').format('HH'))
+    })
+  );
+
+  const length = days.filter(day => data[moment(day).format('YYYY-MM-DD')]).length;
+
+  const monthOccurrences = [].concat.apply([], monthInsights).reduce((acc, item) => {
+    acc[item] = (acc[item] || 0) + 1;
+    return acc;
+  }, {});
+
+  let monthObj = {};
+  for (let i = 0; i < 24; i++) {
+    monthObj[i] = monthOccurrences[i] ? Number(monthOccurrences[i]/ length).toFixed(2) : 0
+  }
+
+  return monthObj;
+};
+
+export const getCurrentWeek = selectedDay => {
+  const startOfWeek = moment(selectedDay).startOf('isoWeek');
+  const endOfWeek = moment(selectedDay).endOf('isoWeek');
+
+  let daysArr = [];
+  let dayItem = startOfWeek;
+
+  while (dayItem <= endOfWeek) {
+    daysArr.push(moment(dayItem).format('DD-MM-YYYY'));
+    dayItem = dayItem.clone().add(1, 'd');
+  }
+
+  return daysArr;
+};
+
+export const getCurrentMonth = selectedDay => {
+  const startOfMonth = moment(selectedDay).startOf('month');
+  const endOfMonth = moment(selectedDay).endOf('month');
+
+  let daysArr = [];
+  let dayItem = startOfMonth;
+
+  while (dayItem <= endOfMonth) {
+    daysArr.push(moment(dayItem).format('DD-MM-YYYY'));
+    dayItem = dayItem.clone().add(1, 'd');
+  }
+
+  return daysArr;
+};
+
+export const getCurrentWeekdays = selectedDay => {
+  const start = moment(selectedDay).startOf('year');
+  const end = moment(selectedDay).endOf('year');
+
+  let daysArr = [];
+  let dayItem = moment(selectedDay);
+
+  while (dayItem <= end) {
+    daysArr.push(moment(dayItem).format('DD-MM-YYYY'));
+    dayItem = dayItem.clone().add(7, 'd');
+  }
+
+  let daysArr1 = [];
+  let dayItem1 = moment(selectedDay);
+
+  while (dayItem1 >= start) {
+    daysArr1.push(moment(dayItem1).format('DD-MM-YYYY'));
+    dayItem1 = dayItem1.clone().subtract(7, 'd');
+  }
+
+  return {
+    daysArr: daysArr.concat(daysArr1),
+    length: daysArr.concat(daysArr1).length
+  }
 };
 
 export default parseData;

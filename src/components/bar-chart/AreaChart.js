@@ -7,91 +7,107 @@ class AreaChart extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      circleHoverIndex: -1
-    }
+      circleHoverIndex: -1,
+      showTooltip: false,
+      domainX: null,
+      domainY: null
+    };
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextProps.selectedDay !== this.props.selectedDay;
+  }
+
+  componentDidMount() {
+    this.renderLine();
   }
 
   componentDidUpdate() {
-    // let line = d3.selectAll('.line');
-    // if (line.node()) {
-    //   const totalLength = line.node().getTotalLength();
-    //   line
-    //     .attr('stroke-dasharray', totalLength)
-    //     .attr('stroke-dashoffset', totalLength)
-    //     .attr('stroke-width', 6)
-    //     .attr('stroke', '#7888BF')
-    //     .transition()
-    //     .delay(1000)
-    //     .duration(1000)
-    //     .attr('stroke-width', 0)
-    //     .attr('stroke-dashoffset', 0);
-    // }
-    // let area = d3.selectAll('.area');
-    // area
-    //   .attr('transform', 'translate(0,300)')
-    //   .transition()
-    //   .delay(1000)
-    //   .duration(1000)
-    //   .attr('transform', 'translate(0,0)');
-    // let dots = d3.selectAll('.dot');
-    // dots
-    //   .attr('transform', 'translate(0,300)')
-    //   .transition()
-    //   .delay(2000)
-    //   .duration(1000)
-    //   .attr('transform', 'translate(0,0)')
+    this.renderLine();
   }
 
+  renderLine = () => {
+    let line = d3.selectAll('.line');
+    if (line.node()) {
+      const totalLength = line.node().getTotalLength();
+      line
+        .attr('stroke-dasharray', totalLength)
+        .attr('stroke-dashoffset', totalLength)
+        .attr('stroke-width', 6)
+        .attr('stroke', '#7888BF')
+        .transition()
+        .duration(1000)
+        .attr('stroke-width', 0)
+        .attr('stroke-dashoffset', 0);
+    }
+    let area = d3.selectAll('.area');
+    area
+      .attr('transform', 'translate(0,300)')
+      .transition()
+      .delay(500)
+      .duration(1000)
+      .attr('transform', 'translate(0,0)');
+  };
+
+
+  handleMouseMove = (mouseX, mouseY) => {
+    const { yScale, plotHeight } = this.props;
+
+    // mouseX = mouseX - 40;
+
+    d3.select(".mouse-line")
+      .attr("d", function() {
+        let d = "M" + mouseX + "," + (plotHeight - 50);
+        d += " " + mouseX + "," + 0;
+        return d;
+      });
+
+    const lines = document.getElementsByClassName('line');
+    let pos;
+
+    d3.selectAll(".mouse-per-line")
+      .attr("transform", function(d, i) {
+        let beginning = 0,
+          end = lines && lines[i].getTotalLength(),
+          target = null;
+
+        while (end){
+          target = Math.floor((beginning + end) / 2);
+          pos = lines[i].getPointAtLength(target);
+          if ((target === end || target === beginning) && pos.x !== mouseX) {
+            break;
+          }
+          if (pos.x > mouseX)      end = target;
+          else if (pos.x < mouseX) beginning = target;
+          else break; //position found
+        }
+
+        d3.select(this).select('text')
+          .text(Number(yScale.invert(pos.y)).toFixed(2));
+
+        return "translate(" + mouseX + "," + pos.y +")";
+      });
+  };
+
   render() {
-    const { xScale, plotHeight, margin, yScale, selectedDay, occurrences, dayInsights, data } = this.props;
+    const { xScale, plotWidth, plotHeight, margin, yScale } = this.props;
 
-    const startDate = moment(selectedDay).isoWeekday(1);
-    const endDate = moment(selectedDay).isoWeekday(8);
-    let days = [];
-    let day = startDate;
-    while (day.isBefore(endDate)) {
-      days.push(day.toDate());
-      day = day.clone().add(1, 'd');
-    }
-    const formattedDays = days.map(day => moment(day).format('YYYY-MM-DD'));
-    const weekArray = Object.keys(data).filter(key => formattedDays.includes(key));
-    let weekInsights = weekArray.reduce((acc, item) => {
-      acc.push({ day: item, occurrences: dayInsights[item] });
-      return acc;
-    }, []);
-    weekInsights = weekInsights.map(week =>
-      week.occurrences.map(item => {
-        const m = moment(`${week.day} ${item}`);
-        return m.minute() || m.second() || m.millisecond()
-          ? parseInt(m.add(1, 'hour').startOf('hour').format('HH'))
-          : parseInt(m.startOf('hour').format('HH'))
-      })
-    );
-
-    const weekOccurrences = [].concat.apply([], weekInsights).reduce((acc, item) => {
-      acc[item] = (acc[item] || 0) + 1;
-      return acc;
-    }, {});
-
-    let weekObj = {};
-    for (let i = 1; i <= 24; i++) {
-      weekObj[i] = weekOccurrences[i] ? Number(weekOccurrences[i]/7).toFixed(2) : 0
-    }
+    const weekObj = this.props.weekInsights;
 
     // define the area
     const area = d3.area()
-      .x(d => xScale(d)+25)
+      .x(d => xScale(d))
       .y0(plotHeight - margin.top - margin.bottom)
       .y1(d => yScale(weekObj[d]))
-      .curve(d3.curveCardinal);
+      .curve(d3.curveMonotoneX);
 
     const valueline = d3.line()
-      .x(d => xScale(d)+25)
+      .x((d, i) => xScale(i))
       .y(d => yScale(weekObj[d]))
-      .curve(d3.curveCardinal);
+      .curve(d3.curveMonotoneX);
 
     return (
-      <svg className='areaChart'>
+      <svg className='areaChart' ref='areaChart'>
         <defs>
           <linearGradient id="grad" is x1="0%" y1="100%" x2="0%" y2="0%" spreadMethod="pad">
             <stop offset="10%" stopColor="#fff" stopOpacity={.4}/>
@@ -105,24 +121,55 @@ class AreaChart extends React.Component {
         <path className="line shadow"
               d={valueline(Object.keys(weekObj))}
         />
-        {
-          Object.keys(weekObj).map((item, i) =>
-            !!weekObj[item] &&
-            <circle className='dot'
-                    key={i}
-                    r={5}
-                    cx={xScale(item)+25}
-                    cy={yScale(weekObj[item])}
-                    data-key={item}
-                    data-value={weekObj[item]}
-                    data-tip={`${startDate.format('MMM DD')}-${endDate.format('MMM DD')} (Week ${startDate.week()})<br>Average observations at ${item}:00 --> ${weekObj[item]}`}
-                    fill={`${i === this.state.circleHoverIndex ? "#7888BF" : "#fff"}`}
-                    onMouseOver={() => this.setState({ circleHoverIndex: i })}
-                    onMouseLeave={() => this.setState({ circleHoverIndex: -1 })}
-                    data-for='rectTooltip'
+        <g className="mouse-over-effects">
+          <path
+            className="mouse-line"
+            stroke="#000"
+            strokeWidth={1}
+            opacity={0}
+          >
+          </path>
+          <g
+            className="mouse-per-line"
+          >
+            <circle
+              r={5}
+              fill="#7888BF"
+              strokeWidth={1}
+              stroke="#000"
+              opacity={0}
             />
-          )
-        }
+            <text
+              transform='translate(10,3)'
+              fontSize={14}
+              // fill="#777"
+            />
+          </g>
+          <rect
+            width={plotWidth + 40}
+            height={plotHeight}
+            fill='none'
+            pointerEvents='all'
+            onMouseLeave={() => {
+              d3.select(".mouse-line")
+                .style("opacity", "0");
+              d3.selectAll(".mouse-per-line circle")
+                .style("opacity", "0");
+              d3.selectAll(".mouse-per-line text")
+                .style("opacity", "0");
+            }}
+            onMouseOver={() => {
+              d3.select(".mouse-line")
+                .style("opacity", "1");
+              d3.selectAll(".mouse-per-line circle")
+                .style("opacity", "1");
+              d3.selectAll(".mouse-per-line text")
+                .style("opacity", "1");
+            }}
+            onMouseMove={ev => this.handleMouseMove(ev.nativeEvent.offsetX - 40, ev.nativeEvent.offsetY) }
+          >
+          </rect>
+        </g>
       </svg>
     )
   }
@@ -130,6 +177,7 @@ class AreaChart extends React.Component {
 
 const mapStateToProps = state => ({
   dayInsights: state.app.dayInsights,
+  selectedDay: moment(state.barChart.selectedDay),
   data: state.app.data
 });
 
