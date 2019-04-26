@@ -29,11 +29,13 @@ class Bars extends React.PureComponent {
 
     current.interrupt();
 
+    const color = '#6595ec';
+
     current.transition()
-      .attr('fill', '#6595ec');
+      .attr('fill', color);
 
     const enter = current.enter().append('g').classed('bar', true);
-    enter.attr('fill', '#6595ec');
+    enter.attr('fill', color);
 
     enter
       .append('rect')
@@ -45,7 +47,7 @@ class Bars extends React.PureComponent {
 
     const exit = current.exit().classed('bar', false);
     exit
-      .attr('fill', '#6595ec')
+      .attr('fill', color)
       .attr('opacity', 0.8)
       .transition()
       .attr('opacity', 0)

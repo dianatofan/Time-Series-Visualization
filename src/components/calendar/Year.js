@@ -23,7 +23,7 @@ class Year extends React.PureComponent {
     const monthsArr = chunk(months, months.length / 12);
 
     return (
-      <div>
+      <div className='year-wrapper'>
         {
           monthsArr.map((months, i) =>
             <div className={classNames('year', {'hidden': i !== props.yearIndex})} key={i}>

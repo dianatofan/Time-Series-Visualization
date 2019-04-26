@@ -116,16 +116,8 @@ p {
   font-weight: 400;
 }
 
-.tooltipx {
-  opacity: 1 !important;
-  color: $white !important;
-  background-color: $navyGray !important; }
-
 .place-top::after {
   border-top-color: $navyGray !important; }
-
-.tooltipx::first-line {
-  font-weight: bold !important; }
 
 .dropdown {
   margin: 20px 0 20px 0;

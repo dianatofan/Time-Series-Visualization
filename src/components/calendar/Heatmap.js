@@ -6,6 +6,7 @@ import DayLabels from './DayLabels';
 import YearLabel from './YearLabel';
 import Year from './Year';
 import Card from '../widget/Card';
+import Section from '../widget/Section';
 
 import '../Spinner.scss';
 import { showSpinner } from '../../reducers/app';
@@ -25,14 +26,16 @@ class Heatmap extends React.PureComponent {
 
   render () {
     return (
-      <Card>
-        <DayLabels />
-        <YearLabel />
-        <div className='months'>
-          <Year />
-        </div>
-        <ReactTooltip id='svgTooltip' multiline class='tooltipx'/>
-      </Card>
+      <Section title='Calendar heatmap'>
+        <Card>
+          <YearLabel />
+          <div className='months'>
+            <DayLabels />
+            <Year />
+          </div>
+          <ReactTooltip multiline class='tooltip'/>
+        </Card>
+      </Section>
     )
   }
 }

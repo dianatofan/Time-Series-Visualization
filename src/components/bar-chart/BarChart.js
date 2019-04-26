@@ -6,6 +6,7 @@ import * as d3 from 'd3';
 import ReactTooltip from 'react-tooltip';
 
 import Card from '../widget/Card';
+import Section from '../widget/Section';
 
 import DayLabel from './DayLabel';
 import Bars from './Bars';
@@ -238,18 +239,20 @@ class BarChart extends React.PureComponent {
     };
 
     return (
-      <Card>
-        <DayLabel selectedDay={this.props.selectedDay} />
-        <div className='barChart'>
-            {
-              showBarChart
-              ? renderBarChart()
-              : <div className='emptyString'>No data recorded</div>
-            }
-          { showBarChart && <ReactTooltip id='rectTooltip' multiline class='tooltipx'/> }
-        </div>
-        { showBarChart &&  renderFooter() }
-      </Card>
+      <Section title='Day overview'>
+        <Card>
+          <DayLabel selectedDay={this.props.selectedDay} />
+          <div className='barChart'>
+              {
+                showBarChart
+                ? renderBarChart()
+                : <div className='emptyString'>No data recorded</div>
+              }
+            { showBarChart && <ReactTooltip id='rectTooltip' multiline class='tooltipx'/> }
+          </div>
+          { showBarChart &&  renderFooter() }
+        </Card>
+      </Section>
     )
   }
 }

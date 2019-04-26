@@ -110,16 +110,8 @@ p {
 .upload-message {
   font-weight: 400; }
 
-.tooltipx {
-  opacity: 1 !important;
-  color: #FFF !important;
-  background-color: #394752 !important; }
-
 .place-top::after {
   border-top-color: #394752 !important; }
-
-.tooltipx::first-line {
-  font-weight: bold !important; }
 
 .dropdown {
   margin: 20px 0 20px 0;

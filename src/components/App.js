@@ -1,19 +1,17 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
 import moment from 'moment';
-import Dropzone from 'react-dropzone';
 import Dropdown from 'react-dropdown';
 import * as d3 from 'd3';
 
-import {setData, uploadFile, setDatasetName, showSpinner, setMonthInsights, setWeekdayInsights} from '../reducers/app';
+import { setData, setDatasetName, showSpinner, setMonthInsights, setWeekdayInsights } from '../reducers/app';
 import { showCalendar } from '../reducers/calendar';
 import { showBarChart, selectDay, showWeekOverview, showMonthOverview, showWeekdayOverview } from '../reducers/barChart';
 
-import { parseDayInsights } from '../helpers/parser';
-
 import Heatmap from './calendar/Heatmap';
 import BarChart from './bar-chart/BarChart';
+import DragAndDrop from './widget/DragAndDrop';
+import Section from './widget/Section';
 
 import 'react-dropdown/style.css';
 import './App.scss';
@@ -27,39 +25,6 @@ import dataset4 from '../data/data.csv';
 import { whyDidYouUpdate } from 'why-did-you-update';
 
 const App = props => {
-  const onDrop = (acceptedFiles, rejectedFiles) => {
-    props.uploadFile(acceptedFiles);
-    acceptedFiles.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const data = reader.result;
-        const parsed = d3.csvParse(data);
-        props.setData(parsed);
-        props.showCalendar(true);
-      };
-      reader.onabort = () => console.log('file reading was aborted');
-      reader.onerror = () => console.log('file reading has failed');
-      reader.readAsBinaryString(file);
-    });
-  };
-
-  const bytesToSize = bytes => {
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-    if (bytes === 0) return '0 Byte';
-    const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
-    return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
-  };
-
-  const files = props.files.map((file, i) => (
-    <span key={i}>
-         <b key={file.name}>
-           {file.name}
-         </b>
-         <div className='file-size'>
-           {bytesToSize(file.size)}
-         </div>
-      </span>
-  ));
   const options = ['Dataset_1.csv', 'Dataset_2.csv', 'Dataset_3.csv', 'Dataset_4.csv'];
   const renderHeatmap = dataset => {
     d3.csv(dataset).then(data => {
@@ -105,9 +70,24 @@ const App = props => {
     }
   };
 
-  const showDropzone = false;
+  const showDropzone = true;
 
   // whyDidYouUpdate(React);
+
+  const renderBarChart = () =>
+    <BarChart
+      data={props.allDays[props.selectedDay]}
+      margin={{ top: 20, right: 20, bottom: 30, left: 40 }}
+      height={300}
+      paddingInner={0.2}
+      paddingOuter={0.1}
+    />;
+
+  const renderSpinner = () =>
+    <div className='spinner'>
+      <div className='double-bounce1' />
+      <div className='double-bounce2' />
+    </div>;
 
   return (
     <div className='app'>
@@ -115,40 +95,8 @@ const App = props => {
         <div className='title'> Visualizing Time-Series Data </div>
       </header>
       <div className='content'>
-        {
-          showDropzone &&
-          <section>
-          <p>Upload file</p>
-          <Dropzone
-            accept='text/csv'
-            onDrop={onDrop}
-          >
-            {({getRootProps, getInputProps, isDragActive}) => {
-              return (
-                <div
-                  {...getRootProps()}
-                  className={classNames('dropzone', {'dropzone--isActive': isDragActive, 'dropzone--isDone': !!files.length})}
-                >
-                  <input {...getInputProps()} />
-                  {
-                    !!files.length
-                      ? <span className='file-name'>
-                          <i className="fa fa-remove" />
-                        {files}
-                        </span>
-                      : <span className='upload-message'>
-                          <i className="fa fa-upload" />
-                            Drag & Drop your file or <u>Browse</u>
-                        </span>
-                  }
-                </div>
-              )
-            }}
-          </Dropzone>
-        </section>
-        }
-        <section>
-          <p>Select dataset</p>
+        { showDropzone && <DragAndDrop /> }
+        <Section title='Select dataset'>
           <Dropdown
             className='dropdown'
             options={options}
@@ -156,34 +104,10 @@ const App = props => {
             value={props.datasetName}
             onChange={onSelect}
           />
-        </section>
-        {
-          props.isCalendarVisible &&
-          <section>
-            <p>Calendar heatmap</p>
-            <Heatmap />
-          </section>
-        }
-        {
-          props.isBarChartVisible &&
-          <section>
-            <p>Day overview</p>
-            <BarChart
-              data={props.allDays[props.selectedDay]}
-              margin={{ top: 20, right: 20, bottom: 30, left: 40 }}
-              height={300}
-              paddingInner={0.2}
-              paddingOuter={0.1}
-            />
-          </section>
-        }
-        {
-          props.isSpinnerVisible &&
-          <div className='spinner'>
-            <div className="double-bounce1" />
-            <div className="double-bounce2" />
-          </div>
-        }
+        </Section>
+        { props.isCalendarVisible && <Heatmap /> }
+        { props.isBarChartVisible && renderBarChart() }
+        { props.isSpinnerVisible && renderSpinner() }
       </div>
     </div>
   )
@@ -195,7 +119,6 @@ const mapStateToProps = state => ({
   datasetName: state.app.datasetName,
   dayInsights: state.app.dayInsights,
   selectedDay: moment(state.barChart.selectedDay).format('YYYY-MM-DD'),
-  files: state.app.files,
   isCalendarVisible: state.calendar.isCalendarVisible,
   isBarChartVisible: state.barChart.isBarChartVisible,
   isEmptyContainerVisible: state.app.isEmptyContainerVisible,
@@ -203,7 +126,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  uploadFile: val => dispatch(uploadFile(val)),
   showCalendar: val => dispatch(showCalendar(val)),
   setData: val => dispatch(setData(val)),
   setDatasetName: val => dispatch(setDatasetName(val)),

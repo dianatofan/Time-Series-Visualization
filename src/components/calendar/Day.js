@@ -8,24 +8,25 @@ import {setMonthInsights, setWeekdayInsights} from '../../reducers/app';
 class Day extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
     const formatDate = date => moment(date).format('DD-MM-YY');
-    const isCurrentWeek = nextProps.currentWeek.includes(moment(this.props.day).format('DD-MM-YYYY')) ||
-      this.props.currentWeek.includes(moment(nextProps.day).format('DD-MM-YYYY'));
-    const isCurrentMonth = nextProps.currentMonth.includes(moment(this.props.day).format('DD-MM-YYYY')) ||
-      this.props.currentMonth.includes(moment(nextProps.day).format('DD-MM-YYYY'));
-    const isCurrentWeekday = nextProps.currentWeekdays.daysArr.includes(moment(this.props.day).format('DD-MM-YYYY')) ||
-      this.props.currentWeekdays.daysArr.includes(moment(nextProps.day).format('DD-MM-YYYY'));
+    const isCurrentWeek = nextProps.currentWeek && nextProps.currentWeek.includes(moment(this.props.day).format('DD-MM-YYYY')) ||
+      this.props.currentWeek && this.props.currentWeek.includes(moment(nextProps.day).format('DD-MM-YYYY'));
+    const isCurrentMonth = nextProps.currentMonth && nextProps.currentMonth.includes(moment(this.props.day).format('DD-MM-YYYY')) ||
+      this.props.currentMonth && this.props.currentMonth.includes(moment(nextProps.day).format('DD-MM-YYYY'));
+    const isCurrentWeekday = nextProps.currentWeekdays && nextProps.currentWeekdays.daysArr.includes(moment(this.props.day).format('DD-MM-YYYY')) ||
+      this.props.currentWeekdays && this.props.currentWeekdays.daysArr.includes(moment(nextProps.day).format('DD-MM-YYYY'));
     return formatDate(this.props.day) === formatDate(nextProps.selectedDay) ||
       formatDate(nextProps.day) === formatDate(this.props.selectedDay) ||
       this.props.fill !== nextProps.fill ||
       isCurrentWeek ||
       isCurrentMonth ||
-      isCurrentWeekday;
+      isCurrentWeekday ||
+      this.props.cellSize !== nextProps.cellSize;
   }
 
   componentDidUpdate() {
-    d3.select('.day.fill')
-      .transition()
-      .duration(1000)
+    // d3.select('.day.fill')
+    //   .transition()
+    //   .duration(1000)
   }
 
   render() {
@@ -53,16 +54,16 @@ class Day extends React.Component {
     );
     const count = filters.map(i => !!i && props.data[i]).filter(j => !!j);
 
-    const isCurrentWeek = props.currentWeek.includes(moment(d).format('DD-MM-YYYY'));
-    const isCurrentMonth = props.currentMonth.includes(moment(d).format('DD-MM-YYYY'));
-    const isCurrentWeekday = props.currentWeekdays.daysArr.includes(moment(d).format('DD-MM-YYYY'));
+    const isCurrentWeek = props.currentWeek && props.currentWeek.includes(moment(d).format('DD-MM-YYYY'));
+    const isCurrentMonth = props.currentMonth && props.currentMonth.includes(moment(d).format('DD-MM-YYYY'));
+    const isCurrentWeekday = props.currentWeekdays && props.currentWeekdays.daysArr.includes(moment(d).format('DD-MM-YYYY'));
 
     const item = Object.keys(props.data).find(key =>
       new Date(key).setHours(0,0,0,0) === d.setHours(0,0,0,0));
     const value = !!props.data[item] && normalize(props.data[item], Math.max(...count), Math.min(...count));
     const interpolateColor = ((isCurrentWeek && props.showWeekOverview) || (isCurrentMonth && props.showMonthOverview) || (isCurrentWeekday && props.showWeekdayOverview))
-      ? d3.interpolateReds(value) : d3.interpolatePurples(value);
-    let fillColor = !!props.data[item] ? (isCurrentDay ? d3.interpolateReds(value) : interpolateColor) : '#ececec';
+      ? d3.interpolatePuRd(value) : d3.interpolatePurples(value);
+    let fillColor = !!props.data[item] ? (isCurrentDay ? d3.interpolatePuRd(value) : interpolateColor) : '#ececec';
 
     // #af5159
     const onDayClick = ev => {

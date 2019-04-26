@@ -11,7 +11,7 @@ const YearLabel = props => {
   const showNextArrow = nextYear <= props.maxDate.format('YYYY');
 
   return (
-    <div className='yearLabel'>
+    <div className='year-label'>
       <i
         className={classNames('fas fa-chevron-left', {'disabled': !showPreviousArrow})}
         onClick={() => showPreviousArrow && props.changeYear(-1)}
