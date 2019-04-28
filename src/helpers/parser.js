@@ -102,7 +102,7 @@ export const getWeekdayInsights = (weekday, dayInsights, allDays, currentWeekday
     return acc;
   }, {});
 
-  const length = currentWeekdays.daysArr.filter(day => data[moment(day, 'DD-MM-YYYY').format('YYYY-MM-DD')]).length - 1;
+  const length = currentWeekdays && currentWeekdays.daysArr.filter(day => data[moment(day, 'DD-MM-YYYY').format('YYYY-MM-DD')]).length - 1;
 
   let weekdayObj = {};
   for (let i = 0; i < 24; i++) {

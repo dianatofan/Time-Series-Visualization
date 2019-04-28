@@ -20,7 +20,7 @@ class XAxis extends React.PureComponent {
   render() {
     return (
       <g className='axis axis-x'
-         transform={`translate(0,${this.props.plotHeight - 50})`}
+         transform={this.props.transform}
          ref='xAxis'
          fill='none'
          fontSize={10}

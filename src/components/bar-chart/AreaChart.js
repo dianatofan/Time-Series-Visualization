@@ -15,7 +15,8 @@ class AreaChart extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return nextProps.selectedDay !== this.props.selectedDay;
+    return nextProps.selectedDay !== this.props.selectedDay ||
+      nextProps.plotWidth !== this.props.plotWidth;
   }
 
   componentDidMount() {
@@ -53,20 +54,18 @@ class AreaChart extends React.Component {
   handleMouseMove = (mouseX, mouseY) => {
     const { yScale, plotHeight } = this.props;
 
-    // mouseX = mouseX - 40;
-
-    d3.select(".mouse-line")
-      .attr("d", function() {
-        let d = "M" + mouseX + "," + (plotHeight - 50);
-        d += " " + mouseX + "," + 0;
+    d3.select('.mouse-line')
+      .attr('d', function() {
+        let d = 'M' + mouseX + ',' + (plotHeight - 50);
+        d += ' ' + mouseX + ',' + 0;
         return d;
       });
 
     const lines = document.getElementsByClassName('line');
     let pos;
 
-    d3.selectAll(".mouse-per-line")
-      .attr("transform", function(d, i) {
+    d3.selectAll('.mouse-per-line')
+      .attr('transform', function(d, i) {
         let beginning = 0,
           end = lines && lines[i].getTotalLength(),
           target = null;
@@ -85,7 +84,7 @@ class AreaChart extends React.Component {
         d3.select(this).select('text')
           .text(Number(yScale.invert(pos.y)).toFixed(2));
 
-        return "translate(" + mouseX + "," + pos.y +")";
+        return 'translate(' + mouseX + ',' + pos.y +')';
       });
   };
 
@@ -109,40 +108,40 @@ class AreaChart extends React.Component {
     return (
       <svg className='areaChart' ref='areaChart'>
         <defs>
-          <linearGradient id="grad" is x1="0%" y1="100%" x2="0%" y2="0%" spreadMethod="pad">
-            <stop offset="10%" stopColor="#fff" stopOpacity={.4}/>
-            <stop offset="80%" stopColor="#7888BF" stopOpacity={.8}/>
+          <linearGradient id='grad' x1='0%' y1='100%' x2='0%' y2='0%' spreadMethod='pad'>
+            <stop offset='10%' stopColor='#fff' stopOpacity={.4}/>
+            <stop offset='80%' stopColor='#7888BF' stopOpacity={.8}/>
           </linearGradient>
         </defs>
-        <path className="area"
-              fill="url(#grad)"
+        <path className='area'
+              fill='url(#grad)'
               d={area(Object.keys(weekObj))}
         />
-        <path className="line shadow"
+        <path className='line shadow'
               d={valueline(Object.keys(weekObj))}
         />
-        <g className="mouse-over-effects">
+        <g className='mouse-over-effects'>
           <path
-            className="mouse-line"
-            stroke="#000"
+            className='mouse-line'
+            stroke='#000'
             strokeWidth={1}
             opacity={0}
           >
           </path>
           <g
-            className="mouse-per-line"
+            className='mouse-per-line'
           >
             <circle
               r={5}
-              fill="#7888BF"
+              fill='#7888BF'
               strokeWidth={1}
-              stroke="#000"
+              stroke='#000'
               opacity={0}
             />
             <text
               transform='translate(10,3)'
               fontSize={14}
-              // fill="#777"
+              // fill='#777'
             />
           </g>
           <rect
@@ -151,20 +150,20 @@ class AreaChart extends React.Component {
             fill='none'
             pointerEvents='all'
             onMouseLeave={() => {
-              d3.select(".mouse-line")
-                .style("opacity", "0");
-              d3.selectAll(".mouse-per-line circle")
-                .style("opacity", "0");
-              d3.selectAll(".mouse-per-line text")
-                .style("opacity", "0");
+              d3.select('.mouse-line')
+                .style('opacity', '0');
+              d3.selectAll('.mouse-per-line circle')
+                .style('opacity', '0');
+              d3.selectAll('.mouse-per-line text')
+                .style('opacity', '0');
             }}
             onMouseOver={() => {
-              d3.select(".mouse-line")
-                .style("opacity", "1");
-              d3.selectAll(".mouse-per-line circle")
-                .style("opacity", "1");
-              d3.selectAll(".mouse-per-line text")
-                .style("opacity", "1");
+              d3.select('.mouse-line')
+                .style('opacity', '1');
+              d3.selectAll('.mouse-per-line circle')
+                .style('opacity', '1');
+              d3.selectAll('.mouse-per-line text')
+                .style('opacity', '1');
             }}
             onMouseMove={ev => this.handleMouseMove(ev.nativeEvent.offsetX - 40, ev.nativeEvent.offsetY) }
           >

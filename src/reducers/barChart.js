@@ -5,6 +5,7 @@ const SELECT_DAY = 'SELECT_DAY';
 const SHOW_WEEK_OVERVIEW = 'SHOW_WEEK_OVERVIEW';
 const SHOW_MONTH_OVERVIEW = 'SHOW_MONTH_OVERVIEW';
 const SHOW_WEEKDAY_OVERVIEW = 'SHOW_WEEKDAY_OVERVIEW';
+const RESET = 'RESET';
 
 const initialState = {
   isBarChartVisible: false,
@@ -35,18 +36,26 @@ export default (state = initialState, action) => {
     case SHOW_WEEK_OVERVIEW:
       return {
         ...state,
-        showWeekOverview: action.val
+        showWeekOverview: action.val,
+        showMonthOverview: false,
+        showWeekdayOverview: false
       };
     case SHOW_MONTH_OVERVIEW:
       return {
         ...state,
-        showMonthOverview: action.val
+        showMonthOverview: action.val,
+        showWeekOverview: false,
+        showWeekdayOverview: false
       };
     case SHOW_WEEKDAY_OVERVIEW:
       return {
         ...state,
-        showWeekdayOverview: action.val
+        showWeekdayOverview: action.val,
+        showWeekOverview: false,
+        showMonthOverview: false
       };
+    case RESET:
+      return initialState;
     default:
       return state;
   }
@@ -57,3 +66,4 @@ export const selectDay = val => ({ type: SELECT_DAY, val });
 export const showWeekOverview = val => ({ type: SHOW_WEEK_OVERVIEW, val });
 export const showMonthOverview = val => ({ type: SHOW_MONTH_OVERVIEW, val });
 export const showWeekdayOverview = val => ({ type: SHOW_WEEKDAY_OVERVIEW, val });
+export const onReset = val => ({ type: RESET, val });

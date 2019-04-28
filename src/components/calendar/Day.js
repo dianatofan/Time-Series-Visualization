@@ -62,8 +62,8 @@ class Day extends React.Component {
       new Date(key).setHours(0,0,0,0) === d.setHours(0,0,0,0));
     const value = !!props.data[item] && normalize(props.data[item], Math.max(...count), Math.min(...count));
     const interpolateColor = ((isCurrentWeek && props.showWeekOverview) || (isCurrentMonth && props.showMonthOverview) || (isCurrentWeekday && props.showWeekdayOverview))
-      ? d3.interpolatePuRd(value) : d3.interpolatePurples(value);
-    let fillColor = !!props.data[item] ? (isCurrentDay ? d3.interpolatePuRd(value) : interpolateColor) : '#ececec';
+      ? d3.interpolateOranges(value) : d3.interpolatePurples(value);
+    let fillColor = !!props.data[item] ? (isCurrentDay ? d3.interpolateOranges(value) : interpolateColor) : '#ececec';
 
     // #af5159
     const onDayClick = ev => {

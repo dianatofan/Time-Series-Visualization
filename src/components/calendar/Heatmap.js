@@ -33,7 +33,7 @@ class Heatmap extends React.PureComponent {
             <DayLabels />
             <Year />
           </div>
-          <ReactTooltip multiline class='tooltip'/>
+          <ReactTooltip id='svgTooltip' multiline class='tooltip'/>
         </Card>
       </Section>
     )

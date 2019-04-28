@@ -9,7 +9,7 @@ import { showCalendar } from '../reducers/calendar';
 import { showBarChart, selectDay, showWeekOverview, showMonthOverview, showWeekdayOverview } from '../reducers/barChart';
 
 import Heatmap from './calendar/Heatmap';
-import BarChart from './bar-chart/BarChart';
+import Container from './bar-chart/Container';
 import DragAndDrop from './widget/DragAndDrop';
 import Section from './widget/Section';
 
@@ -75,7 +75,7 @@ const App = props => {
   // whyDidYouUpdate(React);
 
   const renderBarChart = () =>
-    <BarChart
+    <Container
       data={props.allDays[props.selectedDay]}
       margin={{ top: 20, right: 20, bottom: 30, left: 40 }}
       height={300}

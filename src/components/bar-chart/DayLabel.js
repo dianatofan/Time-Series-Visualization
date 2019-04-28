@@ -68,7 +68,7 @@ class DayLabel extends React.Component {
     }
 
     return (
-      <div className='yearLabel dayTitle'
+      <div className='year-label dayTitle'
            tabIndex={0}
            onKeyDown={ev => {
              if (ev) {
