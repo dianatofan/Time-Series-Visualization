@@ -168,7 +168,7 @@ const mapStateToProps = state => ({
   selectedDay: moment(state.calendar.selectedDay).format('YYYY-MM-DD'),
   dataArr: state.app.data,
   allDays: state.app.allDays,
-  currentWeekdays: state.barChart.currentWeekdays,
+  currentWeekdays: state.calendar.currentWeekdays,
   isWeekOverviewChecked: state.barChart.showWeekOverview,
   isMonthOverviewChecked: state.barChart.showMonthOverview,
   isWeekdayOverviewChecked: state.barChart.showWeekdayOverview,

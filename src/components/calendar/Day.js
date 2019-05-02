@@ -2,8 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import * as d3 from 'd3';
-import {showBarChart, showMonthOverview, showWeekOverview} from '../../reducers/barChart';
-import {selectDay} from '../../reducers/calendar';
+import {showBarChart} from '../../reducers/barChart';
+import {selectDay, saveColor} from '../../reducers/calendar';
 import {setMonthInsights, setWeekdayInsights} from '../../reducers/app';
 
 class Day extends React.Component {
@@ -66,7 +66,8 @@ class Day extends React.Component {
       ? d3.interpolateOranges(value) : d3.interpolatePurples(value);
     let fillColor = !!props.data[item] ? (isCurrentDay ? d3.interpolateOranges(value) : interpolateColor) : '#ececec';
 
-    // #af5159
+    value && props.saveColor({ day: moment(d).format('DD-MM-YYYY'), value: d3.interpolateOranges(value) });
+
     const onDayClick = ev => {
       ev.preventDefault();
       ev.stopPropagation();
@@ -81,8 +82,6 @@ class Day extends React.Component {
       });
       props.selectDay({ day: d, color: d3.interpolateOranges(value) });
       props.showBarChart(true);
-      // props.showMonthOverviewFct(false);
-      // props.showWeekOverviewFct(false);
     };
     return (
       <rect
@@ -113,9 +112,9 @@ const mapStateToProps = state => ({
   showWeekOverview: state.barChart.showWeekOverview,
   showMonthOverview: state.barChart.showMonthOverview,
   showWeekdayOverview: state.barChart.showWeekdayOverview,
-  currentWeek: state.barChart.currentWeek,
-  currentMonth: state.barChart.currentMonth,
-  currentWeekdays: state.barChart.currentWeekdays,
+  currentWeek: state.calendar.currentWeek,
+  currentMonth: state.calendar.currentMonth,
+  currentWeekdays: state.calendar.currentWeekdays,
   dayInsights: state.app.dayInsights,
   cellSize: state.calendar.cellSize,
   cellMargin: state.calendar.cellMargin,
@@ -127,8 +126,7 @@ const mapDispatchToProps = dispatch => ({
   selectDay: val => dispatch(selectDay(val)),
   setMonthInsights: val => dispatch(setMonthInsights(val)),
   setWeekdayInsights: val => dispatch(setWeekdayInsights(val)),
-  showWeekOverviewFct: val => dispatch(showWeekOverview(val)),
-  showMonthOverviewFct: val => dispatch(showMonthOverview(val))
+  saveColor: val => dispatch(saveColor(val))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Day);

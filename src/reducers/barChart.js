@@ -16,7 +16,10 @@ export default (state = initialState, action) => {
     case SHOW_BAR_CHART:
       return {
         ...state,
-        isBarChartVisible: action.val
+        isBarChartVisible: action.val,
+        showWeekOverview: false,
+        showMonthOverview: false,
+        showWeekdayOverview: false
       };
     case SHOW_WEEK_OVERVIEW:
       return {

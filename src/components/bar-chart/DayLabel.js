@@ -16,7 +16,7 @@ class DayLabel extends React.Component {
 
   render() {
     const { minDate, maxDate, selectDay, showBarChart, setMonthInsights, setWeekdayInsights,
-      selectedMonth, selectedDay, dayInsights, allDays, selectedWeekday } = this.props;
+      selectedMonth, selectedDay, dayInsights, allDays, selectedWeekday, colors } = this.props;
     const selectedItem = selectedMonth || selectedWeekday || selectedDay;
     let unit = '';
     if (selectedMonth) {
@@ -41,7 +41,8 @@ class DayLabel extends React.Component {
         daysOfWeekday: [],
         weekdayInsights: []
       });
-      selectDay({ day });
+      const color = colors.find(color => color.day === moment(day).format('DD-MM-YYYY'));
+      selectDay({ day, color: color.value });
       showBarChart(true);
     };
     const pickMonth = month => {
@@ -102,7 +103,8 @@ const mapStateToProps = state => ({
   selectedMonth: state.app.selectedMonth,
   selectedWeekday: state.app.selectedWeekday,
   dayInsights: state.app.dayInsights,
-  allDays: state.app.allDays
+  allDays: state.app.allDays,
+  colors: state.calendar.colors
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -4,6 +4,7 @@ const SHOW_CALENDAR = 'SHOW_CALENDAR';
 const CHANGE_YEAR = 'CHANGE_YEAR';
 const SCREEN_RESIZE = 'SCREEN_RESIZE';
 const SELECT_DAY = 'SELECT_DAY';
+const SAVE_COLOR = 'SAVE_COLOR';
 
 const initialState = {
   isCalendarVisible: false,
@@ -15,7 +16,8 @@ const initialState = {
   currentWeek: null,
   currentMonth: null,
   currentWeekdays: null,
-  color: null
+  color: null,
+  colors: []
 };
 
 export default (state = initialState, action) => {
@@ -37,14 +39,23 @@ export default (state = initialState, action) => {
         cellMargin: window.innerWidth / 400
       });
     case SELECT_DAY:
+      const selectedDay = action.val && action.val.day;
+      const color = action.val && action.val.color;
       return {
         ...state,
-        selectedDay: action.val && action.val.day,
-        color: action.val && action.val.color,
-        currentWeek: getCurrentWeek(action.val),
-        currentMonth: getCurrentMonth(action.val),
-        currentWeekdays: getCurrentWeekdays(action.val)
+        selectedDay,
+        color,
+        currentWeek: getCurrentWeek(selectedDay),
+        currentMonth: getCurrentMonth(selectedDay),
+        currentWeekdays: getCurrentWeekdays(selectedDay)
       };
+    case SAVE_COLOR:
+      return Object.assign({}, state, {
+        colors: state.colors.concat({
+          day: action.val.day,
+          value: action.val.value
+        })
+      });
     default:
       return state;
   }
@@ -54,3 +65,4 @@ export const showCalendar = val => ({ type: SHOW_CALENDAR, val });
 export const changeYear = val => ({ type: CHANGE_YEAR, val });
 export const onScreenResize = val => ({ type: SCREEN_RESIZE, val });
 export const selectDay = val => ({ type: SELECT_DAY, val });
+export const saveColor = val => ({ type: SAVE_COLOR, val });
