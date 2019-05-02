@@ -7,7 +7,8 @@ import { connect } from 'react-redux';
 import Day from './Day';
 import { getMonthInsights } from '../../helpers/parser';
 import {setMonthInsights, setWeekdayInsights} from "../../reducers/app";
-import { showBarChart, selectDay } from "../../reducers/barChart";
+import { showBarChart } from "../../reducers/barChart";
+import { selectDay } from '../../reducers/calendar';
 
 class Month extends React.PureComponent {
   constructor(props) {

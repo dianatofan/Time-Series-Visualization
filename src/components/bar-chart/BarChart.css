@@ -17,8 +17,7 @@
   width: 100%; }
 
 .hovered-bar {
-  cursor: pointer;
-  fill: #5455D6; }
+  cursor: pointer; }
 
 .card .footer {
   border-top: solid 1px #F1F1F1; }

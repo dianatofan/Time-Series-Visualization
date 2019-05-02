@@ -1,7 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
 import {
-  selectDay,
   showBarChart,
   showMonthOverview,
   showWeekdayOverview,
@@ -55,7 +54,6 @@ const mapDispatchToProps = dispatch => ({
   showMonthOverview: val => dispatch(showMonthOverview(val)),
   showWeekdayOverview: val => dispatch(showWeekdayOverview(val)),
   showBarChart: val => dispatch(showBarChart(val)),
-  selectDay: val => dispatch(selectDay(val)),
   onReset: val => dispatch(onReset(val))
 });
 

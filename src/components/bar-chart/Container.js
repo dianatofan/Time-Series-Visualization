@@ -43,7 +43,7 @@ const mapStateToProps = state => ({
   dayInsights: state.app.dayInsights,
   monthInsights: state.app.monthInsights,
   weekdayInsights: state.app.weekdayInsights,
-  selectedDay: moment(state.barChart.selectedDay).format('YYYY-MM-DD')
+  selectedDay: moment(state.calendar.selectedDay).format('YYYY-MM-DD')
 });
 
 export default connect(mapStateToProps)(Container);

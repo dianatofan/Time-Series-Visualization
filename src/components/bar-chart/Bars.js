@@ -29,13 +29,14 @@ class Bars extends React.PureComponent {
 
     current.interrupt();
 
-    const color = '#6595ec';
+    const color = this.props.color; //'#6595ec';
 
     current.transition()
-      .attr('fill', color);
+      .attr('fill', (d, i) => i === this.state.hoverIndex ? d3.rgb(color).darker() : color);
 
     const enter = current.enter().append('g').classed('bar', true);
-    enter.attr('fill', color);
+    enter
+      .attr('fill', (d, i) => i === this.state.hoverIndex ? d3.rgb(color).darker() : color);
 
     enter
       .append('rect')

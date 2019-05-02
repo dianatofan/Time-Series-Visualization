@@ -176,7 +176,7 @@ class AreaChart extends React.Component {
 
 const mapStateToProps = state => ({
   dayInsights: state.app.dayInsights,
-  selectedDay: moment(state.barChart.selectedDay),
+  selectedDay: moment(state.calendar.selectedDay),
   data: state.app.data
 });
 

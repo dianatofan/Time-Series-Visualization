@@ -2,7 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import moment from 'moment';
-import {selectDay, showBarChart} from '../../reducers/barChart';
+import {showBarChart} from '../../reducers/barChart';
+import {selectDay} from '../../reducers/calendar';
 import {setMonthInsights, setWeekdayInsights} from '../../reducers/app';
 import { getMonthInsights } from '../../helpers/parser';
 
@@ -40,7 +41,7 @@ class DayLabel extends React.Component {
         daysOfWeekday: [],
         weekdayInsights: []
       });
-      selectDay(day);
+      selectDay({ day });
       showBarChart(true);
     };
     const pickMonth = month => {
@@ -97,7 +98,7 @@ class DayLabel extends React.Component {
 const mapStateToProps = state => ({
   minDate: state.app.minDate,
   maxDate: state.app.maxDate,
-  selectedDay: state.barChart.selectedDay,
+  selectedDay: state.calendar.selectedDay,
   selectedMonth: state.app.selectedMonth,
   selectedWeekday: state.app.selectedWeekday,
   dayInsights: state.app.dayInsights,

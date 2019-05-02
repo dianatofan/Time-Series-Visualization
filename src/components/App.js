@@ -5,8 +5,8 @@ import Dropdown from 'react-dropdown';
 import * as d3 from 'd3';
 
 import { setData, setDatasetName, showSpinner, setMonthInsights, setWeekdayInsights } from '../reducers/app';
-import { showCalendar } from '../reducers/calendar';
-import { showBarChart, selectDay, showWeekOverview, showMonthOverview, showWeekdayOverview } from '../reducers/barChart';
+import { showCalendar, selectDay } from '../reducers/calendar';
+import { showBarChart, showWeekOverview, showMonthOverview, showWeekdayOverview } from '../reducers/barChart';
 
 import Heatmap from './calendar/Heatmap';
 import Container from './bar-chart/Container';
@@ -118,7 +118,7 @@ const mapStateToProps = state => ({
   data: state.app.data,
   datasetName: state.app.datasetName,
   dayInsights: state.app.dayInsights,
-  selectedDay: moment(state.barChart.selectedDay).format('YYYY-MM-DD'),
+  selectedDay: moment(state.calendar.selectedDay).format('YYYY-MM-DD'),
   isCalendarVisible: state.calendar.isCalendarVisible,
   isBarChartVisible: state.barChart.isBarChartVisible,
   isEmptyContainerVisible: state.app.isEmptyContainerVisible,

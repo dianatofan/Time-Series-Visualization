@@ -14,7 +14,8 @@ const initialState = {
   selectedDay: null,
   currentWeek: null,
   currentMonth: null,
-  currentWeekdays: null
+  currentWeekdays: null,
+  color: null
 };
 
 export default (state = initialState, action) => {
@@ -38,7 +39,8 @@ export default (state = initialState, action) => {
     case SELECT_DAY:
       return {
         ...state,
-        selectedDay: action.val,
+        selectedDay: action.val && action.val.day,
+        color: action.val && action.val.color,
         currentWeek: getCurrentWeek(action.val),
         currentMonth: getCurrentMonth(action.val),
         currentWeekdays: getCurrentWeekdays(action.val)

@@ -2,7 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import * as d3 from 'd3';
-import {selectDay, showBarChart, showMonthOverview, showWeekOverview} from '../../reducers/barChart';
+import {showBarChart, showMonthOverview, showWeekOverview} from '../../reducers/barChart';
+import {selectDay} from '../../reducers/calendar';
 import {setMonthInsights, setWeekdayInsights} from '../../reducers/app';
 
 class Day extends React.Component {
@@ -78,7 +79,7 @@ class Day extends React.Component {
         daysOfWeekday: [],
         weekdayInsights: []
       });
-      props.selectDay(d);
+      props.selectDay({ day: d, color: d3.interpolateOranges(value) });
       props.showBarChart(true);
       // props.showMonthOverviewFct(false);
       // props.showWeekOverviewFct(false);
@@ -107,7 +108,7 @@ class Day extends React.Component {
 
 const mapStateToProps = state => ({
   data: state.app.data,
-  selectedDay: state.barChart.selectedDay,
+  selectedDay: state.calendar.selectedDay,
   selectedWeekday: state.app.selectedWeekday,
   showWeekOverview: state.barChart.showWeekOverview,
   showMonthOverview: state.barChart.showMonthOverview,

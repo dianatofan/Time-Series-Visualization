@@ -4,7 +4,8 @@ import classNames from 'classnames';
 import moment from 'moment';
 
 import { setWeekdayInsights, setMonthInsights } from '../../reducers/app';
-import { selectDay, showBarChart } from '../../reducers/barChart';
+import { showBarChart } from '../../reducers/barChart';
+import { selectDay } from '../../reducers/calendar';
 import { getWeekdayInsights } from '../../helpers/parser';
 
 const weekArray = Array.apply(null, Array(7)).map(function (_, i) {

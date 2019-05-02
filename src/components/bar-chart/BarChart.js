@@ -8,7 +8,6 @@ import YAxis from './YAxis';
 import Bars from './Bars';
 import AreaChart from './AreaChart';
 import {
-  selectDay,
   showBarChart,
   showMonthOverview,
   showWeekdayOverview,
@@ -138,7 +137,7 @@ class BarChart extends React.Component {
           <g transform={transform} width={plotWidth} height={plotHeight}>
             <XAxis {...metaData} transform={`translate(0,${plotHeight-50})`}/>
             <YAxis {...metaData} />
-            <Bars {...metaData} {...plotData} />
+            <Bars {...metaData} {...plotData} color={this.props.color} />
             {
               showAreaChart &&
               <AreaChart
@@ -166,17 +165,17 @@ const mapStateToProps = state => ({
   weekdayInsights: state.app.weekdayInsights,
   daysOfMonth: state.app.daysOfMonth,
   daysOfWeekday: state.app.daysOfWeekday,
-  selectedDay: moment(state.barChart.selectedDay).format('YYYY-MM-DD'),
+  selectedDay: moment(state.calendar.selectedDay).format('YYYY-MM-DD'),
   dataArr: state.app.data,
   allDays: state.app.allDays,
   currentWeekdays: state.barChart.currentWeekdays,
   isWeekOverviewChecked: state.barChart.showWeekOverview,
   isMonthOverviewChecked: state.barChart.showMonthOverview,
-  isWeekdayOverviewChecked: state.barChart.showWeekdayOverview
+  isWeekdayOverviewChecked: state.barChart.showWeekdayOverview,
+  color: state.calendar.color
 });
 
 const mapDispatchToProps = dispatch => ({
-  selectDay: val => dispatch(selectDay(val)),
   showWeekOverview: val => dispatch(showWeekOverview(val)),
   showMonthOverview: val => dispatch(showMonthOverview(val)),
   showWeekdayOverview: val => dispatch(showWeekdayOverview(val)),
