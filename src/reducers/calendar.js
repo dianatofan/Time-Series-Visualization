@@ -51,10 +51,10 @@ export default (state = initialState, action) => {
       };
     case SAVE_COLOR:
       return Object.assign({}, state, {
-        colors: state.colors.concat({
-          day: action.val.day,
-          value: action.val.value
-        })
+        colors: [...new Set(state.colors.concat({
+            day: action.val.day,
+            value: action.val.value
+        }))]
       });
     default:
       return state;

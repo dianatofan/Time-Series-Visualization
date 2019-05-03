@@ -15,6 +15,7 @@ import {
 } from '../../reducers/barChart';
 import ReactTooltip from 'react-tooltip';
 import Footer from './Footer';
+import {getAverageColor} from "../../helpers/colors";
 
 class BarChart extends React.Component {
   constructor(props) {
@@ -131,13 +132,15 @@ class BarChart extends React.Component {
 
     const showAreaChart = this.props.isWeekOverviewChecked || this.props.isMonthOverviewChecked || this.props.isWeekdayOverviewChecked;
 
+    const color = this.props.color || getAverageColor(this.props.selectedMonth, this.props.selectedWeekday, this.props.colors);
+
     return (
       <div>
         <svg width='100%' height={this.props.height} ref='barChart'>
           <g transform={transform} width={plotWidth} height={plotHeight}>
             <XAxis {...metaData} transform={`translate(0,${plotHeight-50})`}/>
             <YAxis {...metaData} />
-            <Bars {...metaData} {...plotData} color={this.props.color} />
+            <Bars {...metaData} {...plotData} color={color} />
             {
               showAreaChart &&
               <AreaChart
@@ -166,13 +169,16 @@ const mapStateToProps = state => ({
   daysOfMonth: state.app.daysOfMonth,
   daysOfWeekday: state.app.daysOfWeekday,
   selectedDay: moment(state.calendar.selectedDay).format('YYYY-MM-DD'),
+  selectedMonth: state.app.selectedMonth,
+  selectedWeekday: state.app.selectedWeekday,
   dataArr: state.app.data,
   allDays: state.app.allDays,
   currentWeekdays: state.calendar.currentWeekdays,
   isWeekOverviewChecked: state.barChart.showWeekOverview,
   isMonthOverviewChecked: state.barChart.showMonthOverview,
   isWeekdayOverviewChecked: state.barChart.showWeekdayOverview,
-  color: state.calendar.color
+  color: state.calendar.color,
+  colors: state.calendar.colors
 });
 
 const mapDispatchToProps = dispatch => ({

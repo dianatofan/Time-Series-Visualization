@@ -5,7 +5,7 @@ import Dropdown from 'react-dropdown';
 import * as d3 from 'd3';
 
 import { setData, setDatasetName, showSpinner, setMonthInsights, setWeekdayInsights } from '../reducers/app';
-import { showCalendar, selectDay } from '../reducers/calendar';
+import { showCalendar, selectDay, saveColor } from '../reducers/calendar';
 import { showBarChart, showWeekOverview, showMonthOverview, showWeekdayOverview } from '../reducers/barChart';
 
 import Heatmap from './calendar/Heatmap';
@@ -22,7 +22,7 @@ import dataset2 from '../data/itch_tbc.csv';
 import dataset3 from '../data/ptsd_filtered.csv';
 import dataset4 from '../data/data.csv';
 
-import { whyDidYouUpdate } from 'why-did-you-update';
+// import { whyDidYouUpdate } from 'why-did-you-update';
 
 const App = props => {
   const options = ['Dataset_1.csv', 'Dataset_2.csv', 'Dataset_3.csv', 'Dataset_4.csv'];
@@ -50,6 +50,7 @@ const App = props => {
     props.showWeekOverview(false);
     props.showMonthOverview(false);
     props.showWeekdayOverview(false);
+    props.saveColor([]);
   };
   const onSelect = item => {
     removeCharts();
@@ -136,7 +137,8 @@ const mapDispatchToProps = dispatch => ({
   selectDay: val => dispatch(selectDay(val)),
   showWeekOverview: val => dispatch(showWeekOverview(val)),
   showMonthOverview: val => dispatch(showMonthOverview(val)),
-  showWeekdayOverview: val => dispatch(showWeekdayOverview(val))
+  showWeekdayOverview: val => dispatch(showWeekdayOverview(val)),
+  saveColor: val => dispatch(saveColor(val))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

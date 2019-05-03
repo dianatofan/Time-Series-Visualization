@@ -29,7 +29,7 @@ class Bars extends React.PureComponent {
 
     current.interrupt();
 
-    const color = this.props.color; //'#6595ec';
+    const color = this.props.color; // || '#6595ec';
 
     current.transition()
       .attr('fill', (d, i) => i === this.state.hoverIndex ? d3.rgb(color).darker() : color);

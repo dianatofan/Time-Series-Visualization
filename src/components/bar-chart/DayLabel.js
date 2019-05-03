@@ -5,7 +5,8 @@ import moment from 'moment';
 import {showBarChart} from '../../reducers/barChart';
 import {selectDay} from '../../reducers/calendar';
 import {setMonthInsights, setWeekdayInsights} from '../../reducers/app';
-import { getMonthInsights } from '../../helpers/parser';
+import {getMonthInsights, getWeekdayInsights} from '../../helpers/parser';
+import * as d3 from 'd3';
 
 class DayLabel extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
@@ -16,7 +17,7 @@ class DayLabel extends React.Component {
 
   render() {
     const { minDate, maxDate, selectDay, showBarChart, setMonthInsights, setWeekdayInsights,
-      selectedMonth, selectedDay, dayInsights, allDays, selectedWeekday, colors } = this.props;
+      selectedMonth, selectedDay, dayInsights, allDays, selectedWeekday, colors, currentWeekdays, dataArr } = this.props;
     const selectedItem = selectedMonth || selectedWeekday || selectedDay;
     let unit = '';
     if (selectedMonth) {
@@ -42,7 +43,8 @@ class DayLabel extends React.Component {
         weekdayInsights: []
       });
       const color = colors.find(color => color.day === moment(day).format('DD-MM-YYYY'));
-      selectDay({ day, color: color.value });
+      const value = color && d3.color(color.value);
+      selectDay({ day, color: value });
       showBarChart(true);
     };
     const pickMonth = month => {
@@ -57,6 +59,21 @@ class DayLabel extends React.Component {
         selectedMonth: monthInsights.selectedMonth,
         daysOfMonth: monthInsights.daysOfMonth,
         monthInsights: monthInsights.monthInsights
+      });
+      showBarChart(true);
+    };
+    const pickWeekday = weekday => {
+      selectDay(null);
+      setMonthInsights({
+        monthInsights: [],
+        daysOfMonth: [],
+        selectedMonth: null
+      });
+      const weekdayInsights = getWeekdayInsights(weekday, dayInsights, allDays, currentWeekdays, dataArr);
+      setWeekdayInsights({
+        weekdayInsights: weekdayInsights.weekdayInsights,
+        daysOfWeekday: weekdayInsights.daysOfWeekday,
+        selectedWeekday: weekdayInsights.selectedWeekday
       });
       showBarChart(true);
     };
@@ -75,21 +92,57 @@ class DayLabel extends React.Component {
            onKeyDown={ev => {
              if (ev) {
                if (ev.key === 'ArrowLeft') {
-                 !selectedMonth ? pickDay(moment(selectedItem).add(-1, unit)) : pickMonth(selectedItem - 1)
+                 if (selectedDay) {
+                   pickDay(moment(selectedItem).add(-1, unit));
+                 } else if (selectedMonth) {
+                   pickMonth(parseInt(selectedItem) - 1);
+                 } else if (selectedWeekday) {
+                   const isoWeekday = moment(selectedItem, 'ddd').isoWeekday();
+                   pickWeekday((moment(selectedItem, 'ddd').isoWeekday(isoWeekday - 1)).format('ddd'));
+                 }
                }
                if (ev.key === 'ArrowRight') {
-                 !selectedMonth ? pickDay(moment(selectedItem).add(1, unit)) : pickMonth(parseInt(selectedItem) + 1)
+                 if (selectedDay) {
+                   pickDay(moment(selectedItem).add(1, unit));
+                 } else if (selectedMonth) {
+                   pickMonth(parseInt(selectedItem) + 1);
+                 } else if (selectedWeekday) {
+                   const isoWeekday = moment(selectedItem, 'ddd').isoWeekday();
+                   pickWeekday((moment(selectedItem, 'ddd').isoWeekday(isoWeekday + 1)).format('ddd'));
+                 }
                }
              }
       }}>
         <i
           className={classNames('fas fa-chevron-left', {'disabled': !showPreviousArrow})}
-          onClick={() => {showPreviousArrow && selectDay(moment(selectedItem).add(-1, unit))}}
+          onClick={() => {
+            if (showPreviousArrow) {
+              if (selectedDay) {
+                pickDay(moment(selectedItem).add(-1, unit));
+              } else if (selectedMonth) {
+                pickMonth(parseInt(selectedItem) - 1);
+              } else if (selectedWeekday) {
+                const isoWeekday = moment(selectedItem, 'ddd').isoWeekday();
+                pickWeekday((moment(selectedItem, 'ddd').isoWeekday(isoWeekday - 1)).format('ddd'));
+              }
+            }}
+          }
         />
         { string }
         <i
           className={classNames('fas fa-chevron-right', {'disabled': !showNextArrow})}
-          onClick={() => showNextArrow && selectDay(moment(selectedItem).add(1, unit))}
+          onClick={() => {
+            if (showPreviousArrow) {
+              if (selectedDay) {
+                pickDay(moment(selectedItem).add(+1, unit));
+              } else if (selectedMonth) {
+                pickMonth(parseInt(selectedItem) + 1);
+              } else if (selectedWeekday) {
+                const isoWeekday = moment(selectedItem, 'ddd').isoWeekday();
+                pickWeekday((moment(selectedItem, 'ddd').isoWeekday(isoWeekday + 1)).format('ddd'));
+              }
+            }}
+          }
         />
       </div>
     )
@@ -104,7 +157,9 @@ const mapStateToProps = state => ({
   selectedWeekday: state.app.selectedWeekday,
   dayInsights: state.app.dayInsights,
   allDays: state.app.allDays,
-  colors: state.calendar.colors
+  colors: state.calendar.colors,
+  currentWeekdays: state.calendar.currentWeekdays,
+  dataArr: state.app.data
 });
 
 const mapDispatchToProps = dispatch => ({

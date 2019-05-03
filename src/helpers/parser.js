@@ -1,11 +1,4 @@
 import moment from 'moment';
-import * as d3 from "d3";
-
-const parseTimestamp = timeStamp => {
-  const dateString = timeStamp.split('T')[0];
-  const timeString = timeStamp.split('T')[1].slice(0, -1);
-  return moment(`${dateString} ${timeString}`, 'YYYYMMDD HHmmss').toDate();
-};
 
 const parseTime = timeStamp => {
   const timeString = timeStamp.split('T')[1].slice(0, -1);
@@ -120,7 +113,6 @@ export const getWeekdayInsights = (weekday, dayInsights, allDays, currentWeekday
 export const parseDayInsights = data => {
   const dayInsights = getDayInsights(data);
   return Object.keys(dayInsights).reduce((acc, item) => {
-    // debugger
     const days = dayInsights[item];
     const roundedHours = days && days.map(hour => {
         const m = moment(`${item} ${hour}`);
@@ -133,14 +125,11 @@ export const parseDayInsights = data => {
       acc[item] = (acc[item] || 0) + 1;
       return acc;
     }, {});
-    const max = d3.max(Object.values(occurrences));
-    const nrOfTicks = max < 10 ? max : max / 2;
     let obj = {};
     for (let i = 1; i <= 24; i++) {
       obj[i] = occurrences[i] || 0
     }
     acc[item] = occurrences;
-    // acc.push(occurrences);
     return acc;
   }, {});
 };
