@@ -1,7 +1,7 @@
 {
   "main.css": "/Time-Series-Visualization/static/css/main.30f380d7.chunk.css",
-  "main.js": "/Time-Series-Visualization/static/js/main.f63aa811.chunk.js",
-  "main.js.map": "/Time-Series-Visualization/static/js/main.f63aa811.chunk.js.map",
+  "main.js": "/Time-Series-Visualization/static/js/main.def071fa.chunk.js",
+  "main.js.map": "/Time-Series-Visualization/static/js/main.def071fa.chunk.js.map",
   "static/css/1.686d9dcc.chunk.css": "/Time-Series-Visualization/static/css/1.686d9dcc.chunk.css",
   "static/js/1.16b0c41b.chunk.js": "/Time-Series-Visualization/static/js/1.16b0c41b.chunk.js",
   "static/js/1.16b0c41b.chunk.js.map": "/Time-Series-Visualization/static/js/1.16b0c41b.chunk.js.map",
@@ -14,6 +14,6 @@
   "static/css/main.30f380d7.chunk.css.map": "/Time-Series-Visualization/static/css/main.30f380d7.chunk.css.map",
   "static/css/1.686d9dcc.chunk.css.map": "/Time-Series-Visualization/static/css/1.686d9dcc.chunk.css.map",
   "index.html": "/Time-Series-Visualization/index.html",
-  "precache-manifest.247b13424bdb97177133c4fae375de59.js": "/Time-Series-Visualization/precache-manifest.247b13424bdb97177133c4fae375de59.js",
+  "precache-manifest.1189f15a899e315f36fa32940536ec1f.js": "/Time-Series-Visualization/precache-manifest.1189f15a899e315f36fa32940536ec1f.js",
   "service-worker.js": "/Time-Series-Visualization/service-worker.js"
 }
