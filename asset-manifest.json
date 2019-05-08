@@ -1,10 +1,10 @@
 {
   "main.css": "/Time-Series-Visualization/static/css/main.a6df0737.chunk.css",
-  "main.js": "/Time-Series-Visualization/static/js/main.0452809e.chunk.js",
-  "main.js.map": "/Time-Series-Visualization/static/js/main.0452809e.chunk.js.map",
+  "main.js": "/Time-Series-Visualization/static/js/main.8c1b26b4.chunk.js",
+  "main.js.map": "/Time-Series-Visualization/static/js/main.8c1b26b4.chunk.js.map",
   "static/css/1.cc96a826.chunk.css": "/Time-Series-Visualization/static/css/1.cc96a826.chunk.css",
-  "static/js/1.3e3693d2.chunk.js": "/Time-Series-Visualization/static/js/1.3e3693d2.chunk.js",
-  "static/js/1.3e3693d2.chunk.js.map": "/Time-Series-Visualization/static/js/1.3e3693d2.chunk.js.map",
+  "static/js/1.a1823fdf.chunk.js": "/Time-Series-Visualization/static/js/1.a1823fdf.chunk.js",
+  "static/js/1.a1823fdf.chunk.js.map": "/Time-Series-Visualization/static/js/1.a1823fdf.chunk.js.map",
   "runtime~main.js": "/Time-Series-Visualization/static/js/runtime~main.1baeb39e.js",
   "runtime~main.js.map": "/Time-Series-Visualization/static/js/runtime~main.1baeb39e.js.map",
   "static/media/itching_in_nose_tbc.csv": "/Time-Series-Visualization/static/media/itching_in_nose_tbc.116a8ad6.csv",
@@ -14,6 +14,6 @@
   "static/css/main.a6df0737.chunk.css.map": "/Time-Series-Visualization/static/css/main.a6df0737.chunk.css.map",
   "static/css/1.cc96a826.chunk.css.map": "/Time-Series-Visualization/static/css/1.cc96a826.chunk.css.map",
   "index.html": "/Time-Series-Visualization/index.html",
-  "precache-manifest.42689a9fcf568efa69bd087be7065050.js": "/Time-Series-Visualization/precache-manifest.42689a9fcf568efa69bd087be7065050.js",
+  "precache-manifest.44f74c8f3b461a64f258f4087b59cfb7.js": "/Time-Series-Visualization/precache-manifest.44f74c8f3b461a64f258f4087b59cfb7.js",
   "service-worker.js": "/Time-Series-Visualization/service-worker.js"
 }
