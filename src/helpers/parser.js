@@ -5,7 +5,7 @@ const parseTime = timeStamp => {
   return moment(`${timeString}`, 'HHmmss').utc().format("HH:mm:ss");
 };
 
-const parseDate = timeStamp => moment(`${timeStamp.split('T')[0]}`, 'YYYYMMDDxxx')//.toDate()
+const parseDate = timeStamp => moment(`${timeStamp.split('T')[0]}`, 'YYYYMMDDxxx').utc()
   .format('YYYY-MM-DD').split('T')[0];
 
 const countOccurrences = arr => arr.reduce(function(obj, item) {
@@ -116,9 +116,7 @@ export const parseDayInsights = data => {
     const days = dayInsights[item];
     const roundedHours = days && days.map(hour => {
         const m = moment(`${item} ${hour}`);
-        return m.minute() || m.second() || m.millisecond()
-          ? parseInt(m.add(1, 'hour').startOf('hour').format('HH'))
-          : parseInt(m.startOf('hour').format('HH'))
+        return parseInt(m.startOf('hour').format('HH'));
       }
     );
     const occurrences = roundedHours && roundedHours.reduce((acc, item) => {

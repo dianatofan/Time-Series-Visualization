@@ -11,7 +11,9 @@ class XAxis extends React.PureComponent {
   }
 
   renderAxis = () => {
-    const xAxis = d3.axisBottom(this.props.xScale);
+    const xAxis = d3.axisBottom(this.props.xScale)
+      .ticks(24)
+      .tickFormat(d3.timeFormat('%H'));
     d3.select(this.refs.xAxis)
       .transition()
       .call(xAxis);

@@ -42,7 +42,8 @@ class Bars extends React.PureComponent {
       .append('rect')
       .attr('height', 0)
       .attr('transform', d => `translate(${d.x}, ${this.props.plotHeight})`)
-      .on('mouseover', (d, i) => this.setState({ hoverIndex: i }))
+      .attr('id', (d, i) => `bar-${i}`)
+      .on('mouseover', (d, i) => {console.log(`mouse over ${d} ${i}`); this.setState({ hoverIndex: i })})
       .on('mouseleave', () => this.setState({ hoverIndex: -1 }))
       .on('click', d => openModal(d));
 

@@ -44,7 +44,7 @@ class BarChart extends React.Component {
   };
 
   updateScale = (props, data) => {
-    const xScale = d3.scaleBand();
+    const xScale = d3.scaleTime();
     const newXScale = d3.scaleLinear();
     const yScale = d3.scaleLinear().nice();
 
@@ -54,24 +54,20 @@ class BarChart extends React.Component {
       Math.ceil(Math.max(d3.max(Object.values(currentWeekInsights)), d3.max(Object.values(data)))) :
       d3.max(Object.values(data));
 
-    const xDomain = [...Array(24).keys()];
     const yDomain = [0, max];
 
-    xScale
-      .domain(xDomain)
-      .range([0, this.state.width - props.margin.right])
-      .paddingInner(props.paddingInner)
-      .paddingOuter(props.paddingOuter);
+    const parseTime = d3.timeParse('%H:%M');
+    const midnight = parseTime('00:00');
 
-    newXScale
-      .domain([0, 23])
+    xScale
+      .domain([midnight, d3.timeDay.offset(midnight, 1)])
       .range([0, this.state.width - props.margin.right]);
 
     yScale
       .domain(yDomain)
       .range([props.height - props.margin.top - props.margin.bottom, 0]);
 
-    return {xScale, yScale, newXScale};
+    return {xScale, yScale};
   };
 
   updatePlotSize = props => {
@@ -89,11 +85,13 @@ class BarChart extends React.Component {
     } else {
       data = this.props.data;
     }
-    const { xScale, yScale, newXScale } =  this.updateScale(this.props, data);
+    const { xScale, yScale } =  this.updateScale(this.props, data);
     const { plotWidth, plotHeight } = this.updatePlotSize(this.props);
 
     const max = d3.max(Object.values(data));
-    const nrOfTicks = max < 10 ? max : max / 2;
+    const nrOfTicks = max < 10 ? max : (max > 20 ? max / 4 : max / 2);
+
+    const parseTime = d3.timeParse('%H');
 
     const metaData = {
       xScale,
@@ -106,13 +104,14 @@ class BarChart extends React.Component {
       plotData: Object.keys(data).map((item, i) => ({
         id: i,
         data: item,
-        x: xScale(item),
+        x: xScale(parseTime(item)),
         y: yScale(data[item]),
-        width: xScale.bandwidth(),
+        width: ((this.state.width - this.props.margin.right) / 24) * 0.8,
         height: plotHeight - yScale(data[item]) - this.props.margin.top - this.props.margin.bottom,
         occurrences: data[item]
       }))
     };
+
     const transform = `translate(${this.props.margin.left},${this.props.margin.top})`;
 
     const currentWeekInsights = this.props.isWeekOverviewChecked && getCurrentWeekInsights(this.props.dataArr, this.props.selectedDay, this.props.dayInsights);
@@ -144,7 +143,7 @@ class BarChart extends React.Component {
             {
               showAreaChart &&
               <AreaChart
-                xScale={newXScale}
+                xScale={xScale}
                 yScale={yScale}
                 plotWidth={plotWidth}
                 plotHeight={plotHeight}
@@ -152,6 +151,7 @@ class BarChart extends React.Component {
                 weekInsights={insights}
                 occurrences={data}
                 transform={transform}
+                color={color}
               />
             }
           </g>

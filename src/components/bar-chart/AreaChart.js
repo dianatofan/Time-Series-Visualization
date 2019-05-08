@@ -52,7 +52,7 @@ class AreaChart extends React.Component {
 
 
   handleMouseMove = (mouseX, mouseY) => {
-    const { yScale, plotHeight } = this.props;
+    const { xScale, yScale, plotHeight, color } = this.props;
 
     d3.select('.mouse-line')
       .attr('d', function() {
@@ -84,6 +84,19 @@ class AreaChart extends React.Component {
         d3.select(this).select('text')
           .text(Number(yScale.invert(pos.y)).toFixed(2));
 
+        const x = xScale.invert(pos.x);
+
+        // console.log(x);
+
+        const parseTime = d3.timeParse('%H');
+
+        d3.selectAll('.bar')
+          .style('cursor', 'pointer')
+          .attr('fill', (d, i) => {
+            // console.log(parseTime(d.data), x);
+            return parseTime(d.data) === x ? d3.rgb(color).darker() : color
+          });
+
         return 'translate(' + mouseX + ',' + pos.y +')';
       });
   };
@@ -93,15 +106,17 @@ class AreaChart extends React.Component {
 
     const weekObj = this.props.weekInsights;
 
+    const parseTime = d3.timeParse('%H');
+
     // define the area
     const area = d3.area()
-      .x(d => xScale(d))
+      .x(d => xScale(parseTime(d)))
       .y0(plotHeight - margin.top - margin.bottom)
       .y1(d => yScale(weekObj[d]))
       .curve(d3.curveMonotoneX);
 
     const valueline = d3.line()
-      .x((d, i) => xScale(i))
+      .x((d, i) => xScale(parseTime(i)))
       .y(d => yScale(weekObj[d]))
       .curve(d3.curveMonotoneX);
 
