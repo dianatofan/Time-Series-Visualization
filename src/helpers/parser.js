@@ -124,7 +124,7 @@ export const parseDayInsights = data => {
       return acc;
     }, {});
     let obj = {};
-    for (let i = 1; i <= 24; i++) {
+    for (let i = 0; i <= 24; i++) {
       obj[i] = occurrences[i] || 0
     }
     acc[item] = occurrences;
@@ -265,5 +265,8 @@ export const getCurrentWeekdays = selectedDay => {
     length: daysArr.concat(daysArr1).length
   }
 };
+
+export const getExactTimes = (selectedHour, arr) =>
+  arr.filter(i => moment(i, 'HH:mm:ss').format('HH') === moment(selectedHour.data, 'H').format('HH'));
 
 export default parseData;

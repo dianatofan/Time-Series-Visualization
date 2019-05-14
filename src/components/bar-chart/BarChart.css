@@ -30,4 +30,10 @@
 .checkbox.bold {
   font-weight: bold; }
 
+.axis line {
+  stroke: transparent; }
+
+.cursor-pointer {
+  cursor: pointer; }
+
 /*# sourceMappingURL=BarChart.css.map */

@@ -18,9 +18,7 @@ const Container = props => {
   const barChartProps = {
     data: props.data,
     margin: props.margin,
-    height: props.height,
-    paddingInner: props.paddingInner,
-    paddingOuter: props.paddingOuter
+    height: props.height
   };
 
   return (

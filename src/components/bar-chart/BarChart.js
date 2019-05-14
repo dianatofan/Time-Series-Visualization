@@ -7,7 +7,9 @@ import XAxis from './XAxis';
 import YAxis from './YAxis';
 import Bars from './Bars';
 import AreaChart from './AreaChart';
+import Modal from '../widget/Modal';
 import {
+  openModal,
   showBarChart,
   showMonthOverview,
   showWeekdayOverview,
@@ -16,6 +18,7 @@ import {
 import ReactTooltip from 'react-tooltip';
 import Footer from './Footer';
 import {getAverageColor} from "../../helpers/colors";
+import clock from './clock.svg';
 
 class BarChart extends React.Component {
   constructor(props) {
@@ -45,16 +48,17 @@ class BarChart extends React.Component {
 
   updateScale = (props, data) => {
     const xScale = d3.scaleTime();
-    const newXScale = d3.scaleLinear();
     const yScale = d3.scaleLinear().nice();
 
     const currentWeekInsights = this.props.isWeekOverviewChecked && getCurrentWeekInsights(this.props.dataArr, this.props.selectedDay, this.props.dayInsights);
+
+    const checkedBox = this.props.isWeekOverviewChecked || this.props.isMonthOverviewChecked || this.props.isWeekdayOverviewChecked;
 
     const max = currentWeekInsights ?
       Math.ceil(Math.max(d3.max(Object.values(currentWeekInsights)), d3.max(Object.values(data)))) :
       d3.max(Object.values(data));
 
-    const yDomain = [0, max];
+    const yDomain = [0, checkedBox ? max + max / 20 : max];
 
     const parseTime = d3.timeParse('%H:%M');
     const midnight = parseTime('00:00');
@@ -74,6 +78,10 @@ class BarChart extends React.Component {
     const plotWidth = this.state.width - (props.margin.left + props.margin.right);
     const plotHeight = props.height;
     return {plotWidth, plotHeight}
+  };
+
+  hideModal = () => {
+    this.props.openModal(null);
   };
 
   render() {
@@ -133,6 +141,8 @@ class BarChart extends React.Component {
 
     const color = this.props.color || getAverageColor(this.props.selectedMonth, this.props.selectedWeekday, this.props.colors);
 
+    const d = this.props.modalData;
+
     return (
       <div>
         <svg width='100%' height={this.props.height} ref='barChart'>
@@ -140,24 +150,27 @@ class BarChart extends React.Component {
             <XAxis {...metaData} transform={`translate(0,${plotHeight-50})`}/>
             <YAxis {...metaData} />
             <Bars {...metaData} {...plotData} color={color} />
-            {
-              showAreaChart &&
-              <AreaChart
-                xScale={xScale}
-                yScale={yScale}
-                plotWidth={plotWidth}
-                plotHeight={plotHeight}
-                margin={this.props.margin}
-                weekInsights={insights}
-                occurrences={data}
-                transform={transform}
-                color={color}
-              />
-            }
+            { showAreaChart && <AreaChart {...metaData} {...plotData} margin={this.props.margin} weekInsights={insights} color={color} />}
           </g>
         </svg>
         <Footer />
         <ReactTooltip id='rectTooltip' multiline class='tooltip'/>
+        <Modal show={d} handleClose={this.hideModal}>
+          <div className='modal-title'>{moment(this.props.selectedDay,'YYYY-MM-DD').format('dddd, MMMM DD YYYY')}</div>
+          {d && <div>between {moment(d.data, 'hh').format('H:mm')} - {moment(parseInt(d.data)+1, 'hh').format('H:mm')}</div>}
+          <div className='clock-icon'>
+            <img src={clock} alt='' width={50} height={50} />
+          </div>
+          <div className='time-container'>
+            {
+              this.props.timeArray.map(item =>
+                <span className='time'>
+                  {moment(item, 'HH:mm:ss').format('HH:mm')}
+                </span>
+              )
+            }
+          </div>
+        </Modal>
       </div>
     )
   }
@@ -178,14 +191,17 @@ const mapStateToProps = state => ({
   isMonthOverviewChecked: state.barChart.showMonthOverview,
   isWeekdayOverviewChecked: state.barChart.showWeekdayOverview,
   color: state.calendar.color,
-  colors: state.calendar.colors
+  colors: state.calendar.colors,
+  modalData: state.barChart.modalData,
+  timeArray: state.barChart.timeArray
 });
 
 const mapDispatchToProps = dispatch => ({
   showWeekOverview: val => dispatch(showWeekOverview(val)),
   showMonthOverview: val => dispatch(showMonthOverview(val)),
   showWeekdayOverview: val => dispatch(showWeekdayOverview(val)),
-  showBarChart: val => dispatch(showBarChart(val))
+  showBarChart: val => dispatch(showBarChart(val)),
+  openModal: val => dispatch(openModal(val))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(BarChart);

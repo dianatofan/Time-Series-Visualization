@@ -1,0 +1,53 @@
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8); }
+
+.modal-main {
+  position: fixed;
+  background: white;
+  width: 50%;
+  height: auto;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  text-align: center; }
+
+.display-block {
+  display: block; }
+
+.display-none {
+  display: none; }
+
+.modal .fa-times {
+  color: #777;
+  cursor: pointer;
+  position: absolute;
+  right: 20px; }
+
+.modal .fa-times:hover {
+  color: #424a60; }
+
+.modal-title {
+  font-weight: 700; }
+
+.modal .clock-icon {
+  margin: 40px 40px 0 40px;
+  padding-bottom: 10px;
+  border-bottom: solid 2px #E7ECED; }
+
+.modal .time-container {
+  margin-top: 10px;
+  word-wrap: break-word; }
+
+.time-container .time {
+  color: #424a60;
+  font-weight: 200;
+  font-size: 2vw;
+  margin: 0 20px; }
+
+/*# sourceMappingURL=Modal.css.map */

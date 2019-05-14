@@ -6,7 +6,7 @@ import * as d3 from 'd3';
 
 import { setData, setDatasetName, showSpinner, setMonthInsights, setWeekdayInsights } from '../reducers/app';
 import { showCalendar, selectDay, saveColor } from '../reducers/calendar';
-import { showBarChart, showWeekOverview, showMonthOverview, showWeekdayOverview } from '../reducers/barChart';
+import { showBarChart, showWeekOverview, showMonthOverview, showWeekdayOverview, openModal } from '../reducers/barChart';
 
 import Heatmap from './calendar/Heatmap';
 import Container from './bar-chart/Container';
@@ -80,8 +80,6 @@ const App = props => {
       data={props.allDays[props.selectedDay]}
       margin={{ top: 20, right: 20, bottom: 30, left: 40 }}
       height={300}
-      paddingInner={0.2}
-      paddingOuter={0.1}
     />;
 
   const renderSpinner = () =>
@@ -89,6 +87,7 @@ const App = props => {
       <div className='double-bounce1' />
       <div className='double-bounce2' />
     </div>;
+
 
   return (
     <div className='app'>
@@ -123,7 +122,8 @@ const mapStateToProps = state => ({
   isCalendarVisible: state.calendar.isCalendarVisible,
   isBarChartVisible: state.barChart.isBarChartVisible,
   isEmptyContainerVisible: state.app.isEmptyContainerVisible,
-  isSpinnerVisible: state.app.isSpinnerVisible
+  isSpinnerVisible: state.app.isSpinnerVisible,
+  modalData: state.barChart.modalData
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -138,7 +138,8 @@ const mapDispatchToProps = dispatch => ({
   showWeekOverview: val => dispatch(showWeekOverview(val)),
   showMonthOverview: val => dispatch(showMonthOverview(val)),
   showWeekdayOverview: val => dispatch(showWeekdayOverview(val)),
-  saveColor: val => dispatch(saveColor(val))
+  saveColor: val => dispatch(saveColor(val)),
+  openModal: val => dispatch(openModal(val))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

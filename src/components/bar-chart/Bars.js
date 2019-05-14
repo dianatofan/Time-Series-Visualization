@@ -1,12 +1,15 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import * as d3 from 'd3';
+import moment from 'moment';
+
+import { openModal } from '../../reducers/barChart';
 
 class Bars extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      hoverIndex: -1,
-      modalOpen: null
+      hoverIndex: -1
     }
   }
 
@@ -22,9 +25,7 @@ class Bars extends React.PureComponent {
     const parent = d3.select(this.refs.bars).datum(this.props.plotData);
     const current = parent.selectAll('.bar').data(d => d);
     const openModal = d => {
-      this.setState({
-        modalOpen: d
-      });
+      this.props.openModal({ data: d, arr: this.props.dayInsights[this.props.selectedDay] });
     };
 
     current.interrupt();
@@ -43,7 +44,7 @@ class Bars extends React.PureComponent {
       .attr('height', 0)
       .attr('transform', d => `translate(${d.x}, ${this.props.plotHeight})`)
       .attr('id', (d, i) => `bar-${i}`)
-      .on('mouseover', (d, i) => {console.log(`mouse over ${d} ${i}`); this.setState({ hoverIndex: i })})
+      .on('mouseover', (d, i) => { this.setState({ hoverIndex: i }) })
       .on('mouseleave', () => this.setState({ hoverIndex: -1 }))
       .on('click', d => openModal(d));
 
@@ -59,7 +60,7 @@ class Bars extends React.PureComponent {
       .merge(enter)
       .select('rect')
       .attr('width', d => d.width)
-      .attr('data-tip', d => `Time - ${d.data}:00 <br> Occurrences - ${d.occurrences}`)
+      .attr('data-tip', d => `${d.occurrences} occurrences<br>between ${moment(d.data, 'hh').format('H:mm')} - ${moment(parseInt(d.data)+1, 'hh').format('H:mm')}`)
       .attr('data-for', 'rectTooltip')
       .classed('hovered-bar', (d, i) => i === this.state.hoverIndex)
       .transition()
@@ -75,4 +76,13 @@ class Bars extends React.PureComponent {
   }
 }
 
-export default Bars;
+const mapStateToProps = state => ({
+  dayInsights: state.app.dayInsights,
+  selectedDay: moment(state.calendar.selectedDay).format('YYYY-MM-DD')
+});
+
+const mapDispatchToProps = dispatch => ({
+  openModal: val => dispatch(openModal(val))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Bars);

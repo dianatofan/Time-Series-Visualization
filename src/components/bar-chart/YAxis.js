@@ -11,7 +11,9 @@ class YAxis extends React.PureComponent {
   }
 
   renderAxis = () => {
-    const yAxis = d3.axisLeft(this.props.yScale).ticks(this.props.nrOfTicks).tickFormat(d3.format('d'));
+    const yAxis = d3.axisLeft(this.props.yScale)
+      .ticks(this.props.nrOfTicks)
+      .tickFormat(d3.format('d'));
     d3.select(this.refs.yAxis)
       .transition()
       .call(yAxis);

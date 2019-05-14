@@ -7,10 +7,7 @@ class AreaChart extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      circleHoverIndex: -1,
-      showTooltip: false,
-      domainX: null,
-      domainY: null
+      cursorPointer: -1
     };
   }
 
@@ -52,7 +49,7 @@ class AreaChart extends React.Component {
 
 
   handleMouseMove = (mouseX, mouseY) => {
-    const { xScale, yScale, plotHeight, color } = this.props;
+    const { xScale, yScale, plotHeight, color, plotData } = this.props;
 
     d3.select('.mouse-line')
       .attr('d', function() {
@@ -63,6 +60,9 @@ class AreaChart extends React.Component {
 
     const lines = document.getElementsByClassName('line');
     let pos;
+
+    const formatTime = d3.timeFormat('%H');
+    const parseTime = d3.timeParse('%H');
 
     d3.selectAll('.mouse-per-line')
       .attr('transform', function(d, i) {
@@ -86,18 +86,63 @@ class AreaChart extends React.Component {
 
         const x = xScale.invert(pos.x);
 
-        // console.log(x);
-
-        const parseTime = d3.timeParse('%H');
-
         d3.selectAll('.bar')
-          .style('cursor', 'pointer')
-          .attr('fill', (d, i) => {
-            // console.log(parseTime(d.data), x);
-            return parseTime(d.data) === x ? d3.rgb(color).darker() : color
-          });
+          .attr('fill', d =>  formatTime(parseTime(d.data)) === formatTime(x) ? d3.rgb(color).darker() : color);
 
         return 'translate(' + mouseX + ',' + pos.y +')';
+      });
+
+    d3.selectAll('.mouse-per-bar')
+      .attr('transform', function(d, i) {
+
+        const bars = plotData.map(i => moment(i.data, 'H').format('HH'));
+
+        let beginning = 0,
+          end = lines && lines[i].getTotalLength(),
+          target = null;
+
+        while (end){
+          target = Math.floor((beginning + end) / 2);
+          pos = lines[i].getPointAtLength(target);
+          if ((target === end || target === beginning) && pos.x !== mouseX) {
+            break;
+          }
+          if (pos.x > mouseX)      end = target;
+          else if (pos.x < mouseX) beginning = target;
+          else break; //position found
+        }
+
+        const x = xScale.invert(pos.x);
+
+        if (bars.indexOf(formatTime(x)) > -1) {
+          const item = plotData.find(i => moment(i.data, 'H').format('HH') === formatTime(x));
+          // let repeat = () => {
+          //   d3.select(`#bar-${item.id}`)
+          //     .transition()
+          //     .duration(500)
+          //     .ease(d3.easeLinear)
+          //     .attr('width', item.width * 1.2)
+          //     .transition()
+          //     .duration(500)
+          //     .ease(d3.easeLinear)
+          //     .attr('width', item.width)
+          //     .attr('height', item.height)
+          // };
+          d3.select('.mouse-over-effects')
+            .style('cursor', 'pointer');
+          d3.select('.bar-text')
+            .style('opacity', 1)
+            .text(item.occurrences);
+          d3.select('.bar-circle')
+            .style('opacity', 1);
+          return 'translate(' + mouseX + ',' + `${item.y - 3.8}` +')'
+        }
+        d3.select('.mouse-over-effects')
+          .style('cursor', 'auto');
+        d3.select('.bar-text')
+          .style('opacity', 0);
+        d3.select('.bar-circle')
+          .style('opacity', 0);
       });
   };
 
@@ -119,6 +164,15 @@ class AreaChart extends React.Component {
       .x((d, i) => xScale(parseTime(i)))
       .y(d => yScale(weekObj[d]))
       .curve(d3.curveMonotoneX);
+
+    const setLineOpacity = val => {
+      d3.select('.mouse-line')
+        .style('opacity', val);
+      d3.selectAll('.mouse-per-line .line-circle')
+        .style('opacity', val);
+      d3.selectAll('.mouse-per-line .line-text')
+        .style('opacity', val);
+    };
 
     return (
       <svg className='areaChart' ref='areaChart'>
@@ -147,6 +201,7 @@ class AreaChart extends React.Component {
             className='mouse-per-line'
           >
             <circle
+              className='line-circle'
               r={5}
               fill='#7888BF'
               strokeWidth={1}
@@ -154,32 +209,35 @@ class AreaChart extends React.Component {
               opacity={0}
             />
             <text
+              className='line-text'
               transform='translate(10,3)'
               fontSize={14}
-              // fill='#777'
+            />
+          </g>
+          <g className='mouse-per-bar'>
+            <circle
+              className='bar-circle'
+              r={5}
+              fill={d3.rgb(this.props.color).darker()}
+              strokeWidth={1}
+              stroke='#000'
+              opacity={0}
+            />
+            <text
+              className='bar-text'
+              transform='translate(-17,3)'
+              fontSize={14}
+              opacity={0}
             />
           </g>
           <rect
             width={plotWidth + 40}
             height={plotHeight}
+            transform='translate(0,-20)'
             fill='none'
             pointerEvents='all'
-            onMouseLeave={() => {
-              d3.select('.mouse-line')
-                .style('opacity', '0');
-              d3.selectAll('.mouse-per-line circle')
-                .style('opacity', '0');
-              d3.selectAll('.mouse-per-line text')
-                .style('opacity', '0');
-            }}
-            onMouseOver={() => {
-              d3.select('.mouse-line')
-                .style('opacity', '1');
-              d3.selectAll('.mouse-per-line circle')
-                .style('opacity', '1');
-              d3.selectAll('.mouse-per-line text')
-                .style('opacity', '1');
-            }}
+            onMouseLeave={() => setLineOpacity('0')}
+            onMouseOver={() => setLineOpacity('1')}
             onMouseMove={ev => this.handleMouseMove(ev.nativeEvent.offsetX - 40, ev.nativeEvent.offsetY) }
           >
           </rect>
