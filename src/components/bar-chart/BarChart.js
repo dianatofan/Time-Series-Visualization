@@ -143,6 +143,8 @@ class BarChart extends React.Component {
 
     const d = this.props.modalData;
 
+    const convertRange = (val, r1, r2 )=> (val - r1[0]) * (r2[1] - r2[0]) / (r1[1] - r1[0]) + r2[0];
+
     return (
       <div>
         <svg width='100%' height={this.props.height} ref='barChart'>
@@ -163,9 +165,9 @@ class BarChart extends React.Component {
           </div>
           <div className='time-container'>
             {
-              this.props.timeArray.map(item =>
-                <span className='time'>
-                  {moment(item, 'HH:mm:ss').format('HH:mm')}
+              Object.keys(this.props.timeArray).map(key =>
+                <span className='time' style={{ fontSize: convertRange(this.props.timeArray[key], [1,20], [15,50]) }}>
+                  {key}
                 </span>
               )
             }

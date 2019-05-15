@@ -266,7 +266,9 @@ export const getCurrentWeekdays = selectedDay => {
   }
 };
 
-export const getExactTimes = (selectedHour, arr) =>
-  arr.filter(i => moment(i, 'HH:mm:ss').format('HH') === moment(selectedHour.data, 'H').format('HH'));
+export const getExactTimes = (selectedHour, arr) => {
+  const exactTimes = arr.filter(i => moment(i, 'HH:mm:ss').format('HH') === moment(selectedHour.data, 'H').format('HH'));
+  return countOccurrences(exactTimes.map(i => moment(i, 'HH:mm:ss').format('HH:mm')));
+};
 
 export default parseData;
