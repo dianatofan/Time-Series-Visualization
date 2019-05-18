@@ -27,26 +27,43 @@ class Month extends React.PureComponent {
   }
 
   showMoreData = () => {
-    const { count } = this.state;
+    let { count } = this.state;
     const { month } = this.props;
     const days = d3.timeDays(month, new Date(month.getFullYear(), month.getMonth()+1, 1));
     if (count < days.length) {
-      requestAnimationFrame(() => this.setState({ count: count+1 }));
-    } else {
-      console.log('now show day and month labels');
+      requestAnimationFrame(() => this.setState({ count: count + 1 }));
     }
   };
 
+  getWeeksInMonth = month => {
+    const m = d3.timeMonth.floor(month);
+    return d3.timeWeeks(d3.timeWeek.floor(m), d3.timeMonth.offset(m,1)).length;
+  };
+
+  renderMonthOverview = month => {
+    this.props.selectDay(null);
+    this.props.setWeekdayInsights({
+      selectedWeekday: null,
+      daysOfWeekday: [],
+      weekdayInsights: []
+    });
+    const monthInsights = getMonthInsights(moment().month(month).format('M'), this.props.dayInsights, this.props.allDays);
+    this.props.setMonthInsights({
+      selectedMonth: monthInsights.selectedMonth,
+      daysOfMonth: monthInsights.daysOfMonth,
+      monthInsights: monthInsights.monthInsights
+    });
+    this.props.showBarChart(true);
+  };
+
+  renderDays = (renderList, isCurrentMonth) =>
+    renderList.map(d => <Day fill={isCurrentMonth || moment(d).format('ddd') === this.props.selectedWeekday} day={d} month={this.props.month} key={d} />);
+
   render() {
+    console.log('render month')
     const props = this.props;
 
     const month = props.month;
-
-    const weeksInMonth = month => {
-      const m = d3.timeMonth.floor(month);
-      return d3.timeWeeks(d3.timeWeek.floor(m), d3.timeMonth.offset(m,1)).length;
-    };
-
     const cellMargin = props.cellMargin,
       cellSize = props.cellSize;
 
@@ -65,41 +82,25 @@ class Month extends React.PureComponent {
     const endReached = count >= days.length;
     const renderList = endReached ? days : days.slice(0, count);
 
-    const renderMonthOverview = month => {
-      props.selectDay(null);
-      props.setWeekdayInsights({
-        selectedWeekday: null,
-        daysOfWeekday: [],
-        weekdayInsights: []
-      });
-      const monthInsights = getMonthInsights(moment().month(month).format('M'), props.dayInsights, props.allDays);
-      props.setMonthInsights({
-        selectedMonth: monthInsights.selectedMonth,
-        daysOfMonth: monthInsights.daysOfMonth,
-        monthInsights: monthInsights.monthInsights
-      });
-      props.showBarChart(true);
-    };
-
     const isCurrentMonth = moment(this.props.selectedMonth, 'M').format('MMMM') === monthName(month);
     return (
       <svg
         className='month'
         height={((cellSize * 7) + (cellMargin * 8) + 20)}
-        width={(cellSize * weeksInMonth(month)) + (cellMargin * (weeksInMonth(month) + 5)) + extraSpace}
+        width={(cellSize * this.getWeeksInMonth(month)) + (cellMargin * (this.getWeeksInMonth(month) + 5)) + extraSpace}
         key={month}
       >
         <g>
           <text
             className={classNames('month-name', {'bold': isCurrentMonth})}
             y={(cellSize * 7) + (cellMargin * 8) + 15}
-            x={((cellSize * weeksInMonth(month)) + (cellMargin * (weeksInMonth(month) + 1))) / 2}
+            x={((cellSize * this.getWeeksInMonth(month)) + (cellMargin * (this.getWeeksInMonth(month) + 1))) / 2}
             textAnchor='middle'
-            onClick={() => renderMonthOverview(monthName(month))}
+            onClick={() => this.renderMonthOverview(monthName(month))}
           >
             { monthName(month) }
           </text>
-          { renderList.map(d => <Day fill={isCurrentMonth || moment(d).format('ddd') === props.selectedWeekday} day={d} month={month} key={d} />) }
+          { this.renderDays(renderList, isCurrentMonth) }
         </g>
       </svg>
     )

@@ -192,8 +192,9 @@ class AreaChart extends React.Component {
         <g className='mouse-over-effects'>
           <path
             className='mouse-line'
-            stroke='#000'
+            stroke='#777'
             strokeWidth={1}
+            strokeDasharray='3,3'
             opacity={0}
           >
           </path>

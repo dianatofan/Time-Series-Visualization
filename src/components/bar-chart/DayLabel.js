@@ -15,134 +15,112 @@ class DayLabel extends React.Component {
       nextProps.selectedWeekday !== this.props.selectedWeekday;
   }
 
-  render() {
-    const { minDate, maxDate, selectDay, showBarChart, setMonthInsights, setWeekdayInsights,
-      selectedMonth, selectedDay, dayInsights, allDays, selectedWeekday, colors, currentWeekdays, dataArr } = this.props;
-    const selectedItem = selectedMonth || selectedWeekday || selectedDay;
-    let unit = '';
-    if (selectedMonth) {
-      unit = 'months';
-    } else if (selectedWeekday) {
-      unit = 'weeks';
+  pickDay = day => {
+    this.props.setMonthInsights({
+      monthInsights: [],
+      daysOfMonth: [],
+      selectedMonth: null
+    });
+    this.props.setWeekdayInsights({
+      selectedWeekday: null,
+      daysOfWeekday: [],
+      weekdayInsights: []
+    });
+    const color = this.props.colors.find(color => color.day === moment(day).format('DD-MM-YYYY'));
+    const value = color && d3.color(color.value);
+    this.props.selectDay({ day, color: value });
+    this.props.showBarChart(true);
+  };
+
+  pickMonth = month => {
+    this.props.selectDay(null);
+    this.props.setWeekdayInsights({
+      selectedWeekday: null,
+      daysOfWeekday: [],
+      weekdayInsights: []
+    });
+    const monthInsights = getMonthInsights(month.toString(), this.props.dayInsights, this.props.allDays);
+    this.props.setMonthInsights({
+      selectedMonth: monthInsights.selectedMonth,
+      daysOfMonth: monthInsights.daysOfMonth,
+      monthInsights: monthInsights.monthInsights
+    });
+    this.props.showBarChart(true);
+  };
+
+  pickWeekday = weekday => {
+    this.props.selectDay(null);
+    this.props.setMonthInsights({
+      monthInsights: [],
+      daysOfMonth: [],
+      selectedMonth: null
+    });
+    const weekdayInsights = getWeekdayInsights(weekday, this.props.dayInsights, this.props.allDays, this.props.currentWeekdays, this.props.dataArr);
+    this.props.setWeekdayInsights({
+      weekdayInsights: weekdayInsights.weekdayInsights,
+      daysOfWeekday: weekdayInsights.daysOfWeekday,
+      selectedWeekday: weekdayInsights.selectedWeekday
+    });
+    this.props.showBarChart(true);
+  };
+
+  getUnit = () => {
+    if (this.props.selectedMonth) {
+      return 'months';
+    } else if (this.props.selectedWeekday) {
+      return 'weeks';
     } else {
-      unit = 'days';
+      return 'days';
     }
+  };
+
+  getString = selectedItem => {
+    if (this.props.selectedMonth) {
+      return moment(this.props.selectedMonth, 'M').format('MMMM');
+    } else if (this.props.selectedWeekday) {
+      return `${moment(this.props.selectedWeekday, 'ddd').format('dddd')}s`;
+    } else {
+      return moment(selectedItem).format('dddd, MMMM DD YYYY');
+    }
+  };
+
+  select = (selectedItem, val, unit) => {
+    if (this.props.selectedDay) {
+      this.pickDay(moment(selectedItem).add(val, unit));
+    } else if (this.props.selectedMonth) {
+      this.pickMonth(parseInt(selectedItem) + val);
+    } else if (this.props.selectedWeekday) {
+      const isoWeekday = moment(selectedItem, 'ddd').isoWeekday();
+      this.pickWeekday((moment(selectedItem, 'ddd').isoWeekday(isoWeekday + val)).format('ddd'));
+    }
+  };
+
+  render() {
+    const { minDate, maxDate, selectedMonth, selectedDay, selectedWeekday } = this.props;
+    const selectedItem = selectedMonth || selectedWeekday || selectedDay;
+    const unit = this.getUnit();
+
     const previousItem = selectedMonth ? selectedMonth-1 : moment(selectedItem).subtract(1, unit);
     const nextItem = selectedMonth ? parseInt(selectedMonth)+1 : moment(selectedItem).add(1, unit);
+
     const showPreviousArrow = selectedMonth ? moment(previousItem, 'M').isAfter(minDate.startOf('year')) : previousItem.isAfter(minDate.startOf('year'));
     const showNextArrow = selectedMonth ? true : nextItem.isBefore(maxDate.endOf('year'));
-    const pickDay = day => {
-      setMonthInsights({
-        monthInsights: [],
-        daysOfMonth: [],
-        selectedMonth: null
-      });
-      setWeekdayInsights({
-        selectedWeekday: null,
-        daysOfWeekday: [],
-        weekdayInsights: []
-      });
-      const color = colors.find(color => color.day === moment(day).format('DD-MM-YYYY'));
-      const value = color && d3.color(color.value);
-      selectDay({ day, color: value });
-      showBarChart(true);
-    };
-    const pickMonth = month => {
-      selectDay(null);
-      setWeekdayInsights({
-        selectedWeekday: null,
-        daysOfWeekday: [],
-        weekdayInsights: []
-      });
-      const monthInsights = getMonthInsights(month.toString(), dayInsights, allDays);
-      setMonthInsights({
-        selectedMonth: monthInsights.selectedMonth,
-        daysOfMonth: monthInsights.daysOfMonth,
-        monthInsights: monthInsights.monthInsights
-      });
-      showBarChart(true);
-    };
-    const pickWeekday = weekday => {
-      selectDay(null);
-      setMonthInsights({
-        monthInsights: [],
-        daysOfMonth: [],
-        selectedMonth: null
-      });
-      const weekdayInsights = getWeekdayInsights(weekday, dayInsights, allDays, currentWeekdays, dataArr);
-      setWeekdayInsights({
-        weekdayInsights: weekdayInsights.weekdayInsights,
-        daysOfWeekday: weekdayInsights.daysOfWeekday,
-        selectedWeekday: weekdayInsights.selectedWeekday
-      });
-      showBarChart(true);
-    };
-    let string = '';
-    if (selectedMonth) {
-      string = moment(selectedMonth, 'M').format('MMMM');
-    } else if (selectedWeekday) {
-      string = `${moment(selectedWeekday, 'ddd').format('dddd')}s`;
-    } else {
-      string = moment(selectedItem).format('dddd, MMMM DD YYYY');
-    }
 
     return (
       <div className='year-label dayTitle'
            tabIndex={0}
-           onKeyDown={ev => {
-             if (ev) {
-               if (ev.key === 'ArrowLeft') {
-                 if (selectedDay) {
-                   pickDay(moment(selectedItem).add(-1, unit));
-                 } else if (selectedMonth) {
-                   pickMonth(parseInt(selectedItem) - 1);
-                 } else if (selectedWeekday) {
-                   const isoWeekday = moment(selectedItem, 'ddd').isoWeekday();
-                   pickWeekday((moment(selectedItem, 'ddd').isoWeekday(isoWeekday - 1)).format('ddd'));
-                 }
-               }
-               if (ev.key === 'ArrowRight') {
-                 if (selectedDay) {
-                   pickDay(moment(selectedItem).add(1, unit));
-                 } else if (selectedMonth) {
-                   pickMonth(parseInt(selectedItem) + 1);
-                 } else if (selectedWeekday) {
-                   const isoWeekday = moment(selectedItem, 'ddd').isoWeekday();
-                   pickWeekday((moment(selectedItem, 'ddd').isoWeekday(isoWeekday + 1)).format('ddd'));
-                 }
-               }
-             }
-      }}>
+           onKeyDown={ev =>
+             (ev.key === 'ArrowLeft' && this.select(selectedItem, -1, unit)) ||
+             (ev.key === 'ArrowRight' && this.select(selectedItem, 1, unit))
+           }>
         <i
           className={classNames('fas fa-chevron-left', {'disabled': !showPreviousArrow})}
-          onClick={() => {
-            if (showPreviousArrow) {
-              if (selectedDay) {
-                pickDay(moment(selectedItem).add(-1, unit));
-              } else if (selectedMonth) {
-                pickMonth(parseInt(selectedItem) - 1);
-              } else if (selectedWeekday) {
-                const isoWeekday = moment(selectedItem, 'ddd').isoWeekday();
-                pickWeekday((moment(selectedItem, 'ddd').isoWeekday(isoWeekday - 1)).format('ddd'));
-              }
-            }}
-          }
+          onClick={() => showPreviousArrow && this.select(selectedItem, -1, unit)}
         />
-        { string }
+        { this.getString(selectedItem) }
         <i
           className={classNames('fas fa-chevron-right', {'disabled': !showNextArrow})}
-          onClick={() => {
-            if (showPreviousArrow) {
-              if (selectedDay) {
-                pickDay(moment(selectedItem).add(+1, unit));
-              } else if (selectedMonth) {
-                pickMonth(parseInt(selectedItem) + 1);
-              } else if (selectedWeekday) {
-                const isoWeekday = moment(selectedItem, 'ddd').isoWeekday();
-                pickWeekday((moment(selectedItem, 'ddd').isoWeekday(isoWeekday + 1)).format('ddd'));
-              }
-            }}
-          }
+          onClick={() => showPreviousArrow && this.select(selectedItem, 1, unit)}
         />
       </div>
     )
