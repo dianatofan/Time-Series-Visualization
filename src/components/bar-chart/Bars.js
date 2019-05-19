@@ -21,16 +21,17 @@ class Bars extends React.PureComponent {
     this.renderBars();
   }
 
+  openModal = d => {
+    this.props.openModal({ data: d, arr: this.props.dayInsights[this.props.selectedDay] });
+  };
+
   renderBars = () => {
     const parent = d3.select(this.refs.bars).datum(this.props.plotData);
     const current = parent.selectAll('.bar').data(d => d);
-    const openModal = d => {
-      this.props.openModal({ data: d, arr: this.props.dayInsights[this.props.selectedDay] });
-    };
 
     current.interrupt();
 
-    const color = this.props.color; // || '#6595ec';
+    const color = this.props.color;
 
     current.transition()
       .attr('fill', (d, i) => i === this.state.hoverIndex ? d3.rgb(color).darker() : color);
@@ -46,7 +47,7 @@ class Bars extends React.PureComponent {
       .attr('id', (d, i) => `bar-${i}`)
       .on('mouseover', (d, i) => { this.setState({ hoverIndex: i }) })
       .on('mouseleave', () => this.setState({ hoverIndex: -1 }))
-      .on('click', d => openModal(d));
+      .on('click', d => this.openModal(d));
 
     const exit = current.exit().classed('bar', false);
     exit

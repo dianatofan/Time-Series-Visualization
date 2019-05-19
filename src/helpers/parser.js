@@ -152,9 +152,9 @@ export const getCurrentWeekInsights = (data, selectedDay, dayInsights) => {
     return acc;
   }, {});
   let weekObj = {};
+
   for (let i = 0; i < 24; i++) {
-    const index = (i === 0) ? i : (i + 0.25);
-    weekObj[index] = weekOccurrences[i] ? Number(weekOccurrences[i] / length).toFixed(2) : 0
+    weekObj[i] = weekOccurrences[i] ? Number(weekOccurrences[i] / length).toFixed(2) : 0
   }
   return weekObj;
 };

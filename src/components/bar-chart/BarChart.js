@@ -8,11 +8,10 @@ import YAxis from './YAxis';
 import Bars from './Bars';
 import AreaChart from './AreaChart';
 import Modal from '../widget/Modal';
-import { openModal,  showBarChart, showMonthOverview, showWeekdayOverview, showWeekOverview } from '../../reducers/barChart';
+import { showBarChart, showMonthOverview, showWeekdayOverview, showWeekOverview } from '../../reducers/barChart';
 import ReactTooltip from 'react-tooltip';
 import Footer from './Footer';
 import {getAverageColor} from "../../helpers/colors";
-import clock from './clock.svg';
 
 class BarChart extends React.Component {
   constructor(props) {
@@ -42,7 +41,7 @@ class BarChart extends React.Component {
 
   updateScale = (props, data) => {
     const xScale = d3.scaleTime();
-    const xScaleArea = d3.scaleLinear().nice();
+    const xScaleArea = d3.scaleTime();
     const yScale = d3.scaleLinear().nice();
 
     const currentWeekInsights = this.props.isWeekOverviewChecked && getCurrentWeekInsights(this.props.dataArr, this.props.selectedDay, this.props.dayInsights);
@@ -59,12 +58,12 @@ class BarChart extends React.Component {
     const midnight = parseTime('00:00');
 
     xScale
-      .domain([midnight, d3.timeDay.offset(midnight, 1)])
+      .domain([midnight, d3.timeDay.offset(midnight)])
       .range([0, this.state.width - props.margin.right]);
 
     xScaleArea
-      .domain([0, 23])
-      .range([0, this.state.width - props.margin.right - 10]);
+      .domain([midnight, d3.timeDay.offset(midnight)])
+      .range([0, this.state.width - props.margin.right]);
 
     yScale
       .domain(yDomain)
@@ -78,30 +77,6 @@ class BarChart extends React.Component {
     const plotHeight = props.height;
     return {plotWidth, plotHeight}
   };
-
-  hideModal = () => {
-    this.props.openModal(null);
-  };
-
-  convertRange = (val, r1, r2 )=> (val - r1[0]) * (r2[1] - r2[0]) / (r1[1] - r1[0]) + r2[0];
-
-  renderModal = props =>
-    <Modal show={props.modalData} handleClose={this.hideModal}>
-      <div className='modal-title'>{moment(props.selectedDay,'YYYY-MM-DD').format('dddd, MMMM DD YYYY')}</div>
-      {props.modalData && <div>between {moment(props.modalData.data, 'hh').format('H:mm')} - {moment(parseInt(props.modalData.data)+1, 'hh').format('H:mm')}</div>}
-      <div className='clock-icon'>
-        <img src={clock} alt='' width={50} height={50} />
-      </div>
-      <div className='time-container'>
-        {
-          Object.keys(props.timeArray).map(key =>
-            <span className='time' style={{ fontSize: this.convertRange(props.timeArray[key], [1,20], [15,50]) }}>
-              {key}
-            </span>
-          )
-        }
-      </div>
-    </Modal>;
 
   render() {
     let data = [];
@@ -173,7 +148,7 @@ class BarChart extends React.Component {
         </svg>
         <Footer />
         <ReactTooltip id='rectTooltip' multiline class='tooltip'/>
-        { this.renderModal(this.props) }
+        <Modal />
       </div>
     )
   }
@@ -194,17 +169,14 @@ const mapStateToProps = state => ({
   isMonthOverviewChecked: state.barChart.showMonthOverview,
   isWeekdayOverviewChecked: state.barChart.showWeekdayOverview,
   color: state.calendar.color,
-  colors: state.calendar.colors,
-  modalData: state.barChart.modalData,
-  timeArray: state.barChart.timeArray
+  colors: state.calendar.colors
 });
 
 const mapDispatchToProps = dispatch => ({
   showWeekOverview: val => dispatch(showWeekOverview(val)),
   showMonthOverview: val => dispatch(showMonthOverview(val)),
   showWeekdayOverview: val => dispatch(showWeekdayOverview(val)),
-  showBarChart: val => dispatch(showBarChart(val)),
-  openModal: val => dispatch(openModal(val))
+  showBarChart: val => dispatch(showBarChart(val))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(BarChart);
