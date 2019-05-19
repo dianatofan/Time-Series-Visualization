@@ -8,13 +8,7 @@ import YAxis from './YAxis';
 import Bars from './Bars';
 import AreaChart from './AreaChart';
 import Modal from '../widget/Modal';
-import {
-  openModal,
-  showBarChart,
-  showMonthOverview,
-  showWeekdayOverview,
-  showWeekOverview
-} from '../../reducers/barChart';
+import { openModal,  showBarChart, showMonthOverview, showWeekdayOverview, showWeekOverview } from '../../reducers/barChart';
 import ReactTooltip from 'react-tooltip';
 import Footer from './Footer';
 import {getAverageColor} from "../../helpers/colors";
@@ -48,6 +42,7 @@ class BarChart extends React.Component {
 
   updateScale = (props, data) => {
     const xScale = d3.scaleTime();
+    const xScaleArea = d3.scaleLinear().nice();
     const yScale = d3.scaleLinear().nice();
 
     const currentWeekInsights = this.props.isWeekOverviewChecked && getCurrentWeekInsights(this.props.dataArr, this.props.selectedDay, this.props.dayInsights);
@@ -67,11 +62,15 @@ class BarChart extends React.Component {
       .domain([midnight, d3.timeDay.offset(midnight, 1)])
       .range([0, this.state.width - props.margin.right]);
 
+    xScaleArea
+      .domain([0, 23])
+      .range([0, this.state.width - props.margin.right - 10]);
+
     yScale
       .domain(yDomain)
       .range([props.height - props.margin.top - props.margin.bottom, 0]);
 
-    return {xScale, yScale};
+    return {xScale, yScale, xScaleArea};
   };
 
   updatePlotSize = props => {
@@ -84,6 +83,26 @@ class BarChart extends React.Component {
     this.props.openModal(null);
   };
 
+  convertRange = (val, r1, r2 )=> (val - r1[0]) * (r2[1] - r2[0]) / (r1[1] - r1[0]) + r2[0];
+
+  renderModal = props =>
+    <Modal show={props.modalData} handleClose={this.hideModal}>
+      <div className='modal-title'>{moment(props.selectedDay,'YYYY-MM-DD').format('dddd, MMMM DD YYYY')}</div>
+      {props.modalData && <div>between {moment(props.modalData.data, 'hh').format('H:mm')} - {moment(parseInt(props.modalData.data)+1, 'hh').format('H:mm')}</div>}
+      <div className='clock-icon'>
+        <img src={clock} alt='' width={50} height={50} />
+      </div>
+      <div className='time-container'>
+        {
+          Object.keys(props.timeArray).map(key =>
+            <span className='time' style={{ fontSize: this.convertRange(props.timeArray[key], [1,20], [15,50]) }}>
+              {key}
+            </span>
+          )
+        }
+      </div>
+    </Modal>;
+
   render() {
     let data = [];
     if (!!this.props.monthInsights.length) {
@@ -93,7 +112,7 @@ class BarChart extends React.Component {
     } else {
       data = this.props.data;
     }
-    const { xScale, yScale } =  this.updateScale(this.props, data);
+    const { xScale, yScale, xScaleArea } =  this.updateScale(this.props, data);
     const { plotWidth, plotHeight } = this.updatePlotSize(this.props);
 
     const max = d3.max(Object.values(data));
@@ -104,6 +123,7 @@ class BarChart extends React.Component {
     const metaData = {
       xScale,
       yScale,
+      xScaleArea,
       plotWidth,
       plotHeight,
       nrOfTicks
@@ -141,10 +161,6 @@ class BarChart extends React.Component {
 
     const color = this.props.color || getAverageColor(this.props.selectedMonth, this.props.selectedWeekday, this.props.colors);
 
-    const d = this.props.modalData;
-
-    const convertRange = (val, r1, r2 )=> (val - r1[0]) * (r2[1] - r2[0]) / (r1[1] - r1[0]) + r2[0];
-
     return (
       <div>
         <svg width='100%' height={this.props.height} ref='barChart'>
@@ -157,22 +173,7 @@ class BarChart extends React.Component {
         </svg>
         <Footer />
         <ReactTooltip id='rectTooltip' multiline class='tooltip'/>
-        <Modal show={d} handleClose={this.hideModal}>
-          <div className='modal-title'>{moment(this.props.selectedDay,'YYYY-MM-DD').format('dddd, MMMM DD YYYY')}</div>
-          {d && <div>between {moment(d.data, 'hh').format('H:mm')} - {moment(parseInt(d.data)+1, 'hh').format('H:mm')}</div>}
-          <div className='clock-icon'>
-            <img src={clock} alt='' width={50} height={50} />
-          </div>
-          <div className='time-container'>
-            {
-              Object.keys(this.props.timeArray).map(key =>
-                <span className='time' style={{ fontSize: convertRange(this.props.timeArray[key], [1,20], [15,50]) }}>
-                  {key}
-                </span>
-              )
-            }
-          </div>
-        </Modal>
+        { this.renderModal(this.props) }
       </div>
     )
   }

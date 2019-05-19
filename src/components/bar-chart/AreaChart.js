@@ -49,7 +49,7 @@ class AreaChart extends React.Component {
 
 
   handleMouseMove = (mouseX, mouseY) => {
-    const { xScale, yScale, plotHeight, color, plotData } = this.props;
+    const { xScaleArea, yScale, plotHeight, color, plotData } = this.props;
 
     d3.select('.mouse-line')
       .attr('d', function() {
@@ -84,7 +84,7 @@ class AreaChart extends React.Component {
         d3.select(this).select('text')
           .text(Number(yScale.invert(pos.y)).toFixed(2));
 
-        const x = xScale.invert(pos.x);
+        const x = xScaleArea.invert(pos.x);
 
         d3.selectAll('.bar')
           .attr('fill', d =>  formatTime(parseTime(d.data)) === formatTime(x) ? d3.rgb(color).darker() : color);
@@ -112,22 +112,10 @@ class AreaChart extends React.Component {
           else break; //position found
         }
 
-        const x = xScale.invert(pos.x);
+        const x = xScaleArea.invert(pos.x);
 
         if (bars.indexOf(formatTime(x)) > -1) {
           const item = plotData.find(i => moment(i.data, 'H').format('HH') === formatTime(x));
-          // let repeat = () => {
-          //   d3.select(`#bar-${item.id}`)
-          //     .transition()
-          //     .duration(500)
-          //     .ease(d3.easeLinear)
-          //     .attr('width', item.width * 1.2)
-          //     .transition()
-          //     .duration(500)
-          //     .ease(d3.easeLinear)
-          //     .attr('width', item.width)
-          //     .attr('height', item.height)
-          // };
           d3.select('.mouse-over-effects')
             .style('cursor', 'pointer');
           d3.select('.bar-text')
@@ -147,23 +135,22 @@ class AreaChart extends React.Component {
   };
 
   render() {
-    const { xScale, plotWidth, plotHeight, margin, yScale } = this.props;
+    const { xScaleArea, plotWidth, plotHeight, margin, yScale } = this.props;
 
     const weekObj = this.props.weekInsights;
 
     const parseTime = d3.timeParse('%H');
 
-    // define the area
     const area = d3.area()
-      .x(d => xScale(parseTime(d)))
+      .x(d => xScaleArea(d))
       .y0(plotHeight - margin.top - margin.bottom)
       .y1(d => yScale(weekObj[d]))
-      .curve(d3.curveMonotoneX);
+      // .curve(d3.curveMonotoneX);
 
-    const valueline = d3.line()
-      .x((d, i) => xScale(parseTime(i)))
+    const line = d3.line()
+      .x(d => xScaleArea(d))
       .y(d => yScale(weekObj[d]))
-      .curve(d3.curveMonotoneX);
+      // .curve(d3.curveMonotoneX);
 
     const setLineOpacity = val => {
       d3.select('.mouse-line')
@@ -187,7 +174,7 @@ class AreaChart extends React.Component {
               d={area(Object.keys(weekObj))}
         />
         <path className='line shadow'
-              d={valueline(Object.keys(weekObj))}
+              d={line(Object.keys(weekObj))}
         />
         <g className='mouse-over-effects'>
           <path
@@ -234,7 +221,7 @@ class AreaChart extends React.Component {
           <rect
             width={plotWidth + 40}
             height={plotHeight}
-            transform='translate(0,-20)'
+            transform='translate(0,0)'
             fill='none'
             pointerEvents='all'
             onMouseLeave={() => setLineOpacity('0')}

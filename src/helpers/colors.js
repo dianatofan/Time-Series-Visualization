@@ -32,7 +32,14 @@ export const getDayColor = (props, isCurrentDay) => {
     const isCurrentWeekday = (props.currentWeekdays && props.currentWeekdays.daysArr.includes(moment(props.day).format('DD-MM-YYYY')) && props.showWeekdayOverview) ||
       (props.selectedWeekday && props.selectedWeekday === moment(props.day).format('ddd'));
 
-    const value = props.data[item] && normalize(props.data[item], Math.max(...Object.values(props.data)), Math.min(...Object.values(props.data)));
+    const daysArr = Array.from({length: moment(props.month).daysInMonth()}, (x, i) => moment(props.month).startOf('month').add(i, 'days').format('YYYY-MM-DD'));
+
+    const count = Object.keys(props.data).reduce((acc, item) => {
+      daysArr.includes(item) && acc.push(props.data[item]);
+      return acc;
+    }, []);
+
+    const value = !!props.data[item] && normalize(props.data[item], Math.max(...count), Math.min(...count));
     const interpolateColor = (isCurrentDay || isCurrentWeek || isCurrentMonth || isCurrentWeekday) ? d3.interpolateOranges(value) : d3.interpolatePurples(value);
 
     const isColorSaved = props.colors.find(color => color.day === moment(props.day).format('DD-MM-YYYY'));
@@ -40,12 +47,13 @@ export const getDayColor = (props, isCurrentDay) => {
 
     return {
       value,
-      count: props.data[item] || 0,
+      count: props.data[item],
       fillColor: interpolateColor
     }
   }
 
   return {
-    fillColor: '#ececec'
+    fillColor: '#ececec',
+    count: 0
   };
 };

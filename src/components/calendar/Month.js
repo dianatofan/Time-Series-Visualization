@@ -29,7 +29,7 @@ class Month extends React.PureComponent {
   showMoreData = () => {
     let { count } = this.state;
     const { month } = this.props;
-    const days = d3.timeDays(month, new Date(month.getFullYear(), month.getMonth()+1, 1));
+    const days = d3.timeDays(month, new Date(month.getFullYear(), month.getMonth() + 1, 1));
     if (count < days.length) {
       requestAnimationFrame(() => this.setState({ count: count + 1 }));
     }
@@ -60,7 +60,6 @@ class Month extends React.PureComponent {
     renderList.map(d => <Day fill={isCurrentMonth || moment(d).format('ddd') === this.props.selectedWeekday} day={d} month={this.props.month} key={d} />);
 
   render() {
-    console.log('render month')
     const props = this.props;
 
     const month = props.month;
