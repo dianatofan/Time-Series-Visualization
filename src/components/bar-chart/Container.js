@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 
 import Card from '../widget/Card';
@@ -22,13 +23,17 @@ const Container = props => {
   };
 
   return (
-    <Section title='Day overview'>
+    <Section className={classNames({'section-one-third': props.showDatasetOverview, 'section-two-thirds': !props.showDatasetOverview})}>
       <Card>
-        <DayLabel selectedDay={props.selectedDay} />
+        {
+          props.showDatasetOverview ?
+          <div className='year-label dayTitle dataset-overview-title'>Weekdays vs. weekends</div> :
+          <DayLabel selectedDay={props.selectedDay} />
+        }
         <div className='barChart'>
           {
             showBarChart
-              ? <BarChart {...barChartProps} />
+              ? <BarChart {...barChartProps} showDatasetOverview={props.showDatasetOverview} />
               : <div className='emptyString'>No data recorded</div>
           }
         </div>

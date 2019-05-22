@@ -1,5 +1,4 @@
 import moment from 'moment';
-import * as d3 from "d3";
 
 const parseTime = timeStamp => {
   const timeString = timeStamp.split('T')[1].slice(0, -1);
@@ -58,6 +57,7 @@ export const getMonthInsights = (month, dayInsights, allDays) => {
       } else {
         acc[key] = val[key];
       }
+      return null;
     });
     return acc;
   }, {});
@@ -66,6 +66,21 @@ export const getMonthInsights = (month, dayInsights, allDays) => {
     daysOfMonth: mergedDays,
     monthInsights: mergedData.flat()
   };
+};
+
+export const getDatasetOverview = (allDays, data, dayInsights) => {
+  const weekdayInsights = Object.keys(dayInsights)
+    .reduce((obj, key) => {
+      const weekday = moment(key, 'YYYY-MM-DD').format('ddd');
+      obj[weekday] = obj[weekday] || [];
+      obj[weekday].push(dayInsights[key]);
+      return obj;
+    }, {});
+  return Object.keys(weekdayInsights)
+    .reduce((obj, key) => {
+      obj[key] = weekdayInsights[key].flat().length;
+      return obj;
+    }, {});
 };
 
 export const getWeekdayInsights = (weekday, dayInsights, allDays, currentWeekdays, data) => {
@@ -92,6 +107,7 @@ export const getWeekdayInsights = (weekday, dayInsights, allDays, currentWeekday
       } else {
         acc[key] = val[key];
       }
+      return null;
     });
     return acc;
   }, {});

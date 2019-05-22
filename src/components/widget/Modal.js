@@ -6,7 +6,7 @@ import './Modal.scss';
 
 import { openModal } from "../../reducers/barChart";
 import moment from 'moment';
-import clock from "../bar-chart/clock.svg";
+import clock from "../../icons/clock.svg";
 
 class Modal extends React.PureComponent {
 

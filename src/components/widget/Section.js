@@ -1,7 +1,9 @@
 import React from 'react';
 
+import './Section.scss';
+
 const Section = props =>
-  <section>
+  <section className={`section ${props.className || ''}`}>
     <p>{props.title}</p>
     {props.children}
   </section>;

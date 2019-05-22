@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import * as d3 from 'd3';
-import {getCurrentMonthInsights, getCurrentWeekInsights, getWeekdayInsights} from '../../helpers/parser';
+import {getCurrentMonthInsights, getCurrentWeekInsights, getWeekdayInsights, getDatasetOverview} from '../../helpers/parser';
 import XAxis from './XAxis';
 import YAxis from './YAxis';
 import Bars from './Bars';
@@ -12,12 +12,13 @@ import { showBarChart, showMonthOverview, showWeekdayOverview, showWeekOverview 
 import ReactTooltip from 'react-tooltip';
 import Footer from './Footer';
 import {getAverageColor} from "../../helpers/colors";
+import RadialChart from '../radial-chart/RadialChart';
 
 class BarChart extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      width: document.getElementById('card').clientWidth - props.margin.left - props.margin.right
+      width: (document.getElementById('card').clientWidth - props.margin.left - props.margin.right) * 0.66
     };
   }
 
@@ -39,56 +40,76 @@ class BarChart extends React.Component {
     });
   };
 
-  updateScale = (props, data) => {
+  getData = () => {
+    if (!!this.props.monthInsights.length) {
+      return this.props.daysOfMonth;
+    }
+    if (!!this.props.weekdayInsights.length) {
+      return this.props.daysOfWeekday;
+    }
+    return this.props.data;
+  };
+
+  getInsights = () => {
+    if (this.props.showDatasetOverview) {
+      return getDatasetOverview(this.props.allDays, this.props.dataArr, this.props.dayInsights);
+    }
+    if (this.props.isWeekOverviewChecked) {
+      return getCurrentWeekInsights(this.props.dataArr, this.props.selectedDay, this.props.dayInsights);
+    }
+    if (this.props.isMonthOverviewChecked) {
+      return getCurrentMonthInsights(this.props.dataArr, this.props.selectedDay, this.props.dayInsights);
+    }
+    if (this.props.isWeekdayOverviewChecked) {
+      return getWeekdayInsights(moment(this.props.selectedDay).format('ddd'), this.props.dayInsights, this.props.allDays, this.props.currentWeekdays, this.props.dataArr).weekdayObj;
+    }
+  };
+
+  showAreaChart = () => !this.props.showDatasetOverview &&
+    (this.props.isWeekOverviewChecked || this.props.isMonthOverviewChecked || this.props.isWeekdayOverviewChecked);
+
+  updateScale = data => {
     const xScale = d3.scaleTime();
     const xScaleArea = d3.scaleTime();
     const yScale = d3.scaleLinear().nice();
 
-    const currentWeekInsights = this.props.isWeekOverviewChecked && getCurrentWeekInsights(this.props.dataArr, this.props.selectedDay, this.props.dayInsights);
+    const insights = this.getInsights();
 
-    const checkedBox = this.props.isWeekOverviewChecked || this.props.isMonthOverviewChecked || this.props.isWeekdayOverviewChecked;
-
-    const max = currentWeekInsights ?
-      Math.ceil(Math.max(d3.max(Object.values(currentWeekInsights)), d3.max(Object.values(data)))) :
+    const max = insights ?
+      Math.ceil(Math.max(d3.max(Object.values(insights)), d3.max(Object.values(data)))) :
       d3.max(Object.values(data));
 
-    const yDomain = [0, checkedBox ? max + max / 20 : max];
+    const yDomain = [0, this.showAreaChart() ? max + max / 20 : max];
 
     const parseTime = d3.timeParse('%H:%M');
     const midnight = parseTime('00:00');
 
     xScale
       .domain([midnight, d3.timeDay.offset(midnight)])
-      .range([0, this.state.width - props.margin.right]);
+      .range([0, this.state.width - this.props.margin.right]);
 
     xScaleArea
       .domain([midnight, d3.timeDay.offset(midnight)])
-      .range([0, this.state.width - props.margin.right]);
+      .range([0, this.state.width - this.props.margin.right]);
 
     yScale
       .domain(yDomain)
-      .range([props.height - props.margin.top - props.margin.bottom, 0]);
+      .range([this.props.height - this.props.margin.top - this.props.margin.bottom, 0]);
 
     return {xScale, yScale, xScaleArea};
   };
 
-  updatePlotSize = props => {
-    const plotWidth = this.state.width - (props.margin.left + props.margin.right);
-    const plotHeight = props.height;
+  updatePlotSize = () => {
+    const plotWidth = this.state.width - (this.props.margin.left + this.props.margin.right);
+    const plotHeight = this.props.height;
     return {plotWidth, plotHeight}
   };
 
   render() {
-    let data = [];
-    if (!!this.props.monthInsights.length) {
-      data = this.props.daysOfMonth;
-    } else if (!!this.props.weekdayInsights.length) {
-      data = this.props.daysOfWeekday;
-    } else {
-      data = this.props.data;
-    }
-    const { xScale, yScale, xScaleArea } =  this.updateScale(this.props, data);
-    const { plotWidth, plotHeight } = this.updatePlotSize(this.props);
+    const data = this.props.showDatasetOverview ? this.getInsights() : this.getData();
+
+    const { xScale, yScale, xScaleArea } =  this.updateScale(data);
+    const { plotWidth, plotHeight } = this.updatePlotSize();
 
     const max = d3.max(Object.values(data));
     const nrOfTicks = max < 10 ? max : (max > 20 ? max / 4 : max / 2);
@@ -116,39 +137,25 @@ class BarChart extends React.Component {
     };
 
     const transform = `translate(${this.props.margin.left},${this.props.margin.top})`;
-
-    const currentWeekInsights = this.props.isWeekOverviewChecked && getCurrentWeekInsights(this.props.dataArr, this.props.selectedDay, this.props.dayInsights);
-    const currentMonthInsights = this.props.isMonthOverviewChecked && getCurrentMonthInsights(this.props.dataArr, this.props.selectedDay, this.props.dayInsights);
-    const currentWeekdayInsights = this.props.isWeekdayOverviewChecked && getWeekdayInsights(moment(this.props.selectedDay).format('ddd'), this.props.dayInsights, this.props.allDays, this.props.currentWeekdays, this.props.dataArr);
-
-    let insights;
-    if (this.props.isWeekOverviewChecked) {
-      insights = currentWeekInsights;
-    }
-    if (this.props.isMonthOverviewChecked) {
-      insights = currentMonthInsights;
-    }
-    if (this.props.isWeekdayOverviewChecked) {
-      insights = currentWeekdayInsights.weekdayObj;
-    }
-
-    const showAreaChart = this.props.isWeekOverviewChecked || this.props.isMonthOverviewChecked || this.props.isWeekdayOverviewChecked;
-
     const color = this.props.color || getAverageColor(this.props.selectedMonth, this.props.selectedWeekday, this.props.colors);
 
     return (
       <div>
-        <svg width='100%' height={this.props.height} ref='barChart'>
+        { !this.props.showDatasetOverview ?
+          <svg width='100%' height={this.props.height} ref='barChart'>
           <g transform={transform} width={plotWidth} height={plotHeight}>
-            <XAxis {...metaData} transform={`translate(0,${plotHeight-50})`}/>
+            <XAxis {...metaData} transform={`translate(0,${plotHeight - 50})`}/>
             <YAxis {...metaData} />
-            <Bars {...metaData} {...plotData} color={color} />
-            { showAreaChart && <AreaChart {...metaData} {...plotData} margin={this.props.margin} weekInsights={insights} color={color} />}
+            <Bars {...metaData} {...plotData} color={color}/>
+            {this.showAreaChart() &&
+            <AreaChart {...metaData} {...plotData} margin={this.props.margin} weekInsights={this.getInsights()} color={color}/>}
           </g>
-        </svg>
-        <Footer />
+        </svg> :
+          <RadialChart data={data} />
+        }
+        { !this.props.showDatasetOverview && <Footer showDatasetOverview={this.props.showDatasetOverview} /> }
         <ReactTooltip id='rectTooltip' multiline class='tooltip'/>
-        <Modal />
+        { !this.props.showDatasetOverview && <Modal /> }
       </div>
     )
   }

@@ -1,0 +1,20 @@
+.upload-section {
+  margin: 20px 0 30px 0; }
+
+.section:nth-child(2) {
+  margin-bottom: 45px; }
+
+.section-two-thirds {
+  display: inline-block;
+  width: 67%; }
+
+.section-one-third {
+  display: inline-block;
+  width: 30%; }
+
+@media screen and (max-width: 500px) {
+  .section-one-third,
+  .section-two-thirds {
+    display: block; } }
+
+/*# sourceMappingURL=Section.css.map */

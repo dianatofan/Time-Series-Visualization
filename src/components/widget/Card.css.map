@@ -1,6 +1,6 @@
 {
 "version": 3,
-"mappings": "AAAA,KAAM;EACJ,UAAU,EAAE,iBAAiB;EAC7B,MAAM,EAAE,aAAa",
+"mappings": "AAEA,KAAM;EAEJ,UAAU,EAAE,iBAAiB;EAC7B,MAAM,EAAE,aAAa",
 "sources": ["Card.scss"],
 "names": [],
 "file": "Card.css"

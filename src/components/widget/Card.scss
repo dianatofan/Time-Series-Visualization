@@ -1,4 +1,13 @@
+@import '../../helpers/colors';
+
 .card {
+  //border: solid 1.5px #e8e8e8;
   box-shadow: 0 0 5px 0 #e8e8e8;
   margin: 20px 0 20px 0;
 }
+//
+//.card:hover {
+//  box-shadow: none;
+//  border: solid 1.5px $lightBlue;
+//  cursor: pointer;
+//}

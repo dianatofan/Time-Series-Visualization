@@ -10,7 +10,6 @@
 .app {
   display: flex;
   flex-direction: column;
-  //height: 100vh;
   margin: 0;
   text-align: center;
   width: 100vw;
@@ -20,6 +19,7 @@
   align-items: center;
   background: $white;
   display: flex;
+  justify-content: space-between;
   font-weight: bold;
   height: 60px;
   text-transform: uppercase;
@@ -32,14 +32,37 @@
   margin-left: 6%;
   font-weight: bold; }
 
+.header .icons {
+  cursor: pointer;
+  margin-right: 6%;
+  display: flex;
+  text-decoration: none;
+}
+
+.icons .github-icon {
+  margin-right: 10px;
+}
+
+.icons .pdf-icon,
+.icons .github-icon {
+  width: 25px;
+  height: 25px;
+}
+
+.icons .fa-github:hover,
+.icons:hover .pdf-icon {
+  fill: $radiantPurple;
+  color: $radiantPurple;
+}
+
 .content {
   height: 100vh;
-  margin: 3% 6%;
+  margin: 0 6%;
   text-align: left; }
 
 p {
   color: $purple;
-  font-size: 1.1em;
+  font-size: 1em;
   font-weight: 600;
   margin: 0; }
 
@@ -86,7 +109,7 @@ p {
 .dropzone {
   background: $white !important;
   opacity: 1 !important;
-  border: dotted 2px $lightBlue !important;
+  border: dotted 2px $whiteGray !important;
   margin: 20px !important;
   outline: none;
   height: 50px;
@@ -109,7 +132,7 @@ p {
 }
 
 p {
-  color: $purple;
+  color: $radiantPurple;
 }
 
 .upload-message {
@@ -122,7 +145,7 @@ p {
 .dropdown {
   margin: 20px 0 20px 0;
   border: solid 1px $whiteGray;
-  width: 100%;
+  width: 50%;
 }
 
 .dropdown .Dropdown-control,
@@ -150,4 +173,33 @@ p {
   outline: none;
   cursor: pointer;
 }
+
+.charts-container {
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.dataset-overview-title {
+  display: flex;
+  justify-content: center !important;
+}
+
+.upload-dataset {
+  display: flex;
+}
+
+.dropzone {
+  width: 50%;
+}
+
+.Dropdown-control {
+  height: 100%;
+  line-height: 35px;
+}
+
+.Dropdown-arrow {
+  top: 22px;
+}
+
 /*# sourceMappingURL=App.css.map */

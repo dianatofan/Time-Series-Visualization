@@ -118,7 +118,7 @@ class AreaChart extends React.Component {
             .text(item.occurrences);
           d3.select('.bar-circle')
             .style('opacity', 1);
-          return 'translate(' + mouseX + ',' + `${item.y - 3.8}` +')'
+          return `translate(${mouseX},${item.y - 3.8})`
         }
         d3.select('.mouse-over-effects')
           .style('cursor', 'auto')
