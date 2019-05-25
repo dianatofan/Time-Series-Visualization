@@ -17,7 +17,7 @@ const Container = props => {
     !!props.weekdayInsights.length;
 
   const barChartProps = {
-    data: props.data,
+    plotData: props.data,
     margin: props.margin,
     height: props.height
   };

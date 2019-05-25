@@ -114,7 +114,7 @@ class RadialChart extends React.PureComponent {
             })
             .duration(500)
             . attr('opacity', function (d, j) {
-              return j !== i - 1 ? 0.25 : 1;
+              return j !== i - 1 ? 0.1 : 1;
             });
 
           d3.selectAll('.textClass text')
@@ -124,7 +124,7 @@ class RadialChart extends React.PureComponent {
             })
             .duration(500)
             . attr('opacity', function (d, j) {
-              return j !== i - 1 ? 0.25 : 1;
+              return j !== i - 1 ? 0.1 : 1;
             });
         }
       })

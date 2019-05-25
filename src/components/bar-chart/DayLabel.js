@@ -3,10 +3,11 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import moment from 'moment';
 import {showBarChart} from '../../reducers/barChart';
-import {selectDay} from '../../reducers/calendar';
+import {saveColor, selectDay} from '../../reducers/calendar';
 import {setMonthInsights, setWeekdayInsights} from '../../reducers/app';
 import {getMonthInsights, getWeekdayInsights} from '../../helpers/parser';
 import * as d3 from 'd3';
+import {getAdjacentDayColor} from "../../helpers/colors";
 
 class DayLabel extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
@@ -27,8 +28,12 @@ class DayLabel extends React.Component {
       weekdayInsights: []
     });
     const color = this.props.colors.find(color => color.day === moment(day).format('DD-MM-YYYY'));
-    const value = color && d3.color(color.value);
-    this.props.selectDay({ day, color: value });
+    let value = color && d3.color(color.value);
+    if (!value) {
+      value = getAdjacentDayColor(this.props, moment(day).format('DD-MM-YYYY'), moment(day).startOf('month'));
+      this.props.saveColor({ day: moment(day).format('DD-MM-YYYY'), value });
+    }
+    this.props.selectDay({ day, color: value, data: this.props.data });
     this.props.showBarChart(true);
   };
 
@@ -55,7 +60,7 @@ class DayLabel extends React.Component {
       daysOfMonth: [],
       selectedMonth: null
     });
-    const weekdayInsights = getWeekdayInsights(weekday, this.props.dayInsights, this.props.allDays, this.props.currentWeekdays, this.props.dataArr);
+    const weekdayInsights = getWeekdayInsights(weekday, this.props.dayInsights, this.props.allDays, this.props.currentWeekdays, this.props.data);
     this.props.setWeekdayInsights({
       weekdayInsights: weekdayInsights.weekdayInsights,
       daysOfWeekday: weekdayInsights.daysOfWeekday,
@@ -137,14 +142,15 @@ const mapStateToProps = state => ({
   allDays: state.app.allDays,
   colors: state.calendar.colors,
   currentWeekdays: state.calendar.currentWeekdays,
-  dataArr: state.app.data
+  data: state.app.data
 });
 
 const mapDispatchToProps = dispatch => ({
   selectDay: val => dispatch(selectDay(val)),
   showBarChart: val => dispatch(showBarChart(val)),
   setMonthInsights: val => dispatch(setMonthInsights(val)),
-  setWeekdayInsights: val => dispatch(setWeekdayInsights(val))
+  setWeekdayInsights: val => dispatch(setWeekdayInsights(val)),
+  saveColor: val => dispatch(saveColor(val))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DayLabel);

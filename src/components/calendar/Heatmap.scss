@@ -18,9 +18,10 @@
 }
 
 .day-labels-container {
+  position: relative;
   font-size: .7vw;
-  line-height: 1.6em;
-  top: 80px;
+  line-height: 1.5em;
+  top: 22px;
   margin-left: 20px;
   width: 2.2vw;
   height: 100%;
@@ -139,11 +140,6 @@
   cursor: pointer;
 }
 
-.year {
-  //width: 100%;
-  //margin: 26px 0;
-}
-
 .current-day {
   stroke: $mediumGray;
   stroke-width: 2px;
@@ -152,4 +148,49 @@
 .year-label .disabled {
   color: $whiteGray;
   cursor: not-allowed;
+}
+
+.month .week {
+  font-size: .6vw;
+  fill: $mediumGray;
+  margin: 0 2px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.fade-in {
+  -webkit-animation: fadeIn 0.5s; /* Safari, Chrome and Opera > 12.1 */
+  -moz-animation: fadeIn 0.5s; /* Firefox < 16 */
+  -ms-animation: fadeIn 0.5s; /* Internet Explorer */
+  -o-animation: fadeIn 0.5s; /* Opera < 12.1 */
+  animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Firefox < 16 */
+@-moz-keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Safari, Chrome and Opera > 12.1 */
+@-webkit-keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Internet Explorer */
+@-ms-keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Opera < 12.1 */
+@-o-keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }

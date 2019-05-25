@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import * as d3 from 'd3';
 
 import { setData, setDatasetName, showSpinner, setMonthInsights, setWeekdayInsights, uploadFile } from '../../reducers/app';
-import { showCalendar, selectDay, saveColor } from '../../reducers/calendar';
+import { showCalendar, selectDay, resetColors } from '../../reducers/calendar';
 import { showBarChart, showWeekOverview, showMonthOverview, showWeekdayOverview } from '../../reducers/barChart';
 
 import Section from './Section';
@@ -78,7 +78,7 @@ const Upload = props => {
     props.showWeekOverview(false);
     props.showMonthOverview(false);
     props.showWeekdayOverview(false);
-    props.saveColor([]);
+    props.resetColors();
   };
 
   const onSelect = item => {
@@ -160,7 +160,7 @@ const mapDispatchToProps = dispatch => ({
   showWeekOverview: val => dispatch(showWeekOverview(val)),
   showMonthOverview: val => dispatch(showMonthOverview(val)),
   showWeekdayOverview: val => dispatch(showWeekdayOverview(val)),
-  saveColor: val => dispatch(saveColor(val))
+  resetColors: val => dispatch(resetColors(val))
 });
 
 

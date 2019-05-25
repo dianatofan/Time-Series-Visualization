@@ -200,7 +200,18 @@ export const getCurrentMonthInsights = (data, selectedDay, dayInsights) => {
   return monthObj;
 };
 
-export const getCurrentWeek = selectedDay => {
+
+const contains = (item, arr) => {
+  let i = arr.length;
+  while (i--) {
+    if (arr[i] === item) {
+      return true;
+    }
+  }
+  return false;
+};
+
+export const getCurrentWeek = (selectedDay, data) => {
   const startOfWeek = moment(selectedDay).startOf('isoWeek');
   const endOfWeek = moment(selectedDay).endOf('isoWeek');
 
@@ -208,14 +219,14 @@ export const getCurrentWeek = selectedDay => {
   let dayItem = startOfWeek;
 
   while (dayItem <= endOfWeek) {
-    daysArr.push(moment(dayItem).format('DD-MM-YYYY'));
+    contains(moment(dayItem).format('YYYY-MM-DD'), Object.keys(data)) && daysArr.push(moment(dayItem).format('DD-MM-YYYY'));
     dayItem = dayItem.clone().add(1, 'd');
   }
 
   return daysArr;
 };
 
-export const getCurrentMonth = selectedDay => {
+export const getCurrentMonth = (selectedDay, data) => {
   const startOfMonth = moment(selectedDay).startOf('month');
   const endOfMonth = moment(selectedDay).endOf('month');
 
@@ -223,14 +234,14 @@ export const getCurrentMonth = selectedDay => {
   let dayItem = startOfMonth;
 
   while (dayItem <= endOfMonth) {
-    daysArr.push(moment(dayItem).format('DD-MM-YYYY'));
+    contains(moment(dayItem).format('YYYY-MM-DD'), Object.keys(data)) && daysArr.push(moment(dayItem).format('DD-MM-YYYY'));
     dayItem = dayItem.clone().add(1, 'd');
   }
 
   return daysArr;
 };
 
-export const getCurrentWeekdays = selectedDay => {
+export const getCurrentWeekdays = (selectedDay, data) => {
   const start = moment(selectedDay).startOf('year');
   const end = moment(selectedDay).endOf('year');
 
@@ -238,7 +249,7 @@ export const getCurrentWeekdays = selectedDay => {
   let dayItem = moment(selectedDay);
 
   while (dayItem <= end) {
-    daysArr.push(moment(dayItem).format('DD-MM-YYYY'));
+    contains(moment(dayItem).format('YYYY-MM-DD'), Object.keys(data)) && daysArr.push(moment(dayItem).format('DD-MM-YYYY'));
     dayItem = dayItem.clone().add(7, 'd');
   }
 
@@ -246,13 +257,15 @@ export const getCurrentWeekdays = selectedDay => {
   let dayItem1 = moment(selectedDay);
 
   while (dayItem1 >= start) {
-    daysArr1.push(moment(dayItem1).format('DD-MM-YYYY'));
+    contains(moment(dayItem1).format('YYYY-MM-DD'), Object.keys(data)) && daysArr1.push(moment(dayItem1).format('DD-MM-YYYY'));
     dayItem1 = dayItem1.clone().subtract(7, 'd');
   }
 
+  const array = [...new Set(daysArr.concat(daysArr1))];
+
   return {
-    daysArr: daysArr.concat(daysArr1),
-    length: daysArr.concat(daysArr1).length
+    daysArr: array,
+    length: array.length
   }
 };
 

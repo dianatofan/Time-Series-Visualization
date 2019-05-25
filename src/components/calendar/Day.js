@@ -5,7 +5,7 @@ import * as d3 from 'd3';
 import {showBarChart} from '../../reducers/barChart';
 import {selectDay, saveColor} from '../../reducers/calendar';
 import {setMonthInsights, setWeekdayInsights} from '../../reducers/app';
-import {getDayColor} from '../../helpers/colors';
+import {getAdjacentDayColor, getDayColor} from '../../helpers/colors';
 
 class Day extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
@@ -27,12 +27,6 @@ class Day extends React.Component {
     return isCurrentWeek || isCurrentMonth || isCurrentWeekday;
   };
 
-  componentDidUpdate() {
-    // d3.select('.day.fill')
-    //   .transition()
-    //   .duration(1000)
-  }
-
   onDayClick = (ev, day, color) => {
     ev.preventDefault();
     ev.stopPropagation();
@@ -45,8 +39,16 @@ class Day extends React.Component {
       daysOfWeekday: [],
       weekdayInsights: []
     });
-    this.props.selectDay({ day, color: d3.interpolateOranges(color.value) });
+    this.props.selectDay({ day, color: d3.interpolateOranges(color.value), data: this.props.data });
     this.props.showBarChart(true);
+    const previousDay = moment(day).subtract(1, 'd').format('DD-MM-YYYY');
+    const nextDay = moment(day).add(1, 'd').format('DD-MM-YYYY');
+    const isColorSaved = this.props.colors.find(color => color.day === moment(day).format('DD-MM-YYYY'));
+    const isPreviousColorSaved = this.props.colors.find(color => color.day === previousDay);
+    const isNextColorSaved =this.props.colors.find(color => color.day === nextDay);
+    !isColorSaved && this.props.saveColor({ day: moment(day).format('DD-MM-YYYY'), value: d3.color(d3.interpolateOranges(color.value)) });
+    !isPreviousColorSaved && this.props.saveColor({ day: previousDay, value: getAdjacentDayColor(this.props, previousDay) });
+    !isNextColorSaved && this.props.saveColor({ day: nextDay, value: getAdjacentDayColor(this.props, nextDay) });
   };
 
   render() {
@@ -64,9 +66,9 @@ class Day extends React.Component {
     const color = getDayColor(props, isCurrentDay);
 
     return (
-      <rect
+      <rect ref='day'
         key={d}
-        className='day'
+        className='day fade-in'
         stroke={isCurrentDay ? '#000' : ''}
         strokeWidth={isCurrentDay ? 1 : 0}
         width={cellSize}
@@ -74,7 +76,7 @@ class Day extends React.Component {
         rx={50}
         ry={50}
         fill={color.fillColor}
-        y={(day(d) * cellSize) + (day(d) * cellMargin) + cellMargin}
+        y={(day(d) * cellSize) + (day(d) * cellMargin) + cellMargin + 20}
         x={((week(d) - week(new Date(d.getFullYear(),d.getMonth(),1))) * cellSize) + ((week(d) - week(new Date(d.getFullYear(),d.getMonth(),1))) * cellMargin) + cellMargin}
         onClick={ev => this.onDayClick(ev, d, color)}
         data-tip={`${moment(d).format('dddd, DD MMM YYYY')}<br>Count: ${color.count}`}

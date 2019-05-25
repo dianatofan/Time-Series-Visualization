@@ -19,7 +19,7 @@ class Modal extends React.PureComponent {
   render() {
     const { selectedDay, modalData, timeArray } = this.props;
       return (
-      <div className={classNames('modal', 'modal-animation', {'display-block': modalData}, {'display-none': !modalData})} onClick={this.hideModal}>
+      <div className={classNames('modal', 'fade-in', {'display-block': modalData}, {'display-none': !modalData})} onClick={this.hideModal}>
         <section className='modal-main' onClick={ev => ev.stopPropagation()}>
           <i className='fas fa-times' onClick={this.hideModal} />
           <div className='modal-title'>{selectedDay}</div>

@@ -47,21 +47,21 @@ class BarChart extends React.Component {
     if (!!this.props.weekdayInsights.length) {
       return this.props.daysOfWeekday;
     }
-    return this.props.data;
+    return this.props.plotData;
   };
 
   getInsights = () => {
     if (this.props.showDatasetOverview) {
-      return getDatasetOverview(this.props.allDays, this.props.dataArr, this.props.dayInsights);
+      return getDatasetOverview(this.props.allDays, this.props.data, this.props.dayInsights);
     }
     if (this.props.isWeekOverviewChecked) {
-      return getCurrentWeekInsights(this.props.dataArr, this.props.selectedDay, this.props.dayInsights);
+      return getCurrentWeekInsights(this.props.data, this.props.selectedDay, this.props.dayInsights);
     }
     if (this.props.isMonthOverviewChecked) {
-      return getCurrentMonthInsights(this.props.dataArr, this.props.selectedDay, this.props.dayInsights);
+      return getCurrentMonthInsights(this.props.data, this.props.selectedDay, this.props.dayInsights);
     }
     if (this.props.isWeekdayOverviewChecked) {
-      return getWeekdayInsights(moment(this.props.selectedDay).format('ddd'), this.props.dayInsights, this.props.allDays, this.props.currentWeekdays, this.props.dataArr).weekdayObj;
+      return getWeekdayInsights(moment(this.props.selectedDay).format('ddd'), this.props.dayInsights, this.props.allDays, this.props.currentWeekdays, this.props.data).weekdayObj;
     }
   };
 
@@ -137,7 +137,7 @@ class BarChart extends React.Component {
     };
 
     const transform = `translate(${this.props.margin.left},${this.props.margin.top})`;
-    const color = this.props.color || getAverageColor(this.props.selectedMonth, this.props.selectedWeekday, this.props.colors);
+    const color = this.props.color || getAverageColor(this.props);
 
     return (
       <div>
@@ -169,8 +169,9 @@ const mapStateToProps = state => ({
   selectedDay: moment(state.calendar.selectedDay).format('YYYY-MM-DD'),
   selectedMonth: state.app.selectedMonth,
   selectedWeekday: state.app.selectedWeekday,
-  dataArr: state.app.data,
+  data: state.app.data,
   allDays: state.app.allDays,
+  minDate: state.app.minDate,
   currentWeekdays: state.calendar.currentWeekdays,
   isWeekOverviewChecked: state.barChart.showWeekOverview,
   isMonthOverviewChecked: state.barChart.showMonthOverview,

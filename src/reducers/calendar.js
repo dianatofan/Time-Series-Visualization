@@ -5,6 +5,7 @@ const CHANGE_YEAR = 'CHANGE_YEAR';
 const SCREEN_RESIZE = 'SCREEN_RESIZE';
 const SELECT_DAY = 'SELECT_DAY';
 const SAVE_COLOR = 'SAVE_COLOR';
+const RESET_COLORS = 'RESET_COLORS';
 
 const initialState = {
   isCalendarVisible: false,
@@ -41,13 +42,14 @@ export default (state = initialState, action) => {
     case SELECT_DAY:
       const selectedDay = action.val && action.val.day;
       const color = action.val && action.val.color;
+      const data = action.val && action.val.data;
       return {
         ...state,
         selectedDay,
         color,
-        currentWeek: getCurrentWeek(selectedDay),
-        currentMonth: getCurrentMonth(selectedDay),
-        currentWeekdays: getCurrentWeekdays(selectedDay)
+        currentWeek: getCurrentWeek(selectedDay, data),
+        currentMonth: getCurrentMonth(selectedDay, data),
+        currentWeekdays: getCurrentWeekdays(selectedDay, data)
       };
     case SAVE_COLOR:
       return Object.assign({}, state, {
@@ -56,6 +58,11 @@ export default (state = initialState, action) => {
             value: action.val.value
         }))]
       });
+    case RESET_COLORS:
+      return {
+      ...state,
+        colors: []
+      };
     default:
       return state;
   }
@@ -66,3 +73,4 @@ export const changeYear = val => ({ type: CHANGE_YEAR, val });
 export const onScreenResize = val => ({ type: SCREEN_RESIZE, val });
 export const selectDay = val => ({ type: SELECT_DAY, val });
 export const saveColor = val => ({ type: SAVE_COLOR, val });
+export const resetColors = val => ({ type: RESET_COLORS, val });
