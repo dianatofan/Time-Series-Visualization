@@ -5,7 +5,7 @@ import moment from 'moment';
 import { connect } from 'react-redux';
 
 import Day from './Day';
-import { getMonthInsights } from '../../helpers/parser';
+import { getMonthInsights, getWeekInsights } from '../../helpers/parser';
 import {setMonthInsights, setWeekdayInsights} from "../../reducers/app";
 import { showBarChart } from "../../reducers/barChart";
 import { selectDay } from '../../reducers/calendar';
@@ -14,7 +14,8 @@ class Month extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      count: 1
+      count: 1,
+      weekLabel: 0
     };
   }
 
@@ -40,6 +41,13 @@ class Month extends React.PureComponent {
     return d3.timeWeeks(d3.timeWeek.floor(m), d3.timeMonth.offset(m,1)).length;
   };
 
+  getChunk = (target, size) =>
+    target.reduce((memo, value, index) => {
+      if (index % (target.length / size) === 0 && index !== 0) memo.push([]);
+      memo[memo.length - 1].push(value);
+      return memo
+    }, [[]]);
+
   renderMonthOverview = month => {
     this.props.selectDay(null);
     this.props.setWeekdayInsights({
@@ -56,8 +64,42 @@ class Month extends React.PureComponent {
     this.props.showBarChart(true);
   };
 
+  renderWeekOverview = week => {
+    console.log(week);
+    this.props.selectDay(null);
+    this.props.setWeekdayInsights({
+      selectedWeekday: null,
+      daysOfWeekday: [],
+      weekdayInsights: []
+    });
+    this.props.setMonthInsights({
+      selectedMonth: null,
+      daysOfMonth: [],
+      monthInsights: []
+    });
+    const weekInsights = getWeekInsights(week, this.props.dayInsights, this.props.allDays);
+    this.props.showBarChart(true);
+  };
+
   renderDays = (renderList, isCurrentMonth) =>
     renderList.map(d => <Day fill={isCurrentMonth || moment(d).format('ddd') === this.props.selectedWeekday} day={d} month={this.props.month} key={d} />);
+
+  renderWeekLabels = (cellSize, cellMargin, month) => {
+    const nrOfWeeks = this.props.renderArr.length;
+    let offsets = [0.1, 0.3, 0.5, 0.7, 0.9, 1.1].slice(0, nrOfWeeks);
+    return this.props.renderArr.map((week, i) =>
+      <text
+        className='week slow-fade-in'
+        key={week}
+        y={cellSize}
+        x={((cellSize * this.getWeeksInMonth(month)) + (cellMargin * (this.getWeeksInMonth(month)))) * offsets[i]}
+        textAnchor='middle'
+        onClick={() => this.renderWeekOverview(week)}
+      >
+        { week }
+      </text>
+    )
+  };
 
   render() {
     const props = this.props;
@@ -91,51 +133,19 @@ class Month extends React.PureComponent {
         key={month}
       >
         <g>
-          <text
-            className={classNames('month-name', 'slow-fade-in', {'bold': isCurrentMonth})}
-            y={(cellSize * 7) + (cellMargin * 8) + 35}
-            x={((cellSize * this.getWeeksInMonth(month)) + (cellMargin * (this.getWeeksInMonth(month) + 1))) / 2}
-            textAnchor='middle'
-            onClick={() => this.renderMonthOverview(monthName(month))}
-          >
-            { monthName(month) }
-          </text>
-          <text
-            className={classNames('week', 'slow-fade-in', {'bold': isCurrentMonth})}
-            y={cellSize}
-            x={((cellSize * this.getWeeksInMonth(month)) + (cellMargin * (this.getWeeksInMonth(month) + 1))) * 0.7}
-            textAnchor='middle'
-            onClick={() => this.renderMonthOverview(monthName(month))}
-          >
-            4
-          </text>
-          <text
-            className={classNames('week', 'slow-fade-in', {'bold': isCurrentMonth})}
-            y={cellSize}
-            x={((cellSize * this.getWeeksInMonth(month)) + (cellMargin * (this.getWeeksInMonth(month) + 1))) * 0.3}
-            textAnchor='middle'
-            onClick={() => this.renderMonthOverview(monthName(month))}
-          >
-            2
-          </text>
-          <text
-            className={classNames('week', 'slow-fade-in', {'bold': isCurrentMonth})}
-            y={cellSize}
-            x={((cellSize * this.getWeeksInMonth(month)) + (cellMargin * (this.getWeeksInMonth(month) + 1))) / 2}
-            textAnchor='middle'
-            onClick={() => this.renderMonthOverview(monthName(month))}
-          >
-            3
-          </text>
-          <text
-            className={classNames('week', 'slow-fade-in', {'bold': isCurrentMonth})}
-            y={cellSize}
-            x={((cellSize * this.getWeeksInMonth(month)) + (cellMargin * (this.getWeeksInMonth(month) + 1))) * 0.1}
-            textAnchor='middle'
-            onClick={() => this.renderMonthOverview(monthName(month))}
-          >
-            1
-          </text>
+          {
+          endReached &&
+            <text
+              className={classNames('month-name', 'slow-fade-in', {'bold': isCurrentMonth})}
+              y={(cellSize * 7) + (cellMargin * 8) + 35}
+              x={((cellSize * this.getWeeksInMonth(month)) + (cellMargin * (this.getWeeksInMonth(month) + 1))) / 2}
+              textAnchor='middle'
+              onClick={() => this.renderMonthOverview(monthName(month))}
+            >
+              { monthName(month) }
+            </text>
+          }
+          { endReached && this.renderWeekLabels(cellSize, cellMargin, month) }
           { this.renderDays(renderList, isCurrentMonth) }
         </g>
       </svg>

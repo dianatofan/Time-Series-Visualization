@@ -2,17 +2,17 @@ import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import * as d3 from 'd3';
-import {getCurrentMonthInsights, getCurrentWeekInsights, getWeekdayInsights, getDatasetOverview} from '../../helpers/parser';
+import {getCurrentMonthInsights, getCurrentWeekInsights, getWeekdayInsights} from '../../helpers/parser';
 import XAxis from './XAxis';
 import YAxis from './YAxis';
 import Bars from './Bars';
 import AreaChart from './AreaChart';
 import Modal from '../widget/Modal';
 import { showBarChart, showMonthOverview, showWeekdayOverview, showWeekOverview } from '../../reducers/barChart';
+import {saveColor} from '../../reducers/calendar';
 import ReactTooltip from 'react-tooltip';
 import Footer from './Footer';
 import {getAverageColor} from "../../helpers/colors";
-import RadialChart from '../radial-chart/RadialChart';
 
 class BarChart extends React.Component {
   constructor(props) {
@@ -51,9 +51,6 @@ class BarChart extends React.Component {
   };
 
   getInsights = () => {
-    if (this.props.showDatasetOverview) {
-      return getDatasetOverview(this.props.allDays, this.props.data, this.props.dayInsights);
-    }
     if (this.props.isWeekOverviewChecked) {
       return getCurrentWeekInsights(this.props.data, this.props.selectedDay, this.props.dayInsights);
     }
@@ -65,8 +62,7 @@ class BarChart extends React.Component {
     }
   };
 
-  showAreaChart = () => !this.props.showDatasetOverview &&
-    (this.props.isWeekOverviewChecked || this.props.isMonthOverviewChecked || this.props.isWeekdayOverviewChecked);
+  showAreaChart = () => this.props.isWeekOverviewChecked || this.props.isMonthOverviewChecked || this.props.isWeekdayOverviewChecked;
 
   updateScale = data => {
     const xScale = d3.scaleTime();
@@ -106,7 +102,7 @@ class BarChart extends React.Component {
   };
 
   render() {
-    const data = this.props.showDatasetOverview ? this.getInsights() : this.getData();
+    const data = this.getData();
 
     const { xScale, yScale, xScaleArea } =  this.updateScale(data);
     const { plotWidth, plotHeight } = this.updatePlotSize();
@@ -141,8 +137,7 @@ class BarChart extends React.Component {
 
     return (
       <div>
-        { !this.props.showDatasetOverview ?
-          <svg width='100%' height={this.props.height} ref='barChart'>
+        <svg width='100%' height={this.props.height} ref='barChart'>
           <g transform={transform} width={plotWidth} height={plotHeight}>
             <XAxis {...metaData} transform={`translate(0,${plotHeight - 50})`}/>
             <YAxis {...metaData} />
@@ -150,12 +145,10 @@ class BarChart extends React.Component {
             {this.showAreaChart() &&
             <AreaChart {...metaData} {...plotData} margin={this.props.margin} weekInsights={this.getInsights()} color={color}/>}
           </g>
-        </svg> :
-          <RadialChart data={data} />
-        }
-        { !this.props.showDatasetOverview && <Footer showDatasetOverview={this.props.showDatasetOverview} /> }
+        </svg>
+        <Footer />
         <ReactTooltip id='rectTooltip' multiline class='tooltip'/>
-        { !this.props.showDatasetOverview && <Modal /> }
+        <Modal />
       </div>
     )
   }
@@ -184,7 +177,8 @@ const mapDispatchToProps = dispatch => ({
   showWeekOverview: val => dispatch(showWeekOverview(val)),
   showMonthOverview: val => dispatch(showMonthOverview(val)),
   showWeekdayOverview: val => dispatch(showWeekdayOverview(val)),
-  showBarChart: val => dispatch(showBarChart(val))
+  showBarChart: val => dispatch(showBarChart(val)),
+  saveColor: val => dispatch(saveColor(val))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(BarChart);

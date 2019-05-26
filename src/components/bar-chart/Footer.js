@@ -23,26 +23,17 @@ const Footer = props => {
     props.onReset();
   };
   const renderCheckboxes = () =>
-    props.showDatasetOverview ?
-      <div className='checkboxes'>
-         <span className={classNames('checkbox', {'bold': props.isWeekOverviewChecked})} onClick={onCheckboxChange}>
-           Weekdays <input type='checkbox' checked={props.isWeekOverviewChecked} defaultChecked={false} onChange={onCheckboxChange} />
-         </span>
-        <span className={classNames('checkbox', {'bold': props.isMonthOverviewChecked})} onClick={onMonthCheckboxChange}>
-           Weekends <input type='checkbox' checked={props.isMonthOverviewChecked} defaultChecked={false} onChange={onMonthCheckboxChange} />
-         </span>
-      </div> :
-      <div className='checkboxes'>
-         <span className={classNames('checkbox', {'bold': props.isWeekOverviewChecked})} onClick={onCheckboxChange}>
-           Week overview <input type='checkbox' checked={props.isWeekOverviewChecked} defaultChecked={false} onChange={onCheckboxChange} />
-         </span>
-        <span className={classNames('checkbox', {'bold': props.isMonthOverviewChecked})} onClick={onMonthCheckboxChange}>
-           Month overview <input type='checkbox' checked={props.isMonthOverviewChecked} defaultChecked={false} onChange={onMonthCheckboxChange} />
-         </span>
-        <span className={classNames('checkbox', {'bold': props.isWeekdayOverviewChecked})} onClick={onWeekdayCheckboxChange}>
-           Weekdays <input type='checkbox' checked={props.isWeekdayOverviewChecked} defaultChecked={false} onChange={onWeekdayCheckboxChange} />
-         </span>
-      </div>;
+    <div className='checkboxes'>
+       <span className={classNames('checkbox', {'bold': props.isWeekOverviewChecked})} onClick={onCheckboxChange}>
+         Week overview <input type='checkbox' checked={props.isWeekOverviewChecked} defaultChecked={false} onChange={onCheckboxChange} />
+       </span>
+      <span className={classNames('checkbox', {'bold': props.isMonthOverviewChecked})} onClick={onMonthCheckboxChange}>
+         Month overview <input type='checkbox' checked={props.isMonthOverviewChecked} defaultChecked={false} onChange={onMonthCheckboxChange} />
+       </span>
+      <span className={classNames('checkbox', {'bold': props.isWeekdayOverviewChecked})} onClick={onWeekdayCheckboxChange}>
+         Weekdays <input type='checkbox' checked={props.isWeekdayOverviewChecked} defaultChecked={false} onChange={onWeekdayCheckboxChange} />
+       </span>
+    </div>;
 
   return (
     <div className='footer year-label'>

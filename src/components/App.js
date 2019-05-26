@@ -4,6 +4,7 @@ import moment from 'moment';
 
 import Heatmap from './calendar/Heatmap';
 import Container from './bar-chart/Container';
+import RadialChartContainer from './radial-chart/RadialChartContainer';
 import Upload from './widget/Upload';
 
 import 'react-dropdown/style.css';
@@ -20,12 +21,11 @@ import pdfLogoHover from '../icons/pdf-logo-hover.svg';
 const App = props => {
   // whyDidYouUpdate(React);
 
-  const renderBarChart = showDatasetOverview =>
+  const renderBarChart = () =>
     <Container
       data={props.allDays[props.selectedDay]}
       margin={{ top: 20, right: 20, bottom: 30, left: 40 }}
       height={300}
-      showDatasetOverview={showDatasetOverview}
     />;
 
   const renderSpinner = () =>
@@ -55,7 +55,7 @@ const App = props => {
             <p>Day overview</p>
             <div className='charts-container'>
               { renderBarChart() }
-              { renderBarChart(true) }
+              { props.isBarChartVisible && <RadialChartContainer /> }
             </div>
           </div>
         }

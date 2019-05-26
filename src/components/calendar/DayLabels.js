@@ -27,14 +27,6 @@ const DayLabels = props => {
     });
     props.showBarChart(true);
   };
-  const realError = console.error;
-  console.error = (...x) => {
-    // debugger;
-    if (x[0] === 'Warning: The tag <text> is unrecognized in this browser. If you meant to render a React component, start its name with an uppercase letter.') {
-      return;
-    }
-    realError(...x);
-  };
 
   return (
     <div className='day-labels-container'>

@@ -151,11 +151,15 @@
 }
 
 .month .week {
-  font-size: .6vw;
+  font-size: .5vw;
   fill: $mediumGray;
-  margin: 0 2px;
+  //margin: 0 2px;
   font-weight: 500;
   cursor: pointer;
+}
+
+.month .week.spaced {
+  //font-size: .4vw;
 }
 
 .fade-in {

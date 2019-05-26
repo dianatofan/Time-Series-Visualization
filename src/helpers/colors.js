@@ -1,7 +1,7 @@
 import moment from 'moment';
 import * as d3 from 'd3';
 
-const  getDaysArrayByMonth = (month, year, data) => {
+const getDaysArrayByMonth = (month, year, data) => {
   let daysInMonth = moment(month, 'M').daysInMonth();
   const arrDays = [];
 
@@ -23,10 +23,12 @@ export const getAverageColor = props => {
   const insertMissingColors = daysArray => {
     daysArray.forEach(day => {
       if (!filteredColors.find(color => moment(color.day, 'DD-MM-YYYY').format('YYYY-MM-DD') === day)) {
+        const value = d3.color(d3.interpolateOranges(getValue(props.data, day, moment(day).startOf('month'))));
         filteredColors.push({
           day,
-          value: d3.color(d3.interpolateOranges(getValue(props.data, day, moment(day).startOf('month'))))
+          value
         });
+        props.saveColor({ day: moment(day).format('DD-MM-YYYY'), value });
       }
     })
   };
