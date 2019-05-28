@@ -28,10 +28,16 @@ export const getAverageColor = props => {
           day,
           value
         });
-        props.saveColor({ day: moment(day).format('DD-MM-YYYY'), value });
+        // props.saveColor({ day: moment(day).format('DD-MM-YYYY'), value });
       }
     })
   };
+  if (props.selectedWeek) {
+    filteredColors = props.colors.filter(color => moment(color.day).isoWeek() === props.selectedWeek && d3.rgb(color));
+    const daysArray = Object.keys(props.allDays).filter(key => moment(key).isoWeek() === props.selectedWeek);
+    insertMissingColors(daysArray);
+  }
+
   if (props.selectedMonth) {
     filteredColors = props.colors.filter(color => moment(color.day, 'DD-MM-YYYY').format('M') === props.selectedMonth && d3.rgb(color));
     const daysArray = getDaysArrayByMonth(props.selectedMonth, moment(props.minDate).format('YYYY'), props.data);
@@ -94,7 +100,7 @@ export const getDayColor = (props, isCurrentDay) => {
   if (item) {
     const day = moment(props.day).format('DD-MM-YYYY');
 
-    const isCurrentWeek = contains(props.currentWeek, props.showWeekOverview, day);
+    const isCurrentWeek = contains(props.currentWeek, props.showWeekOverview, day) || (props.selectedWeek && props.selectedWeek === moment(props.day).isoWeek());
     const isCurrentMonth = contains(props.currentMonth, props.showMonthOverview, day) || (props.selectedMonth && props.selectedMonth === moment(props.day).format('M'));
     const isCurrentWeekday = contains(props.currentWeekdays.daysArr, props.showWeekdayOverview, day) || (props.selectedWeekday && props.selectedWeekday === moment(props.day).format('ddd'));
 

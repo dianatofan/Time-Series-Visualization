@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 
 import Day from './Day';
 import { getMonthInsights, getWeekInsights } from '../../helpers/parser';
-import {setMonthInsights, setWeekdayInsights} from "../../reducers/app";
+import { setWeekInsights, setMonthInsights, setWeekdayInsights } from "../../reducers/app";
 import { showBarChart } from "../../reducers/barChart";
 import { selectDay } from '../../reducers/calendar';
 
@@ -55,6 +55,11 @@ class Month extends React.PureComponent {
       daysOfWeekday: [],
       weekdayInsights: []
     });
+    this.props.setWeekInsights({
+      selectedWeek: null,
+      daysOfWeek: [],
+      weekInsights: []
+    });
     const monthInsights = getMonthInsights(moment().month(month).format('M'), this.props.dayInsights, this.props.allDays);
     this.props.setMonthInsights({
       selectedMonth: monthInsights.selectedMonth,
@@ -65,7 +70,6 @@ class Month extends React.PureComponent {
   };
 
   renderWeekOverview = week => {
-    console.log(week);
     this.props.selectDay(null);
     this.props.setWeekdayInsights({
       selectedWeekday: null,
@@ -78,18 +82,44 @@ class Month extends React.PureComponent {
       monthInsights: []
     });
     const weekInsights = getWeekInsights(week, this.props.dayInsights, this.props.allDays);
+    this.props.setWeekInsights({
+      selectedWeek: weekInsights.selectedWeek,
+      daysOfWeek: weekInsights.daysOfWeek,
+      weekInsights: weekInsights.weekInsights
+    });
     this.props.showBarChart(true);
   };
 
   renderDays = (renderList, isCurrentMonth) =>
     renderList.map(d => <Day fill={isCurrentMonth || moment(d).format('ddd') === this.props.selectedWeekday} day={d} month={this.props.month} key={d} />);
 
+  getWeekIndices = month => {
+    const firstDayOfMonth = moment(month).startOf('month');
+    const lastDayOfMonth = moment(month).endOf('month');
+    let weekIndices = [];
+
+    let currentDay = moment(firstDayOfMonth);
+    weekIndices.push(currentDay.isoWeek());
+
+    while(currentDay.month() === firstDayOfMonth.month()) {
+      currentDay.add(1, 'weeks');
+      weekIndices.push(currentDay.isoWeek());
+    }
+
+    if (currentDay.isoWeek() !== lastDayOfMonth.isoWeek()) {
+      weekIndices.pop();
+    }
+
+    return weekIndices;
+  };
+
   renderWeekLabels = (cellSize, cellMargin, month) => {
-    const nrOfWeeks = this.props.renderArr.length;
+    const arr = this.getWeekIndices(month);
+    const nrOfWeeks = arr.length;
     let offsets = [0.1, 0.3, 0.5, 0.7, 0.9, 1.1].slice(0, nrOfWeeks);
-    return this.props.renderArr.map((week, i) =>
+    return arr.map((week, i) =>
       <text
-        className='week slow-fade-in'
+        className={classNames('week slow-fade-in', {'bold': this.props.selectedWeek === week})}
         key={week}
         y={cellSize}
         x={((cellSize * this.getWeeksInMonth(month)) + (cellMargin * (this.getWeeksInMonth(month)))) * offsets[i]}
@@ -159,11 +189,13 @@ const mapStateToProps = state => ({
   dayInsights: state.app.dayInsights,
   cellSize: state.calendar.cellSize,
   cellMargin: state.calendar.cellMargin,
+  selectedWeek: state.app.selectedWeek,
   selectedMonth: state.app.selectedMonth,
   selectedWeekday: state.app.selectedWeekday
 });
 
 const mapDispatchToProps = dispatch => ({
+  setWeekInsights: val => dispatch(setWeekInsights(val)),
   setMonthInsights: val => dispatch(setMonthInsights(val)),
   setWeekdayInsights: val => dispatch(setWeekdayInsights(val)),
   showBarChart: val => dispatch(showBarChart(val)),

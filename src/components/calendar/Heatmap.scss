@@ -64,10 +64,11 @@
   cursor: pointer;
 }
 
-.month-name.bold {
+.month-name.bold,
+.week.bold {
   color: $black;
-  fill: $black;
-  font-weight: 900;
+  fill: $black !important;
+  font-weight: 900 !important;
 }
 
 .month svg {
@@ -153,13 +154,8 @@
 .month .week {
   font-size: .5vw;
   fill: $mediumGray;
-  //margin: 0 2px;
   font-weight: 500;
   cursor: pointer;
-}
-
-.month .week.spaced {
-  //font-size: .4vw;
 }
 
 .fade-in {

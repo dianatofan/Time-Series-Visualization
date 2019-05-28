@@ -70,14 +70,19 @@ export const getMonthInsights = (month, dayInsights, allDays) => {
 
 export const getWeekInsights = (week, dayInsights, allDays) => {
   const weekInsights = Object.keys(dayInsights)
-    .filter(key => moment(key).add(1, 'w').format('w') === week);
-  console.log(weekInsights)
+    .filter(key => {
+      return moment(key).isoWeekday(1).format('w') === week.toString()
+    })
+    .reduce((obj, key) => {
+      obj[key] = dayInsights[key];
+      return obj;
+    }, {});
   const mergedData = Object.keys(weekInsights).reduce((acc, key) => {
     acc.push(weekInsights[key]);
     return acc;
   }, []);
   const allDaysOfWeek = Object.keys(allDays)
-    .filter(key => moment(key).format('w') === week)
+    .filter(key => moment(key).isoWeek() === week)
     .reduce((obj, key) => {
       obj[key] = allDays[key];
       return obj;
@@ -93,12 +98,11 @@ export const getWeekInsights = (week, dayInsights, allDays) => {
     });
     return acc;
   }, {});
-  console.log(mergedDays, mergedData)
-  // return {
-  //   selectedMonth: month,
-  //   daysOfMonth: mergedDays,
-  //   monthInsights: mergedData.flat()
-  // };
+  return {
+    selectedWeek: week,
+    daysOfWeek: mergedDays,
+    weekInsights: mergedData.flat()
+  };
 };
 
 export const getDatasetOverview = (allDays, data, dayInsights) => {

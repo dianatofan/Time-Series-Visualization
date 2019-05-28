@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import * as d3 from 'd3';
-import moment from 'moment';
 
 import Month from './Month';
 
@@ -14,16 +13,6 @@ class Year extends React.PureComponent {
       return memo
     }, [[]]);
 
-  getNrOfWeeks = month => {
-    const daysInMonth = moment(month, 'M').daysInMonth();
-    const nrOfWeeks = Math.ceil(daysInMonth / 7);
-    const firstDay = moment(month, 'M').startOf('month').format('ddd');
-    if (firstDay === 'Sat' || firstDay === 'Sun' || moment(month).format('MMM') === 'Feb') {
-      return nrOfWeeks + 1;
-    }
-    return nrOfWeeks;
-  };
-
   render() {
     const props = this.props;
     const minDate = props.minDate.format('YYYY-MM-DD');
@@ -34,31 +23,17 @@ class Year extends React.PureComponent {
 
     const monthsArr = this.getChunk(months, months.length / 12);
 
-    const arr = Array.from({length: 52}, (v, k) => k+1);
-
-    let count = 0;
-
     return (
       <div className='year-wrapper'>
         {
           monthsArr.map((months, i) =>
             <div className={classNames('year', {'hidden': i !== props.yearIndex})} key={i}>
               {
-                months.map((month, i) => {
-                  let nrOfWeeks = this.getNrOfWeeks(month);
-                    if (moment(month, 'M').endOf('month').format('ddd') === 'Sun' && moment(month, 'M').add(1, 'months').startOf('month').format('ddd') === 'Mon') {
-                      count -= 1;
-                    }
-                  const renderArr = arr.slice(count, nrOfWeeks + count);
-                  count += nrOfWeeks - 1;
-                  return (
-                    <Month
-                      key={i}
-                      month={month}
-                      renderArr={renderArr}
-                    />
-                  )
-                }
+                months.map((month, i) =>
+                  <Month
+                    key={i}
+                    month={month}
+                  />
                 )
               }
             </div>

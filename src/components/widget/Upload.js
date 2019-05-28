@@ -5,7 +5,7 @@ import Dropdown from 'react-dropdown';
 import classNames from 'classnames';
 import * as d3 from 'd3';
 
-import { setData, setDatasetName, showSpinner, setMonthInsights, setWeekdayInsights, uploadFile } from '../../reducers/app';
+import { setData, setDatasetName, showSpinner, setMonthInsights, setWeekInsights, setWeekdayInsights, uploadFile } from '../../reducers/app';
 import { showCalendar, selectDay, resetColors } from '../../reducers/calendar';
 import { showBarChart, showWeekOverview, showMonthOverview, showWeekdayOverview } from '../../reducers/barChart';
 
@@ -73,6 +73,11 @@ const Upload = props => {
       selectedWeekday: null,
       daysOfWeekday: [],
       weekdayInsights: []
+    });
+    props.setWeekInsights({
+      selectedWeek: null,
+      daysOfWeek: [],
+      weekInsights: []
     });
     props.selectDay(null);
     props.showWeekOverview(false);
@@ -155,6 +160,7 @@ const mapDispatchToProps = dispatch => ({
   showCalendar: val => dispatch(showCalendar(val)),
   showBarChart: val => dispatch(showBarChart(val)),
   setMonthInsights: val => dispatch(setMonthInsights(val)),
+  setWeekInsights: val => dispatch(setWeekInsights(val)),
   setWeekdayInsights: val => dispatch(setWeekdayInsights(val)),
   selectDay: val => dispatch(selectDay(val)),
   showWeekOverview: val => dispatch(showWeekOverview(val)),

@@ -41,6 +41,9 @@ class BarChart extends React.Component {
   };
 
   getData = () => {
+    if (!!this.props.weekInsights.length) {
+      return this.props.daysOfWeek;
+    }
     if (!!this.props.monthInsights.length) {
       return this.props.daysOfMonth;
     }
@@ -155,10 +158,13 @@ class BarChart extends React.Component {
 }
 const mapStateToProps = state => ({
   dayInsights: state.app.dayInsights,
+  weekInsights: state.app.weekInsights,
   monthInsights: state.app.monthInsights,
   weekdayInsights: state.app.weekdayInsights,
+  daysOfWeek: state.app.daysOfWeek,
   daysOfMonth: state.app.daysOfMonth,
   daysOfWeekday: state.app.daysOfWeekday,
+  selectedWeek: state.app.selectedWeek,
   selectedDay: moment(state.calendar.selectedDay).format('YYYY-MM-DD'),
   selectedMonth: state.app.selectedMonth,
   selectedWeekday: state.app.selectedWeekday,

@@ -12,6 +12,7 @@ import './BarChart.scss';
 
 const Container = props => {
   const showBarChart = !!props.dayInsights[props.selectedDay] ||
+    !!props.weekInsights.length ||
     !!props.monthInsights.length ||
     !!props.weekdayInsights.length;
 
@@ -39,6 +40,7 @@ const Container = props => {
 
 const mapStateToProps = state => ({
   dayInsights: state.app.dayInsights,
+  weekInsights: state.app.weekInsights,
   monthInsights: state.app.monthInsights,
   weekdayInsights: state.app.weekdayInsights,
   selectedDay: moment(state.calendar.selectedDay).format('YYYY-MM-DD')

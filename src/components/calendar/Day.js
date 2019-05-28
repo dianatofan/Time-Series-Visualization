@@ -4,7 +4,7 @@ import moment from 'moment';
 import * as d3 from 'd3';
 import {showBarChart} from '../../reducers/barChart';
 import {selectDay, saveColor} from '../../reducers/calendar';
-import {setMonthInsights, setWeekdayInsights} from '../../reducers/app';
+import {setMonthInsights, setWeekdayInsights, setWeekInsights} from '../../reducers/app';
 import {getAdjacentDayColor, getDayColor} from '../../helpers/colors';
 
 class Day extends React.Component {
@@ -12,6 +12,7 @@ class Day extends React.Component {
     const formatDate = date => moment(date).format('DD-MM-YY');
     return formatDate(this.props.day) === formatDate(nextProps.selectedDay) ||
       formatDate(nextProps.day) === formatDate(this.props.selectedDay) ||
+      this.props.selectedWeek !== nextProps.selectedWeek ||
       this.isEqual(nextProps) ||
       this.props.fill !== nextProps.fill ||
       this.props.cellSize !== nextProps.cellSize;
@@ -31,6 +32,7 @@ class Day extends React.Component {
     ev.preventDefault();
     ev.stopPropagation();
     this.props.setMonthInsights({
+      selectedMonth: null,
       monthInsights: [],
       daysOfMonth: []
     });
@@ -38,6 +40,11 @@ class Day extends React.Component {
       selectedWeekday: null,
       daysOfWeekday: [],
       weekdayInsights: []
+    });
+    this.props.setWeekInsights({
+      selectedWeek: null,
+      daysOfWeek: [],
+      weekInsights: []
     });
     this.props.selectDay({ day, color: d3.interpolateOranges(color.value), data: this.props.data });
     this.props.showBarChart(true);
@@ -90,8 +97,9 @@ class Day extends React.Component {
 const mapStateToProps = state => ({
   data: state.app.data,
   selectedDay: state.calendar.selectedDay,
-  selectedWeekday: state.app.selectedWeekday,
   selectedMonth: state.app.selectedMonth,
+  selectedWeek: state.app.selectedWeek,
+  selectedWeekday: state.app.selectedWeekday,
   showWeekOverview: state.barChart.showWeekOverview,
   showMonthOverview: state.barChart.showMonthOverview,
   showWeekdayOverview: state.barChart.showWeekdayOverview,
@@ -108,6 +116,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   showBarChart: val => dispatch(showBarChart(val)),
   selectDay: val => dispatch(selectDay(val)),
+  setWeekInsights: val => dispatch(setWeekInsights(val)),
   setMonthInsights: val => dispatch(setMonthInsights(val)),
   setWeekdayInsights: val => dispatch(setWeekdayInsights(val)),
   saveColor: val => dispatch(saveColor(val))
