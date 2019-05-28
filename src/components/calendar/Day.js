@@ -43,6 +43,7 @@ class Day extends React.Component {
   };
 
   onDayClick = (ev, day, color) => {
+    console.log(this.refs.day.getBoundingClientRect())
     ev.preventDefault();
     ev.stopPropagation();
     if (ev.shiftKey) {

@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import * as d3 from 'd3';
-import moment from 'moment';
 
 import Month from './Month';
 
@@ -25,7 +24,7 @@ class Year extends React.PureComponent {
     const monthsArr = this.getChunk(months, months.length / 12);
 
     return (
-      <div className='year-wrapper'>
+      <div className='year-wrapper' ref='brush'>
         {
           monthsArr.map((months, i) =>
             <div className={classNames('year', {'hidden': i !== props.yearIndex})} key={i}>

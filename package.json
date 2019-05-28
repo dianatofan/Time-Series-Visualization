@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@simonwep/selection-js": "^0.2.3",
     "classnames": "^2.2.6",
     "d3": "^5.7.0",
     "lodash-es": "^4.17.11",

@@ -53,7 +53,7 @@ class DayLabels extends React.Component {
           weekArray.map(day =>
             <text
               key={day}
-              className={classNames('day-labels', {'bold': this.props.selectedWeekday === day || this.props.shiftSelection.indexOf(day) > -1 || this.props.shiftSelection.indexOf('all') > -1})}
+              className={classNames('day-labels', {'bold': this.props.selectedWeekday === day || this.props.shiftSelection.indexOf(day) > -1})}
               onClick={ev => this.onWeekdayClick(ev, day)}
             >
               {day}

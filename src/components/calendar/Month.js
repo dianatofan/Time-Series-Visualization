@@ -10,7 +10,6 @@ import { setWeekInsights, setMonthInsights, setWeekdayInsights, onShiftClick, re
 import { showBarChart } from "../../reducers/barChart";
 import { selectDay } from '../../reducers/calendar';
 
-
 class Month extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -22,11 +21,23 @@ class Month extends React.PureComponent {
 
   componentDidMount() {
     this.showMoreData();
+    this.brush = d3.brush()
+      .on('end', this.brushEnd);
+    d3.select(this.refs.brush).call(this.brush);
   }
 
   componentDidUpdate() {
     this.showMoreData();
   }
+
+  brushEnd = () => {
+    if (!d3.event.selection) {
+      return;
+    }
+    const [x1, x2] = d3.event.selection;
+
+    console.log(x1, x2);
+  };
 
   showMoreData = () => {
     let { count } = this.state;
@@ -111,7 +122,9 @@ class Month extends React.PureComponent {
     renderList.map(d =>
       <Day fill={isCurrentMonth || moment(d).format('ddd') === this.props.selectedWeekday}
            day={d} month={this.props.month}
-           key={d} />
+           key={d}
+           className='day'
+      />
       );
 
   getWeekIndices = month => {
@@ -140,7 +153,7 @@ class Month extends React.PureComponent {
     let offsets = [0.1, 0.3, 0.5, 0.7, 0.9, 1.1].slice(0, nrOfWeeks);
     return arr.map((week, i) =>
       <text
-        className={classNames('week slow-fade-in', {'bold': this.props.selectedWeek === week || this.props.shiftSelection.indexOf(week) > -1 || this.props.shiftSelection.indexOf('all') > -1})}
+        className={classNames('week slow-fade-in', {'bold': this.props.selectedWeek === week || this.props.shiftSelection.indexOf(week) > -1})}
         key={week}
         y={cellSize}
         x={((cellSize * this.getWeeksInMonth(month)) + (cellMargin * (this.getWeeksInMonth(month)))) * offsets[i]}
@@ -187,7 +200,7 @@ class Month extends React.PureComponent {
           {
           endReached &&
             <text
-              className={classNames('month-name', 'slow-fade-in', {'bold': isCurrentMonth || this.props.shiftSelection.indexOf(monthName(month)) > -1 || this.props.shiftSelection.indexOf('all') > -1})}
+              className={classNames('month-name', 'slow-fade-in', {'bold': isCurrentMonth || this.props.shiftSelection.indexOf(monthName(month)) > -1})}
               y={(cellSize * 7) + (cellMargin * 8) + 35}
               x={((cellSize * this.getWeeksInMonth(month)) + (cellMargin * (this.getWeeksInMonth(month) + 1))) / 2}
               textAnchor='middle'
