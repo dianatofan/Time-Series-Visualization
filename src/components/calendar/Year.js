@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import * as d3 from 'd3';
+import moment from 'moment';
 
 import Month from './Month';
 

@@ -10,6 +10,7 @@ import { setWeekInsights, setMonthInsights, setWeekdayInsights, onShiftClick, re
 import { showBarChart } from "../../reducers/barChart";
 import { selectDay } from '../../reducers/calendar';
 
+
 class Month extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -107,7 +108,11 @@ class Month extends React.PureComponent {
   };
 
   renderDays = (renderList, isCurrentMonth) =>
-    renderList.map(d => <Day fill={isCurrentMonth || moment(d).format('ddd') === this.props.selectedWeekday} day={d} month={this.props.month} key={d} />);
+    renderList.map(d =>
+      <Day fill={isCurrentMonth || moment(d).format('ddd') === this.props.selectedWeekday}
+           day={d} month={this.props.month}
+           key={d} />
+      );
 
   getWeekIndices = month => {
     const firstDayOfMonth = moment(month).startOf('month');
@@ -156,6 +161,7 @@ class Month extends React.PureComponent {
 
     const monthName = d3.timeFormat('%B');
 
+    console.log(props)
     const days = d3.timeDays(month, new Date(month.getFullYear(), month.getMonth()+1, 1));
     const lastDay = moment(month).endOf('month').format('ddd'); // last day of current month
     const firstDay = moment(month).add(1, 'months').startOf('month').format('ddd'); // first day of next month
@@ -192,7 +198,9 @@ class Month extends React.PureComponent {
             </text>
           }
           { endReached && this.renderWeekLabels(cellSize, cellMargin, month) }
-          { this.renderDays(renderList, isCurrentMonth) }
+          {
+            this.renderDays(renderList, isCurrentMonth)
+          }
         </g>
       </svg>
     )
