@@ -1,7 +1,7 @@
 {
-  "main.css": "/Time-Series-Visualization/static/css/main.04d2ddb3.chunk.css",
-  "main.js": "/Time-Series-Visualization/static/js/main.1a024c73.chunk.js",
-  "main.js.map": "/Time-Series-Visualization/static/js/main.1a024c73.chunk.js.map",
+  "main.css": "/Time-Series-Visualization/static/css/main.faf3e7b8.chunk.css",
+  "main.js": "/Time-Series-Visualization/static/js/main.3909a580.chunk.js",
+  "main.js.map": "/Time-Series-Visualization/static/js/main.3909a580.chunk.js.map",
   "static/css/1.46944513.chunk.css": "/Time-Series-Visualization/static/css/1.46944513.chunk.css",
   "static/js/1.0ec7ae78.chunk.js": "/Time-Series-Visualization/static/js/1.0ec7ae78.chunk.js",
   "static/js/1.0ec7ae78.chunk.js.map": "/Time-Series-Visualization/static/js/1.0ec7ae78.chunk.js.map",
@@ -17,8 +17,8 @@
   "static/media/github-logo-hover.svg": "/Time-Series-Visualization/static/media/github-logo-hover.b2035e53.svg",
   "static/media/pdf-logo-hover.svg": "/Time-Series-Visualization/static/media/pdf-logo-hover.eebd97c5.svg",
   "static/css/1.46944513.chunk.css.map": "/Time-Series-Visualization/static/css/1.46944513.chunk.css.map",
-  "static/css/main.04d2ddb3.chunk.css.map": "/Time-Series-Visualization/static/css/main.04d2ddb3.chunk.css.map",
+  "static/css/main.faf3e7b8.chunk.css.map": "/Time-Series-Visualization/static/css/main.faf3e7b8.chunk.css.map",
   "index.html": "/Time-Series-Visualization/index.html",
-  "precache-manifest.d6201abbe5b52f31b3385c138df43233.js": "/Time-Series-Visualization/precache-manifest.d6201abbe5b52f31b3385c138df43233.js",
+  "precache-manifest.b2c908095401fe8484b170cea53a1504.js": "/Time-Series-Visualization/precache-manifest.b2c908095401fe8484b170cea53a1504.js",
   "service-worker.js": "/Time-Series-Visualization/service-worker.js"
 }
