@@ -101,7 +101,7 @@ class Day extends React.Component {
         moment(d).format('ddd') === props.selectedWeekday ||
         moment(d).format('DD-MM-YY') === moment(props.selectedDay).format('DD-MM-YY'));
 
-    const showStroke = isCurrentDay || isSelected;
+    const showStroke = isCurrentDay || (isSelected && props.data[moment(d).format('YYYY-MM-DD')]);
 
     return (
       <rect ref='day'

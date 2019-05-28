@@ -140,7 +140,7 @@ class Month extends React.PureComponent {
     let offsets = [0.1, 0.3, 0.5, 0.7, 0.9, 1.1].slice(0, nrOfWeeks);
     return arr.map((week, i) =>
       <text
-        className={classNames('week slow-fade-in', {'bold': this.props.selectedWeek === week})}
+        className={classNames('week slow-fade-in', {'bold': this.props.selectedWeek === week || this.props.shiftSelection.indexOf(week) > -1 || this.props.shiftSelection.indexOf('all') > -1})}
         key={week}
         y={cellSize}
         x={((cellSize * this.getWeeksInMonth(month)) + (cellMargin * (this.getWeeksInMonth(month)))) * offsets[i]}
@@ -161,7 +161,6 @@ class Month extends React.PureComponent {
 
     const monthName = d3.timeFormat('%B');
 
-    console.log(props)
     const days = d3.timeDays(month, new Date(month.getFullYear(), month.getMonth()+1, 1));
     const lastDay = moment(month).endOf('month').format('ddd'); // last day of current month
     const firstDay = moment(month).add(1, 'months').startOf('month').format('ddd'); // first day of next month
@@ -188,7 +187,7 @@ class Month extends React.PureComponent {
           {
           endReached &&
             <text
-              className={classNames('month-name', 'slow-fade-in', {'bold': isCurrentMonth})}
+              className={classNames('month-name', 'slow-fade-in', {'bold': isCurrentMonth || this.props.shiftSelection.indexOf(monthName(month)) > -1 || this.props.shiftSelection.indexOf('all') > -1})}
               y={(cellSize * 7) + (cellMargin * 8) + 35}
               x={((cellSize * this.getWeeksInMonth(month)) + (cellMargin * (this.getWeeksInMonth(month) + 1))) / 2}
               textAnchor='middle'
