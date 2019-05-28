@@ -13,7 +13,12 @@
   margin: 0;
   text-align: center;
   width: 100vw;
-  overflow: auto; }
+  overflow: auto;
+  user-select: none; /* CSS3 (little to no support) */
+  -ms-user-select: none; /* IE 10+ */
+  -moz-user-select: none; /* Gecko (Firefox) */
+  -webkit-user-select: none; /* Webkit (Safari, Chrome) */
+}
 
 .header {
   align-items: center;

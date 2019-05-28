@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 
 import Day from './Day';
 import { getMonthInsights, getWeekInsights } from '../../helpers/parser';
-import { setWeekInsights, setMonthInsights, setWeekdayInsights } from "../../reducers/app";
+import { setWeekInsights, setMonthInsights, setWeekdayInsights, onShiftClick, resetShiftSelection, removeItem } from "../../reducers/app";
 import { showBarChart } from "../../reducers/barChart";
 import { selectDay } from '../../reducers/calendar';
 
@@ -15,7 +15,7 @@ class Month extends React.PureComponent {
     super(props);
     this.state = {
       count: 1,
-      weekLabel: 0
+      toggle: false
     };
   }
 
@@ -48,46 +48,62 @@ class Month extends React.PureComponent {
       return memo
     }, [[]]);
 
-  renderMonthOverview = month => {
-    this.props.selectDay(null);
-    this.props.setWeekdayInsights({
-      selectedWeekday: null,
-      daysOfWeekday: [],
-      weekdayInsights: []
-    });
-    this.props.setWeekInsights({
-      selectedWeek: null,
-      daysOfWeek: [],
-      weekInsights: []
-    });
-    const monthInsights = getMonthInsights(moment().month(month).format('M'), this.props.dayInsights, this.props.allDays);
-    this.props.setMonthInsights({
-      selectedMonth: monthInsights.selectedMonth,
-      daysOfMonth: monthInsights.daysOfMonth,
-      monthInsights: monthInsights.monthInsights
-    });
-    this.props.showBarChart(true);
+  renderMonthOverview = (ev, month) => {
+    if (ev.shiftKey) {
+      this.setState({
+        toggle: !this.state.toggle
+      });
+      this.state.toggle ? this.props.onShiftClick(month) : this.props.removeItem(month);
+    } else {
+      this.props.selectDay(null);
+      this.props.resetShiftSelection();
+      this.props.setWeekdayInsights({
+        selectedWeekday: null,
+        daysOfWeekday: [],
+        weekdayInsights: []
+      });
+      this.props.setWeekInsights({
+        selectedWeek: null,
+        daysOfWeek: [],
+        weekInsights: []
+      });
+      const monthInsights = getMonthInsights(moment().month(month).format('M'), this.props.dayInsights, this.props.allDays);
+      this.props.setMonthInsights({
+        selectedMonth: monthInsights.selectedMonth,
+        daysOfMonth: monthInsights.daysOfMonth,
+        monthInsights: monthInsights.monthInsights
+      });
+      this.props.showBarChart(true);
+    }
   };
 
-  renderWeekOverview = week => {
-    this.props.selectDay(null);
-    this.props.setWeekdayInsights({
-      selectedWeekday: null,
-      daysOfWeekday: [],
-      weekdayInsights: []
-    });
-    this.props.setMonthInsights({
-      selectedMonth: null,
-      daysOfMonth: [],
-      monthInsights: []
-    });
-    const weekInsights = getWeekInsights(week, this.props.dayInsights, this.props.allDays);
-    this.props.setWeekInsights({
-      selectedWeek: weekInsights.selectedWeek,
-      daysOfWeek: weekInsights.daysOfWeek,
-      weekInsights: weekInsights.weekInsights
-    });
-    this.props.showBarChart(true);
+  renderWeekOverview = (ev, week) => {
+    if (ev.shiftKey) {
+      this.setState({
+        toggle: !this.state.toggle
+      });
+      this.state.toggle ? this.props.onShiftClick(week) : this.props.removeItem(week);
+    } else {
+      this.props.selectDay(null);
+      this.props.resetShiftSelection();
+      this.props.setWeekdayInsights({
+        selectedWeekday: null,
+        daysOfWeekday: [],
+        weekdayInsights: []
+      });
+      this.props.setMonthInsights({
+        selectedMonth: null,
+        daysOfMonth: [],
+        monthInsights: []
+      });
+      const weekInsights = getWeekInsights(week, this.props.dayInsights, this.props.allDays);
+      this.props.setWeekInsights({
+        selectedWeek: weekInsights.selectedWeek,
+        daysOfWeek: weekInsights.daysOfWeek,
+        weekInsights: weekInsights.weekInsights
+      });
+      this.props.showBarChart(true);
+    }
   };
 
   renderDays = (renderList, isCurrentMonth) =>
@@ -124,7 +140,7 @@ class Month extends React.PureComponent {
         y={cellSize}
         x={((cellSize * this.getWeeksInMonth(month)) + (cellMargin * (this.getWeeksInMonth(month)))) * offsets[i]}
         textAnchor='middle'
-        onClick={() => this.renderWeekOverview(week)}
+        onClick={ev => this.renderWeekOverview(ev, week)}
       >
         { week }
       </text>
@@ -170,7 +186,7 @@ class Month extends React.PureComponent {
               y={(cellSize * 7) + (cellMargin * 8) + 35}
               x={((cellSize * this.getWeeksInMonth(month)) + (cellMargin * (this.getWeeksInMonth(month) + 1))) / 2}
               textAnchor='middle'
-              onClick={() => this.renderMonthOverview(monthName(month))}
+              onClick={ev => this.renderMonthOverview(ev, monthName(month))}
             >
               { monthName(month) }
             </text>
@@ -191,7 +207,8 @@ const mapStateToProps = state => ({
   cellMargin: state.calendar.cellMargin,
   selectedWeek: state.app.selectedWeek,
   selectedMonth: state.app.selectedMonth,
-  selectedWeekday: state.app.selectedWeekday
+  selectedWeekday: state.app.selectedWeekday,
+  shiftSelection: state.app.shiftSelection
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -199,7 +216,10 @@ const mapDispatchToProps = dispatch => ({
   setMonthInsights: val => dispatch(setMonthInsights(val)),
   setWeekdayInsights: val => dispatch(setWeekdayInsights(val)),
   showBarChart: val => dispatch(showBarChart(val)),
-  selectDay: val => dispatch(selectDay(val))
+  selectDay: val => dispatch(selectDay(val)),
+  onShiftClick: val => dispatch(onShiftClick(val)),
+  resetShiftSelection: val => dispatch(resetShiftSelection(val)),
+  removeItem: val => dispatch(removeItem(val))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Month);

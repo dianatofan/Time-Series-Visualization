@@ -137,21 +137,19 @@ class AreaChart extends React.Component {
   };
 
   render() {
-    const { xScaleArea, plotWidth, plotHeight, margin, yScale } = this.props;
-
-    const weekObj = this.props.weekInsights;
+    const { xScaleArea, plotWidth, plotHeight, margin, yScale, insights } = this.props;
 
     const parseTime = d3.timeParse('%H:%M');
 
     const area = d3.area()
       .x(d => xScaleArea(parseTime(`${d}:30`)))
       .y0(plotHeight - margin.top - margin.bottom)
-      .y1(d => yScale(weekObj[d]))
+      .y1(d => yScale(insights[d]))
       .curve(d3.curveMonotoneX);
 
     const line = d3.line()
       .x(d => xScaleArea(parseTime(`${d}:30`)))
-      .y(d => yScale(weekObj[d]))
+      .y(d => yScale(insights[d]))
       .curve(d3.curveMonotoneX);
 
     return (
@@ -164,10 +162,10 @@ class AreaChart extends React.Component {
         </defs>
         <path className='area'
               fill='url(#grad)'
-              d={area(Object.keys(weekObj))}
+              d={area(Object.keys(insights))}
         />
         <path className='line shadow'
-              d={line(Object.keys(weekObj))}
+              d={line(Object.keys(insights))}
         />
         <g className='mouse-over-effects'>
           <path

@@ -100,12 +100,21 @@ export const getDayColor = (props, isCurrentDay) => {
   if (item) {
     const day = moment(props.day).format('DD-MM-YYYY');
 
-    const isCurrentWeek = contains(props.currentWeek, props.showWeekOverview, day) || (props.selectedWeek && props.selectedWeek === moment(props.day).isoWeek());
-    const isCurrentMonth = contains(props.currentMonth, props.showMonthOverview, day) || (props.selectedMonth && props.selectedMonth === moment(props.day).format('M'));
-    const isCurrentWeekday = contains(props.currentWeekdays.daysArr, props.showWeekdayOverview, day) || (props.selectedWeekday && props.selectedWeekday === moment(props.day).format('ddd'));
+    const isCurrentWeek = contains(props.currentWeek, props.showWeekOverview, day) ||
+      (props.selectedWeek && props.selectedWeek === moment(props.day).isoWeek()) ||
+      (!!props.shiftSelection.length && props.shiftSelection.indexOf(moment(props.day).isoWeek()) > -1);
+    const isCurrentMonth = contains(props.currentMonth, props.showMonthOverview, day) ||
+      (props.selectedMonth && props.selectedMonth === moment(props.day).format('M')) ||
+      (!!props.shiftSelection.length && props.shiftSelection.indexOf(moment(props.day).format('MMMM')) > -1);
+    const isCurrentWeekday = contains(props.currentWeekdays.daysArr, props.showWeekdayOverview, day) ||
+      (props.selectedWeekday && props.selectedWeekday === moment(props.day).format('ddd')) ||
+      (!!props.shiftSelection.length && props.shiftSelection.indexOf(moment(props.day).format('ddd')) > -1);
+    const isSelected = !!props.shiftSelection.length &&
+      (props.shiftSelection.indexOf(moment(props.day).format('YYYY-MM-DD')) > -1 ||
+        props.shiftSelection.indexOf('all') > -1);
 
     const value = getValue(props.data, item, props.month);
-    const interpolateColor = (isCurrentDay || isCurrentWeek || isCurrentMonth || isCurrentWeekday) ? d3.interpolateOranges(value) : d3.interpolatePurples(value);
+    const interpolateColor = (isCurrentDay || isSelected || isCurrentWeek || isCurrentMonth || isCurrentWeekday) ? d3.interpolateOranges(value) : d3.interpolatePurples(value);
 
     return {
       value,

@@ -8,6 +8,9 @@ const SHOW_SPINNER = 'SHOW_SPINNER';
 const SET_WEEK_INSIGHTS = 'SET_WEEK_INSIGHTS';
 const SET_MONTH_INSIGHTS = 'SET_MONTH_INSIGHTS';
 const SET_WEEKDAY_INSIGHTS = 'SET_WEEKDAY_INSIGHTS';
+const ON_SHIFT_CLICK = 'ON_SHIFT_CLICK';
+const REMOVE_ITEM = 'REMOVE_ITEM';
+const RESET_SHIFT_SELECTION = 'RESET_SHIFT_SELECTION';
 
 const initialState = {
   data: [],
@@ -20,6 +23,7 @@ const initialState = {
   daysOfMonth: [],
   selectedWeek: null,
   selectedMonth: null,
+  shiftSelection: [],
   weekdayInsights: [],
   daysOfWeekday: [],
   daysOfWeek: [],
@@ -81,6 +85,21 @@ export default (state = initialState, action) => {
         daysOfWeek: action.val.daysOfWeek,
         selectedWeek: action.val.selectedWeek
       };
+    case ON_SHIFT_CLICK:
+      return {
+        ...state,
+        shiftSelection: [...new Set(state.shiftSelection.concat(action.val))]
+      };
+    case REMOVE_ITEM:
+      return {
+        ...state,
+        shiftSelection: state.shiftSelection.filter(item => item !== action.val)
+      };
+    case RESET_SHIFT_SELECTION:
+      return {
+        ...state,
+        shiftSelection: []
+      };
     default:
       return state;
   }
@@ -93,3 +112,6 @@ export const showSpinner = val => ({ type: SHOW_SPINNER, val });
 export const setMonthInsights = val => ({ type: SET_MONTH_INSIGHTS, val });
 export const setWeekInsights = val => ({ type: SET_WEEK_INSIGHTS, val });
 export const setWeekdayInsights = val => ({ type: SET_WEEKDAY_INSIGHTS, val });
+export const onShiftClick = val => ({ type: ON_SHIFT_CLICK, val });
+export const resetShiftSelection = val => ({ type: RESET_SHIFT_SELECTION, val });
+export const removeItem = val => ({ type: REMOVE_ITEM, val });

@@ -4,10 +4,23 @@ import moment from 'moment';
 import * as d3 from 'd3';
 import {showBarChart} from '../../reducers/barChart';
 import {selectDay, saveColor} from '../../reducers/calendar';
-import {setMonthInsights, setWeekdayInsights, setWeekInsights} from '../../reducers/app';
+import {
+  onShiftClick, removeItem,
+  resetShiftSelection,
+  setMonthInsights,
+  setWeekdayInsights,
+  setWeekInsights
+} from '../../reducers/app';
 import {getAdjacentDayColor, getDayColor} from '../../helpers/colors';
 
 class Day extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      toggle: false
+    };
+  }
+
   shouldComponentUpdate(nextProps, nextState) {
     const formatDate = date => moment(date).format('DD-MM-YY');
     return formatDate(this.props.day) === formatDate(nextProps.selectedDay) ||
@@ -15,6 +28,7 @@ class Day extends React.Component {
       this.props.selectedWeek !== nextProps.selectedWeek ||
       this.isEqual(nextProps) ||
       this.props.fill !== nextProps.fill ||
+      this.props.shiftSelection !== nextProps.shiftSelection ||
       this.props.cellSize !== nextProps.cellSize;
   }
 
@@ -31,31 +45,40 @@ class Day extends React.Component {
   onDayClick = (ev, day, color) => {
     ev.preventDefault();
     ev.stopPropagation();
-    this.props.setMonthInsights({
-      selectedMonth: null,
-      monthInsights: [],
-      daysOfMonth: []
-    });
-    this.props.setWeekdayInsights({
-      selectedWeekday: null,
-      daysOfWeekday: [],
-      weekdayInsights: []
-    });
-    this.props.setWeekInsights({
-      selectedWeek: null,
-      daysOfWeek: [],
-      weekInsights: []
-    });
-    this.props.selectDay({ day, color: d3.interpolateOranges(color.value), data: this.props.data });
-    this.props.showBarChart(true);
-    const previousDay = moment(day).subtract(1, 'd').format('DD-MM-YYYY');
-    const nextDay = moment(day).add(1, 'd').format('DD-MM-YYYY');
-    const isColorSaved = this.props.colors.find(color => color.day === moment(day).format('DD-MM-YYYY'));
-    const isPreviousColorSaved = this.props.colors.find(color => color.day === previousDay);
-    const isNextColorSaved =this.props.colors.find(color => color.day === nextDay);
-    !isColorSaved && this.props.saveColor({ day: moment(day).format('DD-MM-YYYY'), value: d3.color(d3.interpolateOranges(color.value)) });
-    !isPreviousColorSaved && this.props.saveColor({ day: previousDay, value: getAdjacentDayColor(this.props, previousDay) });
-    !isNextColorSaved && this.props.saveColor({ day: nextDay, value: getAdjacentDayColor(this.props, nextDay) });
+    if (ev.shiftKey) {
+      this.setState({
+        toggle: !this.state.toggle
+      });
+      const formattedDay = moment(day).format('YYYY-MM-DD');
+      this.state.toggle ? this.props.onShiftClick(formattedDay) : this.props.removeItem(formattedDay);
+    } else {
+      this.props.setMonthInsights({
+        selectedMonth: null,
+        monthInsights: [],
+        daysOfMonth: []
+      });
+      this.props.setWeekdayInsights({
+        selectedWeekday: null,
+        daysOfWeekday: [],
+        weekdayInsights: []
+      });
+      this.props.setWeekInsights({
+        selectedWeek: null,
+        daysOfWeek: [],
+        weekInsights: []
+      });
+      this.props.resetShiftSelection();
+      this.props.selectDay({ day, color: d3.interpolateOranges(color.value), data: this.props.data });
+      this.props.showBarChart(true);
+      const previousDay = moment(day).subtract(1, 'd').format('DD-MM-YYYY');
+      const nextDay = moment(day).add(1, 'd').format('DD-MM-YYYY');
+      const isColorSaved = this.props.colors.find(color => color.day === moment(day).format('DD-MM-YYYY'));
+      const isPreviousColorSaved = this.props.colors.find(color => color.day === previousDay);
+      const isNextColorSaved =this.props.colors.find(color => color.day === nextDay);
+      !isColorSaved && this.props.saveColor({ day: moment(day).format('DD-MM-YYYY'), value: d3.color(d3.interpolateOranges(color.value)) });
+      !isPreviousColorSaved && this.props.saveColor({ day: previousDay, value: getAdjacentDayColor(this.props, previousDay) });
+      !isNextColorSaved && this.props.saveColor({ day: nextDay, value: getAdjacentDayColor(this.props, nextDay) });
+    }
   };
 
   render() {
@@ -72,12 +95,20 @@ class Day extends React.Component {
 
     const color = getDayColor(props, isCurrentDay);
 
+    const isSelected = !!props.shiftSelection.length &&
+      (moment(d).format('M') === props.selectedMonth ||
+        moment(d).isoWeek() === props.selectedWeek ||
+        moment(d).format('ddd') === props.selectedWeekday ||
+        moment(d).format('DD-MM-YY') === moment(props.selectedDay).format('DD-MM-YY'));
+
+    const showStroke = isCurrentDay || isSelected;
+
     return (
       <rect ref='day'
         key={d}
         className='day fade-in'
-        stroke={isCurrentDay ? '#000' : ''}
-        strokeWidth={isCurrentDay ? 1 : 0}
+        stroke={showStroke ? '#000' : ''}
+        strokeWidth={showStroke ? 1 : 0}
         width={cellSize}
         height={cellSize}
         rx={50}
@@ -100,6 +131,7 @@ const mapStateToProps = state => ({
   selectedMonth: state.app.selectedMonth,
   selectedWeek: state.app.selectedWeek,
   selectedWeekday: state.app.selectedWeekday,
+  shiftSelection: state.app.shiftSelection,
   showWeekOverview: state.barChart.showWeekOverview,
   showMonthOverview: state.barChart.showMonthOverview,
   showWeekdayOverview: state.barChart.showWeekdayOverview,
@@ -119,7 +151,10 @@ const mapDispatchToProps = dispatch => ({
   setWeekInsights: val => dispatch(setWeekInsights(val)),
   setMonthInsights: val => dispatch(setMonthInsights(val)),
   setWeekdayInsights: val => dispatch(setWeekdayInsights(val)),
-  saveColor: val => dispatch(saveColor(val))
+  saveColor: val => dispatch(saveColor(val)),
+  onShiftClick: val => dispatch(onShiftClick(val)),
+  resetShiftSelection: val => dispatch(resetShiftSelection(val)),
+  removeItem: val => dispatch(removeItem(val))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Day);

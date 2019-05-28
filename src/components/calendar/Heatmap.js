@@ -9,7 +9,7 @@ import Card from '../widget/Card';
 import Section from '../widget/Section';
 
 import '../Spinner.scss';
-import { showSpinner } from '../../reducers/app';
+import {onShiftClick, showSpinner} from '../../reducers/app';
 import { onScreenResize } from '../../reducers/calendar';
 
 class Heatmap extends React.PureComponent {
@@ -24,9 +24,15 @@ class Heatmap extends React.PureComponent {
     this.props.showSpinner(false);
   }
 
+  selectAll = ev => {
+    if (ev.key === 'A' && ev.shiftKey) {
+      this.props.onShiftClick('all');
+    }
+  };
+
   render () {
     return (
-      <Section title='Calendar heatmap'>
+      <Section title='Calendar heatmap' tabIndex={0} onKeyDown={ev => this.selectAll(ev)}>
         <Card>
           <YearLabel />
           <div className='months'>
@@ -42,7 +48,8 @@ class Heatmap extends React.PureComponent {
 
 const mapDispatchToProps = dispatch => ({
   showSpinner: val => dispatch(showSpinner(val)),
-  onScreenResize: val => dispatch(onScreenResize(val))
+  onScreenResize: val => dispatch(onScreenResize(val)),
+  onShiftClick: val => dispatch(onShiftClick(val))
 });
 
 export default connect(null, mapDispatchToProps)(Heatmap);

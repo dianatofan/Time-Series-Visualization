@@ -164,6 +164,59 @@ export const getWeekdayInsights = (weekday, dayInsights, allDays, currentWeekday
   };
 };
 
+export const getShiftSelectionInsights = (shiftSelection, data, dayInsights, allDays) => {
+  const shiftInsights = Object.keys(dayInsights)
+    .filter(key => shiftSelection.indexOf(moment(key).format('MMMM')) > -1 ||
+      shiftSelection.indexOf(moment(key).isoWeek()) > -1 ||
+      shiftSelection.indexOf(moment(key).format('ddd')) > -1 ||
+      shiftSelection.indexOf(key) > -1 ||
+      shiftSelection.indexOf('all') > -1)
+    .reduce((obj, key) => {
+      obj[key] = dayInsights[key];
+      return obj;
+    }, {});
+
+  const mergedData = Object.keys(shiftInsights).reduce((acc, key) => {
+    acc.push(shiftInsights[key]);
+    return acc;
+  }, []);
+
+  const allSelectedDays = Object.keys(allDays)
+    .filter(key => shiftSelection.indexOf(moment(key).format('MMMM')) > -1 ||
+      shiftSelection.indexOf(moment(key).isoWeek()) > -1 ||
+      shiftSelection.indexOf(moment(key).format('ddd')) > -1 ||
+      shiftSelection.indexOf(key) > -1 ||
+      shiftSelection.indexOf('all') > -1)
+    .reduce((obj, key) => {
+      obj[key] = allDays[key];
+      return obj;
+    }, {});
+
+  const mergedDays = Object.values(allSelectedDays).reduce((acc, val) => {
+    Object.keys(val).map(key => {
+      if (acc.hasOwnProperty(key)) {
+        acc[key] += val[key];
+      } else {
+        acc[key] = val[key];
+      }
+      return null;
+    });
+    return acc;
+  }, {});
+
+  let selectedDaysObj = {};
+  for (let i = 0; i < 24; i++) {
+    selectedDaysObj[i] = mergedDays[i] ? Number(mergedDays[i] / shiftSelection.length).toFixed(2) : 0
+  }
+
+  return {
+    shiftSelection,
+    selectedDays: mergedDays,
+    selectedDaysInsights: mergedData.flat(),
+    selectedDaysObj
+  };
+};
+
 export const parseDayInsights = data => {
   const dayInsights = getDayInsights(data);
   return Object.keys(dayInsights).reduce((acc, item) => {

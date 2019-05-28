@@ -157,6 +157,8 @@ class DayLabel extends React.Component {
     const unit = this.getUnit();
 
     const showArrows = this.showArrows(selectedItem, unit, minDate, maxDate);
+    const showPreviousArrow = showArrows && showArrows.previous;
+    const showNextArrow = showArrows && showArrows.next;
 
     return (
       <div className='year-label dayTitle'
@@ -166,13 +168,13 @@ class DayLabel extends React.Component {
              (ev.key === 'ArrowRight' && this.select(selectedItem, 1, unit))
            }>
         <i
-          className={classNames('fas fa-chevron-left', {'disabled': !showArrows.previous})}
-          onClick={() => showArrows.previous && this.select(selectedItem, -1, unit)}
+          className={classNames('fas fa-chevron-left', {'disabled': !showPreviousArrow})}
+          onClick={() => showPreviousArrow && this.select(selectedItem, -1, unit)}
         />
         { this.getString(selectedItem) }
         <i
-          className={classNames('fas fa-chevron-right', {'disabled': !showArrows.next})}
-          onClick={() => showArrows.next && this.select(selectedItem, 1, unit)}
+          className={classNames('fas fa-chevron-right', {'disabled': !showNextArrow})}
+          onClick={() => showNextArrow && this.select(selectedItem, 1, unit)}
         />
       </div>
     )

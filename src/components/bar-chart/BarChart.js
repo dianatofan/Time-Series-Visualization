@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import * as d3 from 'd3';
-import {getCurrentMonthInsights, getCurrentWeekInsights, getWeekdayInsights} from '../../helpers/parser';
+import {getCurrentMonthInsights, getCurrentWeekInsights, getWeekdayInsights, getShiftSelectionInsights} from '../../helpers/parser';
 import XAxis from './XAxis';
 import YAxis from './YAxis';
 import Bars from './Bars';
@@ -63,9 +63,12 @@ class BarChart extends React.Component {
     if (this.props.isWeekdayOverviewChecked) {
       return getWeekdayInsights(moment(this.props.selectedDay).format('ddd'), this.props.dayInsights, this.props.allDays, this.props.currentWeekdays, this.props.data).weekdayObj;
     }
+    if (!!this.props.shiftSelection.length) {
+      return getShiftSelectionInsights(this.props.shiftSelection, this.props.data, this.props.dayInsights, this.props.allDays).selectedDaysObj
+    }
   };
 
-  showAreaChart = () => this.props.isWeekOverviewChecked || this.props.isMonthOverviewChecked || this.props.isWeekdayOverviewChecked;
+  showAreaChart = () => this.props.isWeekOverviewChecked || this.props.isMonthOverviewChecked || this.props.isWeekdayOverviewChecked || !!this.props.shiftSelection.length;
 
   updateScale = data => {
     const xScale = d3.scaleTime();
@@ -75,7 +78,7 @@ class BarChart extends React.Component {
     const insights = this.getInsights();
 
     const max = insights ?
-      Math.ceil(Math.max(d3.max(Object.values(insights)), d3.max(Object.values(data)))) :
+      Math.ceil(Math.max(d3.max(Object.values(insights).map(i => parseInt(i))), d3.max(Object.values(data).map(i => parseInt(i))))) :
       d3.max(Object.values(data));
 
     const yDomain = [0, this.showAreaChart() ? max + max / 20 : max];
@@ -146,7 +149,7 @@ class BarChart extends React.Component {
             <YAxis {...metaData} />
             <Bars {...metaData} {...plotData} color={color}/>
             {this.showAreaChart() &&
-            <AreaChart {...metaData} {...plotData} margin={this.props.margin} weekInsights={this.getInsights()} color={color}/>}
+            <AreaChart {...metaData} {...plotData} margin={this.props.margin} insights={this.getInsights()} color={color}/>}
           </g>
         </svg>
         <Footer />
@@ -168,6 +171,8 @@ const mapStateToProps = state => ({
   selectedDay: moment(state.calendar.selectedDay).format('YYYY-MM-DD'),
   selectedMonth: state.app.selectedMonth,
   selectedWeekday: state.app.selectedWeekday,
+  shiftSelection: state.app.shiftSelection,
+  selectedDays: state.app.selectedDays,
   data: state.app.data,
   allDays: state.app.allDays,
   minDate: state.app.minDate,
