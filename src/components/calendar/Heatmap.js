@@ -12,9 +12,6 @@ import '../Spinner.scss';
 import {onShiftClick, showSpinner} from '../../reducers/app';
 import { onScreenResize } from '../../reducers/calendar';
 
-import Selection from '@simonwep/selection-js';
-import * as d3 from "d3";
-
 let x1, x2, y1, y2;
 
 class Heatmap extends React.PureComponent {
@@ -27,34 +24,34 @@ class Heatmap extends React.PureComponent {
 
   componentDidMount() {
     this.props.showSpinner(false);
-    this.brush = d3.brush()
-      .extent([[0, 0], [600, 600]])
-      .on('start', this.brushStart)
-      .on('end', this.brushEnd);
-    d3.select(this.refs.brush).call(this.brush);
+    // this.brush = d3.brush()
+    //   .extent([[0, 0], [600, 600]])
+    //   .on('start', this.brushStart)
+    //   .on('end', this.brushEnd);
+    // d3.select(this.refs.brush).call(this.brush);
   }
 
-  brushStart = () => {
-    const s = d3.event.selection,
-      x0 = s[0][0],
-      y0 = s[0][1],
-      dx = s[1][0] - x0,
-      dy = s[1][1] - y0,
-      max = 0;
-
-    if (dx && dy) {
-     console.log(dx, dy);
-    }
-  };
-
-  brushEnd = () => {
-    if (!d3.event.selection) {
-      return;
-    }
-    const [x1, x2] = d3.event.selection;
-
-    console.log(x1, x2);
-  };
+  // brushStart = () => {
+  //   const s = d3.event.selection,
+  //     x0 = s[0][0],
+  //     y0 = s[0][1],
+  //     dx = s[1][0] - x0,
+  //     dy = s[1][1] - y0,
+  //     max = 0;
+  //
+  //   if (dx && dy) {
+  //    console.log(dx, dy);
+  //   }
+  // };
+  //
+  // brushEnd = () => {
+  //   if (!d3.event.selection) {
+  //     return;
+  //   }
+  //   const [x1, x2] = d3.event.selection;
+  //
+  //   console.log(x1, x2);
+  // };
 
   selectAll = ev => {
     if (ev.key === 'A' && ev.shiftKey) {
@@ -100,12 +97,11 @@ class Heatmap extends React.PureComponent {
       <Section title='Calendar heatmap' tabIndex={0} onKeyDown={ev => this.selectAll(ev)}>
         <Card>
           <YearLabel />
-          <g className='months'>
+          <div className='months'>
             <DayLabels />
             <Year />
-            <g ref='brush' />
             <div id='div' ref='div' hidden />
-          </g>
+          </div>
           <ReactTooltip id='svgTooltip' multiline class='tooltip'/>
         </Card>
       </Section>

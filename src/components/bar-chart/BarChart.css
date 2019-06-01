@@ -36,4 +36,11 @@
 .cursor-pointer {
   cursor: pointer; }
 
+.areaChart .line-rectangle,
+.areaChart .bar-rectangle {
+  width: 40px;
+  height: 25px;
+  fill: white;
+  stroke: #777; }
+
 /*# sourceMappingURL=BarChart.css.map */

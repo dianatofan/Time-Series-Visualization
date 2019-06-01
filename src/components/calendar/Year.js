@@ -27,7 +27,7 @@ class Year extends React.PureComponent {
       <div className='year-wrapper' ref='brush'>
         {
           monthsArr.map((months, i) =>
-            <div className={classNames('year', {'hidden': i !== props.yearIndex})} key={i}>
+            <g className={classNames('year', {'hidden': i !== props.yearIndex})} key={i}>
               {
                 months.map((month, i) =>
                   <Month
@@ -36,7 +36,7 @@ class Year extends React.PureComponent {
                   />
                 )
               }
-            </div>
+            </g>
           )
         }
       </div>

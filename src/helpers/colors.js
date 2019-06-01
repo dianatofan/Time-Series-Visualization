@@ -23,29 +23,28 @@ export const getAverageColor = props => {
   const insertMissingColors = daysArray => {
     daysArray.forEach(day => {
       if (!filteredColors.find(color => moment(color.day, 'DD-MM-YYYY').format('YYYY-MM-DD') === day)) {
-        const value = d3.color(d3.interpolateOranges(getValue(props.data, day, moment(day).startOf('month'))));
+        const value = d3.color(getColors(props.data).oranges(props.data[day]));
         filteredColors.push({
           day,
           value
         });
-        // props.saveColor({ day: moment(day).format('DD-MM-YYYY'), value });
       }
     })
   };
   if (props.selectedWeek) {
-    filteredColors = props.colors.filter(color => moment(color.day).isoWeek() === props.selectedWeek && d3.rgb(color));
+    filteredColors = props.colors.filter(color => moment(color.day).isoWeek() === props.selectedWeek && color);
     const daysArray = Object.keys(props.allDays).filter(key => moment(key).isoWeek() === props.selectedWeek);
     insertMissingColors(daysArray);
   }
 
   if (props.selectedMonth) {
-    filteredColors = props.colors.filter(color => moment(color.day, 'DD-MM-YYYY').format('M') === props.selectedMonth && d3.rgb(color));
+    filteredColors = props.colors.filter(color => moment(color.day, 'DD-MM-YYYY').format('M') === props.selectedMonth && color);
     const daysArray = getDaysArrayByMonth(props.selectedMonth, moment(props.minDate).format('YYYY'), props.data);
     insertMissingColors(daysArray);
   }
 
   if (props.selectedWeekday) {
-    filteredColors = props.colors.filter(color => moment(color.day, 'DD-MM-YYYY').format('ddd') === props.selectedWeekday && d3.rgb(color));
+    filteredColors = props.colors.filter(color => moment(color.day, 'DD-MM-YYYY').format('ddd') === props.selectedWeekday && color);
     const daysArray = Object.keys(props.allDays).filter(key => moment(key).isoWeekday() === moment(props.selectedWeekday, 'ddd').isoWeekday());
     insertMissingColors(daysArray);
   }
@@ -57,19 +56,6 @@ export const getAverageColor = props => {
   });
 
   return d3.rgb(rgb.r / filteredColors.length, rgb.g / filteredColors.length, rgb.b / filteredColors.length);
-};
-
-const normalize = (val, max, min) => (1 - 0.25) * ((val - min) / (max - min)) + 0.25;
-
-const getValue = (data, item, month) => {
-  const daysArr = Array.from({length: moment(month).daysInMonth()}, (x, i) => moment(month).startOf('month').add(i, 'days').format('YYYY-MM-DD'));
-
-  const count = Object.keys(data).reduce((acc, item) => {
-    daysArr.includes(item) && acc.push(data[item]);
-    return acc;
-  }, []);
-
-  return !!data[item] && normalize(data[item], Math.max(...count), Math.min(...count));
 };
 
 const contains = (arr, showOverview, item) => {
@@ -84,14 +70,35 @@ const contains = (arr, showOverview, item) => {
   }
 };
 
-export const getAdjacentDayColor = (props, day, monthVal) => {
+export const getAdjacentDayColor = (props, day) => {
   const item = Object.keys(props.data).find(key => moment(key, 'YYYY-MM-DD').format('DD-MM-YYYY') === day);
-  const month = monthVal ? monthVal : props.month;
   if (item) {
-    const value = getValue(props.data, item, month);
-    return d3.color(d3.interpolateOranges(value));
+    return d3.color(getColors(props.data).oranges(props.data[item]));
   }
-  return '#ececec';
+  return '#efefef';
+};
+
+export const getColors = data => {
+  const min = d3.min(Object.values(data));
+  const max = d3.max(Object.values(data));
+  return {
+    purples: purplePalette(min, max),
+    oranges: orangePalette(min, max)
+  }
+};
+
+const purplePalette = (min, max) => {
+  const d = (max-min)/10;
+  return d3.scaleThreshold()
+    .range(['#dadaeb','#c7c7e1','#b5b3d6','#a3a0cc','#938dc2','#857ab8','#7866ae','#6b52a4','#603d9a','#54278f'])
+    .domain([min+d,min+2*d,min+3*d,min+4*d,min+5*d,min+6*d,min+7*d,min+8*d,min+9*d,min+10*d]);
+};
+
+const orangePalette = (min, max) => {
+  const d = (max-min)/10;
+  return d3.scaleThreshold()
+    .range(['#fdd0a2','#febb81','#fea763','#fd9243','#f67e30','#ea6c23','#dc5c18','#cb4d0e','#b94107','#a63603'])
+    .domain([min+d,min+2*d,min+3*d,min+4*d,min+5*d,min+6*d,min+7*d,min+8*d,min+9*d,min+10*d]);
 };
 
 export const getDayColor = (props, isCurrentDay) => {
@@ -113,18 +120,17 @@ export const getDayColor = (props, isCurrentDay) => {
       (props.shiftSelection.indexOf(moment(props.day).format('YYYY-MM-DD')) > -1 ||
         props.shiftSelection.indexOf('all') > -1);
 
-    const value = getValue(props.data, item, props.month);
-    const interpolateColor = (isCurrentDay || isSelected || isCurrentWeek || isCurrentMonth || isCurrentWeekday) ? d3.interpolateOranges(value) : d3.interpolatePurples(value);
+    const colors = getColors(props.data);
+    const interpolateColor = (isCurrentDay || isSelected || isCurrentWeek || isCurrentMonth || isCurrentWeekday) ? colors.oranges(props.data[item]) : colors.purples(props.data[item]);
 
     return {
-      value,
       count: props.data[item],
       fillColor: interpolateColor
     }
   }
 
   return {
-    fillColor: '#ececec',
+    fillColor: '#efefef',
     count: 0
   };
 };

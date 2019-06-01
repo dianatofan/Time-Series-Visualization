@@ -63,6 +63,9 @@ class AreaChart extends React.Component {
         else break; //position found
       }
 
+      d3.select('.line-rectangle')
+        .style('opacity', 1);
+
       d3.select('.line-text')
         .text(Number(yScale.invert(pos.y)).toFixed(2));
 
@@ -91,6 +94,8 @@ class AreaChart extends React.Component {
       });
 
     const hide = () => {
+      d3.select('.bar-rectangle')
+        .style('opacity', 0);
       d3.select('.bar-text')
         .style('opacity', 0);
       d3.select('.bar-circle')
@@ -113,6 +118,8 @@ class AreaChart extends React.Component {
               hide();
             });
 
+          d3.select('.bar-rectangle')
+            .style('opacity', 1);
           d3.select('.bar-text')
             .style('opacity', 1)
             .text(item.occurrences);
@@ -187,10 +194,17 @@ class AreaChart extends React.Component {
               stroke='#000'
               opacity={0}
             />
+            <rect
+              className='line-rectangle'
+              x={10}
+              y={-14}
+              opacity={0}
+            >
+            </rect>
             <text
               className='line-text'
-              transform='translate(10,3)'
               fontSize={14}
+              transform='translate(16,3)'
             />
           </g>
           <g className='mouse-per-bar'>
@@ -202,9 +216,16 @@ class AreaChart extends React.Component {
               stroke='#000'
               opacity={0}
             />
+            <rect
+              className='bar-rectangle'
+              x={-50}
+              y={-14}
+              opacity={0}
+            >
+            </rect>
             <text
               className='bar-text'
-              transform='translate(-17,3)'
+              transform='translate(-35,3)'
               fontSize={14}
               opacity={0}
             />

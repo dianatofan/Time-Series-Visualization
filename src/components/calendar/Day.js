@@ -11,7 +11,7 @@ import {
   setWeekdayInsights,
   setWeekInsights
 } from '../../reducers/app';
-import {getAdjacentDayColor, getDayColor} from '../../helpers/colors';
+import {getAdjacentDayColor, getDayColor, getColors} from '../../helpers/colors';
 
 class Day extends React.Component {
   constructor(props) {
@@ -44,13 +44,12 @@ class Day extends React.Component {
 
   onDayClick = (ev, day, color) => {
     console.log(this.refs.day.getBoundingClientRect())
-    ev.preventDefault();
     ev.stopPropagation();
+    const formattedDay = moment(day).format('YYYY-MM-DD');
     if (ev.shiftKey) {
       this.setState({
         toggle: !this.state.toggle
       });
-      const formattedDay = moment(day).format('YYYY-MM-DD');
       this.state.toggle ? this.props.onShiftClick(formattedDay) : this.props.removeItem(formattedDay);
     } else {
       this.props.setMonthInsights({
@@ -69,14 +68,15 @@ class Day extends React.Component {
         weekInsights: []
       });
       this.props.resetShiftSelection();
-      this.props.selectDay({ day, color: d3.interpolateOranges(color.value), data: this.props.data });
+      const color = d3.color(getColors(this.props.data).oranges(this.props.data[formattedDay]));
+      this.props.selectDay({ day, color, data: this.props.data });
       this.props.showBarChart(true);
       const previousDay = moment(day).subtract(1, 'd').format('DD-MM-YYYY');
       const nextDay = moment(day).add(1, 'd').format('DD-MM-YYYY');
       const isColorSaved = this.props.colors.find(color => color.day === moment(day).format('DD-MM-YYYY'));
       const isPreviousColorSaved = this.props.colors.find(color => color.day === previousDay);
-      const isNextColorSaved =this.props.colors.find(color => color.day === nextDay);
-      !isColorSaved && this.props.saveColor({ day: moment(day).format('DD-MM-YYYY'), value: d3.color(d3.interpolateOranges(color.value)) });
+      const isNextColorSaved = this.props.colors.find(color => color.day === nextDay);
+      !isColorSaved && this.props.saveColor({ day: moment(day).format('DD-MM-YYYY'), value: color });
       !isPreviousColorSaved && this.props.saveColor({ day: previousDay, value: getAdjacentDayColor(this.props, previousDay) });
       !isNextColorSaved && this.props.saveColor({ day: nextDay, value: getAdjacentDayColor(this.props, nextDay) });
     }

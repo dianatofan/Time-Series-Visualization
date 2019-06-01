@@ -1,11 +1,12 @@
 import moment from 'moment';
 
-const parseTime = timeStamp => {
+const parseTime = (timeStamp, offset) => {
   const timeString = timeStamp.split('T')[1].slice(0, -1);
-  return moment(`${timeString}`, 'HHmmss').utc().format("HH:mm:ss");
+  const value = offset || (timeStamp.split(';')[1]).split(';')[0];
+  return moment.utc(`${timeString}`, 'HH:mm:ss').utcOffset(value).format('HH:mm:ss');
 };
 
-const parseDate = timeStamp => moment(`${timeStamp.split('T')[0]}`, 'YYYYMMDDxxx').utc()
+const parseDate = timeStamp => moment(`${timeStamp.split('T')[0]}`, 'YYYYMMDDxxx')
   .format('YYYY-MM-DD').split('T')[0];
 
 const countOccurrences = arr => arr.reduce(function(obj, item) {
@@ -16,7 +17,7 @@ const countOccurrences = arr => arr.reduce(function(obj, item) {
 const parseData = data => {
   const cleanedData = data.map(item => (item[data.columns[0]]).replace(/[-:.]/g, ''));
   let newData = cleanedData.map(item => ({ timestamp: parseDate(item) }));
-  // newData.push({ timestamp: parseDate(data.columns[0]) });
+  newData.unshift({ timestamp: parseDate(data.columns[0]) });
   const x = newData.map(item => item.timestamp);
   return countOccurrences(x);
 };
@@ -28,8 +29,8 @@ const groupBy = arr => arr.reduce(function (r, a) {
 }, {});
 
 export const getDayInsights = data => {
-  let newData = data.map(item => ({ date: parseDate(item[data.columns[0]]), time: parseTime(item[data.columns[0]]) }));
-  // newData.push({ date: parseDate(data.columns[0]), time: parseTimestamp(data.columns[0]) });
+  let newData = data.map(item => ({ date: parseDate(item[data.columns[0]]), time: parseTime(item[data.columns[0]], item[data.columns[1]]) }));
+  newData.unshift({ date: parseDate(data.columns[0]), time: parseTime(data.columns[0], data.columns[1]) });
   return groupBy(newData);
 };
 
