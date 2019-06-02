@@ -1,19 +1,19 @@
 self.__precacheManifest = [
   {
-    "revision": "afce498dc47005b91a9f",
-    "url": "/Time-Series-Visualization/static/css/main.faf3e7b8.chunk.css"
+    "revision": "e373aa5f524753e3e6f9",
+    "url": "/Time-Series-Visualization/static/css/main.b8d40eda.chunk.css"
   },
   {
-    "revision": "afce498dc47005b91a9f",
-    "url": "/Time-Series-Visualization/static/js/main.afce498d.chunk.js"
+    "revision": "e373aa5f524753e3e6f9",
+    "url": "/Time-Series-Visualization/static/js/main.e373aa5f.chunk.js"
   },
   {
-    "revision": "0ec7ae78387a8ebf7253",
-    "url": "/Time-Series-Visualization/static/css/1.46944513.chunk.css"
+    "revision": "7438e960d2dbf683256c",
+    "url": "/Time-Series-Visualization/static/css/1.97e2b5ac.chunk.css"
   },
   {
-    "revision": "0ec7ae78387a8ebf7253",
-    "url": "/Time-Series-Visualization/static/js/1.0ec7ae78.chunk.js"
+    "revision": "7438e960d2dbf683256c",
+    "url": "/Time-Series-Visualization/static/js/1.7438e960.chunk.js"
   },
   {
     "revision": "1baeb39ecad658267a7d",
@@ -32,8 +32,8 @@ self.__precacheManifest = [
     "url": "/Time-Series-Visualization/static/media/clock.d668b059.svg"
   },
   {
-    "revision": "116a8ad68f8999ad9e12099854102da4",
-    "url": "/Time-Series-Visualization/static/media/itching_in_nose_tbc.116a8ad6.csv"
+    "revision": "4437b6044d865ec5d74d63c8cc671f64",
+    "url": "/Time-Series-Visualization/static/media/itching_in_nose_tbc.4437b604.csv"
   },
   {
     "revision": "345754fd2693bedc5bdcea9e6c65ccc2",
@@ -56,7 +56,7 @@ self.__precacheManifest = [
     "url": "/Time-Series-Visualization/static/media/pdf-logo-hover.eebd97c5.svg"
   },
   {
-    "revision": "72dbb6adb18ed0392ae3b25555b72d6e",
+    "revision": "c4f178cc5c87f2ccd2e53b0dcf65fde9",
     "url": "/Time-Series-Visualization/index.html"
   }
 ];
