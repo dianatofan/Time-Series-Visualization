@@ -55,9 +55,11 @@
   width: 40px;
   height: 25px;
   fill: white;
-  stroke: $mediumGray;
-  //opacity: 0.9;
+  stroke: $lightGray;
+  box-shadow: 0 0 5px 0 #e8e8e8;
+  opacity: 0.9;
 }
 
-.areaChart .line-rectangle {
+.barChart svg {
+  margin: 10px 0;
 }

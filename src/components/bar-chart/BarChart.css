@@ -41,6 +41,11 @@
   width: 40px;
   height: 25px;
   fill: white;
-  stroke: #777; }
+  stroke: #E8E8E8;
+  box-shadow: 0 0 5px 0 #e8e8e8;
+  opacity: 0.9; }
+
+.barChart svg {
+  margin: 10px 0; }
 
 /*# sourceMappingURL=BarChart.css.map */

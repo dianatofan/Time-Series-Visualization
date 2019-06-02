@@ -14,7 +14,7 @@ const RadialChartContainer = props => {
   return (
     <Section className='section-one-third'>
       <Card>
-        <div className='year-label dayTitle dataset-overview-title'>Weekdays vs. weekends</div>
+        <div className='year-label dayTitle dataset-overview-title'>Week average</div>
         <div className='barChart'>
           <RadialChart data={getInsights()} />
         </div>

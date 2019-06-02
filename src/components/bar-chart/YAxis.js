@@ -1,5 +1,5 @@
 import React from 'react';
-import * as d3 from "d3";
+import * as d3 from 'd3';
 
 class YAxis extends React.PureComponent {
   componentDidMount() {
@@ -17,6 +17,16 @@ class YAxis extends React.PureComponent {
     d3.select(this.refs.yAxis)
       .transition()
       .call(yAxis);
+    d3.select(this.refs.yAxis)
+      .append('text')
+      .attr('transform', 'rotate(-90)')
+      .attr('y', 10 - this.props.margin.left)
+      .attr('x', -36)
+      .attr('dy', '1em')
+      .style('fill', '#000')
+      .style('font-size', 12)
+      .style('text-anchor', 'middle')
+      .text('Observations');
   };
 
   render() {

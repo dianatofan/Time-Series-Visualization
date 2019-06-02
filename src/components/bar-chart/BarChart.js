@@ -81,7 +81,7 @@ class BarChart extends React.Component {
       Math.ceil(Math.max(d3.max(Object.values(insights).map(i => parseInt(i))), d3.max(Object.values(data).map(i => parseInt(i))))) :
       d3.max(Object.values(data));
 
-    const yDomain = [0, this.showAreaChart() ? max + max / 20 : max];
+    const yDomain = [0, this.showAreaChart() ? max + max / 12 : max];
 
     const parseTime = d3.timeParse('%H:%M');
     const midnight = parseTime('00:00');
@@ -141,18 +141,20 @@ class BarChart extends React.Component {
     const transform = `translate(${this.props.margin.left},${this.props.margin.top})`;
     const color = this.props.color || getAverageColor(this.props);
 
+    const showFooter = !(this.props.selectedMonth || this.props.selectedWeekday || this.props.selectedWeek);
+
     return (
       <div>
         <svg width='100%' height={this.props.height} ref='barChart'>
           <g transform={transform} width={plotWidth} height={plotHeight}>
-            <XAxis {...metaData} transform={`translate(0,${plotHeight - 50})`}/>
-            <YAxis {...metaData} />
+            <XAxis {...metaData} transform={`translate(0,${plotHeight - 50})`} margin={this.props.margin} width={this.state.width} height={this.props.plotHeight}/>
+            <YAxis {...metaData} margin={this.props.margin} height={plotHeight} />
             <Bars {...metaData} {...plotData} color={color}/>
             {this.showAreaChart() &&
             <AreaChart {...metaData} {...plotData} margin={this.props.margin} insights={this.getInsights()} color={color}/>}
           </g>
         </svg>
-        <Footer />
+        <Footer showFooter={showFooter} />
         <ReactTooltip id='rectTooltip' multiline class='tooltip'/>
         <Modal />
       </div>

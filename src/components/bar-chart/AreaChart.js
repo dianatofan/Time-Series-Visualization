@@ -63,12 +63,6 @@ class AreaChart extends React.Component {
         else break; //position found
       }
 
-      d3.select('.line-rectangle')
-        .style('opacity', 1);
-
-      d3.select('.line-text')
-        .text(Number(yScale.invert(pos.y)).toFixed(2));
-
       return pos;
     };
 
@@ -90,10 +84,19 @@ class AreaChart extends React.Component {
         d3.selectAll('.bar')
           .attr('fill', d =>  formatTime(parseTime(d.data)) === formatTime(x) ? d3.rgb(color).darker() : color);
 
+        d3.select('.line-rectangle')
+          .style('opacity', 0.9);
+        d3.select('.line-text')
+          .style('fill', '#7888BF')
+          .style('font-weight', 'bold')
+          .text(Number(yScale.invert(pos.y)).toFixed(2));
+
         return 'translate(' + mouseX + ',' + pos.y +')';
       });
 
     const hide = () => {
+      d3.select('.line-rectangle')
+        .style('opacity', 0);
       d3.select('.bar-rectangle')
         .style('opacity', 0);
       d3.select('.bar-text')
@@ -114,14 +117,16 @@ class AreaChart extends React.Component {
           d3.select('.mouse-over-effects')
             .style('cursor', 'pointer')
             .on('click', () => {
-              openModal({ data: item, arr: dayInsights[moment(selectedDay).format('YYYY-MM-DD')] });
               hide();
+              openModal({ data: item, arr: dayInsights[moment(selectedDay).format('YYYY-MM-DD')] });
             });
 
           d3.select('.bar-rectangle')
-            .style('opacity', 1);
+            .style('opacity', 0.9);
           d3.select('.bar-text')
             .style('opacity', 1)
+            .style('fill', d3.rgb(color).darker())
+            .style('font-weight', 'bold')
             .text(item.occurrences);
           d3.select('.bar-circle')
             .style('opacity', 1);

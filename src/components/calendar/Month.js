@@ -9,6 +9,8 @@ import { getMonthInsights, getWeekInsights } from '../../helpers/parser';
 import { setWeekInsights, setMonthInsights, setWeekdayInsights, onShiftClick, resetShiftSelection, removeItem } from "../../reducers/app";
 import { showBarChart } from "../../reducers/barChart";
 import { selectDay } from '../../reducers/calendar';
+import ReactTooltip from "react-tooltip";
+import Card from "../widget/Card";
 
 class Month extends React.PureComponent {
   constructor(props) {
@@ -210,9 +212,7 @@ class Month extends React.PureComponent {
             </text>
           }
           { endReached && this.renderWeekLabels(cellSize, cellMargin, month) }
-          {
-            this.renderDays(renderList, isCurrentMonth)
-          }
+          { this.renderDays(renderList, isCurrentMonth) }
         </g>
       </svg>
     )

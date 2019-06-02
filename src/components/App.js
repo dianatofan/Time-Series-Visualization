@@ -24,7 +24,7 @@ const App = props => {
   const renderBarChart = () =>
     <Container
       data={props.allDays[props.selectedDay]}
-      margin={{ top: 20, right: 20, bottom: 30, left: 40 }}
+      margin={{ top: 10, right: 30, bottom: 40, left: 50 }}
       height={300}
     />;
 

@@ -94,15 +94,14 @@ class Heatmap extends React.PureComponent {
 
   render () {
     return (
-      <Section title='Calendar heatmap' tabIndex={0} onKeyDown={ev => this.selectAll(ev)}>
-        <Card>
+      <Section title='Calendar heatmap'>
+        <Card tabIndex={0} onKeyDown={ev => this.selectAll(ev)}>
           <YearLabel />
           <div className='months'>
             <DayLabels />
             <Year />
             <div id='div' ref='div' hidden />
           </div>
-          <ReactTooltip id='svgTooltip' multiline class='tooltip'/>
         </Card>
       </Section>
     )

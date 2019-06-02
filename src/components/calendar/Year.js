@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import * as d3 from 'd3';
+import ReactTooltip from 'react-tooltip';
 
 import Month from './Month';
 
@@ -12,6 +13,10 @@ class Year extends React.PureComponent {
       memo[memo.length - 1].push(value);
       return memo
     }, [[]]);
+
+  componentDidUpdate() {
+    ReactTooltip.rebuild();
+  }
 
   render() {
     const props = this.props;
@@ -39,6 +44,7 @@ class Year extends React.PureComponent {
             </g>
           )
         }
+        <ReactTooltip id='svgTooltip' multiline class='tooltip'/>
       </div>
     )
   }

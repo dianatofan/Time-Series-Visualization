@@ -105,7 +105,10 @@ class Day extends React.Component {
     const showStroke = isCurrentDay || (isSelected && props.data[moment(d).format('YYYY-MM-DD')]);
 
     return (
-      <rect ref='day'
+      <rect
+        data-tip={`${moment(d).format('dddd, DD MMM YYYY')}<br>Count: ${color.count}`}
+        data-for='svgTooltip'
+        ref='day'
         key={d}
         className='day fade-in'
         stroke={showStroke ? '#000' : ''}
@@ -118,8 +121,6 @@ class Day extends React.Component {
         y={(day(d) * cellSize) + (day(d) * cellMargin) + cellMargin + 20}
         x={((week(d) - week(new Date(d.getFullYear(),d.getMonth(),1))) * cellSize) + ((week(d) - week(new Date(d.getFullYear(),d.getMonth(),1))) * cellMargin) + cellMargin}
         onClick={ev => this.onDayClick(ev, d, color)}
-        data-tip={`${moment(d).format('dddd, DD MMM YYYY')}<br>Count: ${color.count}`}
-        data-for='svgTooltip'
       >
       </rect>
     )

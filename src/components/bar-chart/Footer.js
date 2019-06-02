@@ -37,7 +37,7 @@ const Footer = props => {
 
   return (
     <div className='footer year-label'>
-      { renderCheckboxes() }
+      { props.showFooter ? renderCheckboxes() : <div className='checkboxes'/> }
       <button onClick={onRemoveClick}>
         Remove charts
       </button>

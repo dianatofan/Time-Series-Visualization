@@ -88,10 +88,10 @@ export const getColors = data => {
 };
 
 const purplePalette = (min, max) => {
-  const d = (max-min)/10;
+  const d = (max-min)/20;
   return d3.scaleThreshold()
-    .range(['#dadaeb','#c7c7e1','#b5b3d6','#a3a0cc','#938dc2','#857ab8','#7866ae','#6b52a4','#603d9a','#54278f'])
-    .domain([min+d,min+2*d,min+3*d,min+4*d,min+5*d,min+6*d,min+7*d,min+8*d,min+9*d,min+10*d]);
+    .range(['#dadaeb','#d1d0e6','#c9c7e1','#c0bedc','#b7b5d7','#afacd2','#a6a3ce','#9e9ac9','#9591c4','#8c89c0','#8380bc','#7d76b7','#786db2','#7464ad','#6f5aa8','#6950a3','#64469e','#5f3d99','#5a3294','#54278f'])
+    .domain([min+d,min+2*d,min+3*d,min+4*d,min+5*d,min+6*d,min+7*d,min+8*d,min+9*d,min+10*d,min+11*d,min+12*d,min+13*d,min+14*d,min+15*d,min+16*d,min+17*d,min+18*d,min+19*d,min+20*d]);
 };
 
 const orangePalette = (min, max) => {

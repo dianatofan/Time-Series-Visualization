@@ -24,7 +24,7 @@ const Container = props => {
 
   return (
     <Section className='section-two-thirds'>
-      <Card>
+      <Card tabIndex={0}>
         <DayLabel selectedDay={props.selectedDay} />
         <div className='barChart'>
           {
