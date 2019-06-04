@@ -1,11 +1,11 @@
 self.__precacheManifest = [
   {
-    "revision": "e373aa5f524753e3e6f9",
-    "url": "/Time-Series-Visualization/static/css/main.b8d40eda.chunk.css"
+    "revision": "b539274a278f10d2ac6f",
+    "url": "/Time-Series-Visualization/static/css/main.4b9d5c4c.chunk.css"
   },
   {
-    "revision": "e373aa5f524753e3e6f9",
-    "url": "/Time-Series-Visualization/static/js/main.e373aa5f.chunk.js"
+    "revision": "b539274a278f10d2ac6f",
+    "url": "/Time-Series-Visualization/static/js/main.b539274a.chunk.js"
   },
   {
     "revision": "7438e960d2dbf683256c",
@@ -56,7 +56,7 @@ self.__precacheManifest = [
     "url": "/Time-Series-Visualization/static/media/pdf-logo-hover.eebd97c5.svg"
   },
   {
-    "revision": "c4f178cc5c87f2ccd2e53b0dcf65fde9",
+    "revision": "a761f511a30704a8a4137176c5a8ab15",
     "url": "/Time-Series-Visualization/index.html"
   }
 ];
