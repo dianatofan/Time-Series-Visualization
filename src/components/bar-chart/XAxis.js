@@ -17,14 +17,6 @@ class XAxis extends React.PureComponent {
     d3.select(this.refs.xAxis)
       .transition()
       .call(xAxis);
-    d3.select(this.refs.xAxis)
-     .append('text')
-      .attr('y', 35)
-      .attr('x', this.props.width - 70)
-      .style('text-anchor', 'middle')
-      .style('fill', '#000')
-      .style('font-size', 12)
-      .text('Hour of the day');
   };
 
   render() {
@@ -35,7 +27,15 @@ class XAxis extends React.PureComponent {
          fill='none'
          fontSize={10}
          textAnchor='middle'
-      />
+      >
+        <text x={this.props.width - 70}
+              y={35}
+              textAnchor='middle'
+              fill='#000'
+              fontSize={12}>
+          Hour of the day
+        </text>
+      </g>
     )
   }
 }

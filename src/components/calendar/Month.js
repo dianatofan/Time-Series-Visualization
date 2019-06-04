@@ -10,7 +10,6 @@ import { setWeekInsights, setMonthInsights, setWeekdayInsights, onShiftClick, re
 import { showBarChart } from "../../reducers/barChart";
 import { selectDay } from '../../reducers/calendar';
 import ReactTooltip from "react-tooltip";
-import Card from "../widget/Card";
 
 class Month extends React.PureComponent {
   constructor(props) {
@@ -30,6 +29,7 @@ class Month extends React.PureComponent {
 
   componentDidUpdate() {
     this.showMoreData();
+    ReactTooltip.rebuild();
   }
 
   brushEnd = () => {
@@ -63,11 +63,13 @@ class Month extends React.PureComponent {
     }, [[]]);
 
   renderMonthOverview = (ev, month) => {
+    ev.stopPropagation();
     if (ev.shiftKey) {
       this.setState({
         toggle: !this.state.toggle
+      }, () => {
+        this.state.toggle ? this.props.onShiftClick(month) : this.props.removeItem(month);
       });
-      this.state.toggle ? this.props.onShiftClick(month) : this.props.removeItem(month);
     } else {
       this.props.selectDay(null);
       this.props.resetShiftSelection();
@@ -92,11 +94,13 @@ class Month extends React.PureComponent {
   };
 
   renderWeekOverview = (ev, week) => {
+    ev.stopPropagation();
     if (ev.shiftKey) {
       this.setState({
         toggle: !this.state.toggle
+      }, () => {
+        this.state.toggle ? this.props.onShiftClick(week) : this.props.removeItem(week);
       });
-      this.state.toggle ? this.props.onShiftClick(week) : this.props.removeItem(week);
     } else {
       this.props.selectDay(null);
       this.props.resetShiftSelection();

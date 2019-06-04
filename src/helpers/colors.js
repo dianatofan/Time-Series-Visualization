@@ -115,7 +115,8 @@ export const getDayColor = (props, isCurrentDay) => {
       (!!props.shiftSelection.length && props.shiftSelection.indexOf(moment(props.day).format('MMMM')) > -1);
     const isCurrentWeekday = contains(props.currentWeekdays.daysArr, props.showWeekdayOverview, day) ||
       (props.selectedWeekday && props.selectedWeekday === moment(props.day).format('ddd')) ||
-      (!!props.shiftSelection.length && props.shiftSelection.indexOf(moment(props.day).format('ddd')) > -1);
+      (!!props.shiftSelection.length && props.shiftSelection.indexOf(moment(props.day).format('ddd')) > -1) ||
+      (props.highlightedWeekday && props.highlightedWeekday === moment(props.day).format('ddd'));
     const isSelected = !!props.shiftSelection.length &&
       (props.shiftSelection.indexOf(moment(props.day).format('YYYY-MM-DD')) > -1 ||
         props.shiftSelection.indexOf('all') > -1);

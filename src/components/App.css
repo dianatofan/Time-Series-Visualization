@@ -189,6 +189,9 @@ p {
 .Dropdown-arrow {
   top: 22px; }
 
+@media screen and (max-width: 1000px) {
+  .charts-container {
+    flex-direction: column; } }
 /*# sourceMappingURL=App.css.map */
 
 /*# sourceMappingURL=App.css.map */

@@ -1,9 +1,9 @@
 const SHOW_RADIAL_CHART = 'SHOW_RADIAL_CHART';
-const SELECT_DAY = 'SELECT_DAY';
+const HIGHLIGHT_DAY = 'HIGHLIGHT_DAY';
 
 const initialState = {
   isRadialChartVisible: false,
-  selectedDay: null
+  highlightedWeekday: null
 };
 
 export default (state = initialState, action) => {
@@ -13,10 +13,10 @@ export default (state = initialState, action) => {
         ...state,
         isRadialChartVisible: action.val
       };
-    case SELECT_DAY:
+    case HIGHLIGHT_DAY:
       return {
         ...state,
-        selectedDay: action.val
+        highlightedWeekday: action.val
       };
     default:
       return state;
@@ -24,4 +24,4 @@ export default (state = initialState, action) => {
 }
 
 export const showRadialChart = val => ({ type: SHOW_RADIAL_CHART, val });
-export const selectDay = val => ({ type: SELECT_DAY, val });
+export const highlightDay = val => ({ type: HIGHLIGHT_DAY, val });

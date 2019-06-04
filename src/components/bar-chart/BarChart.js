@@ -17,8 +17,10 @@ import {getAverageColor} from "../../helpers/colors";
 class BarChart extends React.Component {
   constructor(props) {
     super(props);
+    const smallerScreen = document.getElementById('card').clientWidth < 900;
+    const val = smallerScreen ? 1 : 0.66;
     this.state = {
-      width: (document.getElementById('card').clientWidth - props.margin.left - props.margin.right) * 0.66
+      width: (document.getElementById('card').clientWidth - props.margin.left - props.margin.right) * val
     };
   }
 
@@ -35,8 +37,10 @@ class BarChart extends React.Component {
   }
 
   resize = () => {
+    const smallerScreen = document.getElementById('card').clientWidth < 900;
+    const val = smallerScreen ? 1 : 0.66;
     this.setState({
-      width: document.getElementById('card').clientWidth - this.props.margin.left - this.props.margin.right
+      width: (document.getElementById('card').clientWidth - this.props.margin.left - this.props.margin.right) * val
     });
   };
 
@@ -78,21 +82,22 @@ class BarChart extends React.Component {
     const insights = this.getInsights();
 
     const max = insights ?
-      Math.ceil(Math.max(d3.max(Object.values(insights).map(i => parseInt(i))), d3.max(Object.values(data).map(i => parseInt(i))))) :
+      Math.ceil(Math.max(d3.max(Object.values(insights).map(i => Math.ceil(i))), d3.max(Object.values(data).map(i => Math.ceil(i))))) :
       d3.max(Object.values(data));
 
     const yDomain = [0, this.showAreaChart() ? max + max / 12 : max];
 
     const parseTime = d3.timeParse('%H:%M');
     const midnight = parseTime('00:00');
+    const halfPastMidnight = parseTime('00:30');
 
     xScale
       .domain([midnight, d3.timeDay.offset(midnight)])
       .range([0, this.state.width - this.props.margin.right]);
 
     xScaleArea
-      .domain([midnight, d3.timeDay.offset(midnight)])
-      .range([0, this.state.width - this.props.margin.right]);
+      .domain([halfPastMidnight, d3.timeDay.offset(midnight)])
+      .range([0, this.state.width - 5]);
 
     yScale
       .domain(yDomain)
@@ -113,8 +118,17 @@ class BarChart extends React.Component {
     const { xScale, yScale, xScaleArea } =  this.updateScale(data);
     const { plotWidth, plotHeight } = this.updatePlotSize();
 
-    const max = d3.max(Object.values(data));
-    const nrOfTicks = max < 10 ? max : (max > 20 ? max / 4 : max / 2);
+    const max = d3.max(Object.values(data).map(i => Math.ceil(i)));
+    let nrOfTicks = max;
+    if (max > 10) {
+      nrOfTicks = max / 2;
+    }
+    if (max > 20) {
+      nrOfTicks = max / 4;
+    }
+    if (max > 40) {
+      nrOfTicks = max / 8;
+    }
 
     const parseTime = d3.timeParse('%H');
 

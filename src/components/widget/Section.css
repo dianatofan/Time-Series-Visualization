@@ -12,9 +12,9 @@
   display: inline-block;
   width: 30%; }
 
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 1000px) {
   .section-one-third,
   .section-two-thirds {
-    display: block; } }
+    width: 100%; } }
 
 /*# sourceMappingURL=Section.css.map */

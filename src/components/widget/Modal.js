@@ -10,19 +10,47 @@ import clock from "../../icons/clock.svg";
 
 class Modal extends React.PureComponent {
 
+  componentDidMount() {
+    window.addEventListener('keyup', this.handleKeyUp);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('keyup', this.handleKeyUp, false);
+  }
+
+  handleKeyUp = ev => {
+    if (ev.key === 'Escape') {
+      ev.preventDefault();
+      this.hideModal();
+    }
+  };
+
   hideModal = () => {
     this.props.openModal(null);
   };
 
   convertRange = (val, r1, r2 )=> (val - r1[0]) * (r2[1] - r2[0]) / (r1[1] - r1[0]) + r2[0];
 
+  getString = selectedItem => {
+    if (this.props.selectedMonth) {
+      return moment(this.props.selectedMonth, 'M').format('MMMM');
+    } else if (this.props.selectedWeek) {
+      return `Week ${this.props.selectedWeek}`;
+    } else if (this.props.selectedWeekday) {
+      return `${moment(this.props.selectedWeekday, 'ddd').format('dddd')}s`;
+    } else {
+      return moment(selectedItem).format('dddd, MMMM DD YYYY');
+    }
+  };
+
   render() {
-    const { selectedDay, modalData, timeArray } = this.props;
+    const { selectedDay, selectedMonth, selectedWeekday, selectedWeek, modalData, timeArray } = this.props;
+    const selectedItem = selectedMonth || selectedWeekday || selectedDay || selectedWeek;
       return (
       <div className={classNames('modal', 'fade-in', {'display-block': modalData}, {'display-none': !modalData})} onClick={this.hideModal}>
         <section className='modal-main' onClick={ev => ev.stopPropagation()}>
           <i className='fas fa-times' onClick={this.hideModal} />
-          <div className='modal-title'>{selectedDay}</div>
+          <div className='modal-title'>{ this.getString(selectedItem) }</div>
           {modalData && <div>between {moment(modalData.data, 'hh').format('H:mm')} - {moment(parseInt(modalData.data)+1, 'hh').format('H:mm')}</div>}
           <div className='clock-icon'>
             <img src={clock} alt='' width={50} height={50} />
@@ -44,8 +72,11 @@ class Modal extends React.PureComponent {
 
 const mapStateToProps = state => ({
   modalData: state.barChart.modalData,
-  selectedDay: moment(state.calendar.selectedDay).format('dddd, MMMM DD YYYY'),
-  timeArray: state.barChart.timeArray
+  timeArray: state.barChart.timeArray,
+  selectedDay: state.calendar.selectedDay,
+  selectedWeek: state.app.selectedWeek,
+  selectedMonth: state.app.selectedMonth,
+  selectedWeekday: state.app.selectedWeekday,
 });
 
 const mapDispatchToProps = dispatch => ({

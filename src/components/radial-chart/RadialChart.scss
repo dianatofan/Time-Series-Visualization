@@ -1,7 +1,14 @@
-.radial-chart {
-  margin: 0 30px;
+.radial-chart-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-.hovered-circle {
-  fill: pink;
+@media screen and (min-width: 1000px) {
+  .radial-chart {
+    position: relative;
+    right: 8%;
+    bottom: 4%;
+  }
 }

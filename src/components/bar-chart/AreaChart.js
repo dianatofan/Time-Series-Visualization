@@ -42,7 +42,8 @@ class AreaChart extends React.Component {
   };
 
   handleMouseMove = (mouseX, mouseY) => {
-    const { xScaleArea, yScale, plotHeight, color, plotData, openModal, dayInsights, selectedDay } = this.props;
+    const { xScaleArea, yScale, plotHeight, color, plotData, openModal, dayInsights, selectedDay,
+      selectedMonth, selectedWeek, selectedWeekday, monthInsights, weekInsights, weekdayInsights } = this.props;
 
     const getPosition = i => {
       const lines = document.getElementsByClassName('line');
@@ -84,8 +85,6 @@ class AreaChart extends React.Component {
         d3.selectAll('.bar')
           .attr('fill', d =>  formatTime(parseTime(d.data)) === formatTime(x) ? d3.rgb(color).darker() : color);
 
-        d3.select('.line-rectangle')
-          .style('opacity', 0.9);
         d3.select('.line-text')
           .style('fill', '#7888BF')
           .style('font-weight', 'bold')
@@ -95,14 +94,29 @@ class AreaChart extends React.Component {
       });
 
     const hide = () => {
-      d3.select('.line-rectangle')
-        .style('opacity', 0);
       d3.select('.bar-rectangle')
         .style('opacity', 0);
       d3.select('.bar-text')
         .style('opacity', 0);
       d3.select('.bar-circle')
         .style('opacity', 0);
+    };
+
+    const openModalBox = item => {
+      let arr;
+      if (selectedDay) {
+        arr = dayInsights[moment(selectedDay).format('YYYY-MM-DD')];
+      }
+      if (selectedMonth) {
+        arr = monthInsights;
+      }
+      if (selectedWeek) {
+        arr = weekInsights;
+      }
+      if (selectedWeekday) {
+        arr = weekdayInsights;
+      }
+      arr && openModal({ data: item, arr });
     };
 
     d3.selectAll('.mouse-per-bar')
@@ -118,7 +132,7 @@ class AreaChart extends React.Component {
             .style('cursor', 'pointer')
             .on('click', () => {
               hide();
-              openModal({ data: item, arr: dayInsights[moment(selectedDay).format('YYYY-MM-DD')] });
+              openModalBox(item);
             });
 
           d3.select('.bar-rectangle')
@@ -131,6 +145,11 @@ class AreaChart extends React.Component {
           d3.select('.bar-circle')
             .style('opacity', 1);
           return `translate(${mouseX},${item.y - 3.8})`
+        } else {
+          d3.select('.bar-rectangle')
+            .style('opacity', 0);
+          d3.select('.bar-circle')
+            .style('opacity', 0);
         }
         d3.select('.mouse-over-effects')
           .style('cursor', 'auto')
@@ -254,7 +273,13 @@ class AreaChart extends React.Component {
 
 const mapStateToProps = state => ({
   dayInsights: state.app.dayInsights,
+  monthInsights: state.app.monthInsights,
+  weekInsights: state.app.weekInsights,
+  weekdayInsights: state.app.weekdayInsights,
   selectedDay: moment(state.calendar.selectedDay),
+  selectedMonth: state.app.selectedMonth,
+  selectedWeek: state.app.selectedWeek,
+  selectedWeekday: state.app.selectedWeekday,
   data: state.app.data
 });
 

@@ -3,6 +3,12 @@ import { connect } from 'react-redux';
 import * as d3 from 'd3';
 import moment from 'moment';
 
+import { setWeekdayInsights } from '../../reducers/app';
+import { highlightDay } from '../../reducers/radialChart';
+import {getWeekdayInsights} from '../../helpers/parser';
+import {showBarChart} from '../../reducers/barChart';
+import {selectDay} from '../../reducers/calendar';
+
 import './RadialChart.scss';
 
 class RadialChart extends React.PureComponent {
@@ -33,17 +39,10 @@ class RadialChart extends React.PureComponent {
     return (80 - 5) * ((val - min) / (max - min)) + 5;
   };
 
-  toggleFadeCss = blocks => {
-    blocks
-      .style('opacity', undefined)
-      .classed({ out: this.state.visible });
-    this.setState({
-      visible: !this.state.visible
-    })
-  };
-
   renderArcs = () => {
     const svg = d3.select(this.refs.radialChart);
+
+    const { setWeekdayInsights, highlightDay, dayInsights, allDays, showBarChart } = this.props;
 
     const width = 350;
     const arcSize = (5 * width / 100);
@@ -104,10 +103,20 @@ class RadialChart extends React.PureComponent {
         }
       })
       .style('cursor', 'pointer')
+      .on('click', function (d, i) {
+        const weekdayInsights = getWeekdayInsights(d.data.object.label, dayInsights, allDays);
+        setWeekdayInsights({
+          selectedWeekday: weekdayInsights.selectedWeekday,
+          daysOfWeekday: weekdayInsights.daysOfWeekday,
+          weekdayInsights: weekdayInsights.weekdayInsights
+        });
+        showBarChart(true);
+        selectDay(null);
+      })
       .on('mouseover', function (d, i) {
         if (i === 0) {
           const id = d3.select(this).attr('id');
-          d3.selectAll('path')
+          d3.selectAll('.radial-chart path')
             .transition()
             .filter(function () {
               return d3.select(this).attr('id') !== id;
@@ -126,11 +135,24 @@ class RadialChart extends React.PureComponent {
             . attr('opacity', function (d, j) {
               return j !== i - 1 ? 0.1 : 1;
             });
+
+          d3.selectAll('.textpath')
+            .transition()
+            .filter(function () {
+              return d3.select(this).text() !== d.data.object.value;
+            })
+            .duration(500)
+            . attr('opacity', function (d, j) {
+              return j !== i - 1 ? 0.1 : 1;
+            });
+          highlightDay(d.data.object.label);
         }
       })
       .on('mouseleave', (d, i) => {
-        d3.selectAll('path').attr('opacity', 1);
+        d3.selectAll('.radial-chart path').attr('opacity', 1);
         d3.selectAll('.textClass text').attr('opacity', 1);
+        d3.selectAll('.textpath').attr('opacity', 1);
+        highlightDay(null);
       })
       .attr('fill', (d, i) => i === 0 ? d.data.object.color : i === 1 ? '#F1F1F1' : 'none')
       .transition()
@@ -153,6 +175,7 @@ class RadialChart extends React.PureComponent {
             .attr('fill', '#777')
             .attr('dominant-baseline', 'central')
             .append('textPath')
+            .attr('class', 'textpath')
             .attr('textLength', function (d, i) {
               return 0;
             })
@@ -192,7 +215,16 @@ class RadialChart extends React.PureComponent {
 
 const mapStateToProps = state => ({
   dayInsights: state.app.dayInsights,
-  selectedDay: moment(state.calendar.selectedDay).format('YYYY-MM-DD')
+  allDays: state.app.allDays,
+  selectedDay: moment(state.calendar.selectedDay).format('YYYY-MM-DD'),
+  highlightedWeekday: state.radialChart.highlightedWeekday
 });
 
-export default connect(mapStateToProps)(RadialChart);
+const mapDispatchToProps = dispatch => ({
+  highlightDay: val => dispatch(highlightDay(val)),
+  setWeekdayInsights: val => dispatch(setWeekdayInsights(val)),
+  showBarChart: val => dispatch(showBarChart(val)),
+  selectDay: val => dispatch(selectDay(val))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(RadialChart);

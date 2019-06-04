@@ -22,7 +22,20 @@ class Bars extends React.PureComponent {
   }
 
   openModal = d => {
-    this.props.openModal({ data: d, arr: this.props.dayInsights[this.props.selectedDay] });
+    let arr;
+    if (this.props.selectedDay) {
+      arr = this.props.dayInsights[this.props.selectedDay];
+    }
+    if (this.props.selectedMonth) {
+      arr = this.props.monthInsights;
+    }
+    if (this.props.selectedWeek) {
+      arr = this.props.weekInsights;
+    }
+    if (this.props.selectedWeekday) {
+      arr = this.props.weekdayInsights;
+    }
+    arr && this.props.openModal({ data: d, arr });
   };
 
   renderBars = () => {
@@ -79,7 +92,13 @@ class Bars extends React.PureComponent {
 
 const mapStateToProps = state => ({
   dayInsights: state.app.dayInsights,
-  selectedDay: moment(state.calendar.selectedDay).format('YYYY-MM-DD')
+  monthInsights: state.app.monthInsights,
+  weekInsights: state.app.weekInsights,
+  weekdayInsights: state.app.weekdayInsights,
+  selectedDay: moment(state.calendar.selectedDay).format('YYYY-MM-DD'),
+  selectedMonth: state.app.selectedMonth,
+  selectedWeek: state.app.selectedWeek,
+  selectedWeekday: state.app.selectedWeekday
 });
 
 const mapDispatchToProps = dispatch => ({

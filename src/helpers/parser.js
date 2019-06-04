@@ -107,6 +107,7 @@ export const getWeekInsights = (week, dayInsights, allDays) => {
 };
 
 export const getDatasetOverview = (allDays, data, dayInsights) => {
+  const length = Object.keys(data).length;
   const weekdayInsights = Object.keys(dayInsights)
     .reduce((obj, key) => {
       const weekday = moment(key, 'YYYY-MM-DD').format('ddd');
@@ -116,7 +117,7 @@ export const getDatasetOverview = (allDays, data, dayInsights) => {
     }, {});
   return Object.keys(weekdayInsights)
     .reduce((obj, key) => {
-      obj[key] = weekdayInsights[key].flat().length;
+      obj[key] = Number(weekdayInsights[key].flat().length / length).toFixed(2);
       return obj;
     }, {});
 };

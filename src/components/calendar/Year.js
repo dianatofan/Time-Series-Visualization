@@ -29,7 +29,7 @@ class Year extends React.PureComponent {
     const monthsArr = this.getChunk(months, months.length / 12);
 
     return (
-      <div className='year-wrapper' ref='brush'>
+      <div className='year-wrapper' ref='brush' onClick={ev => ev.stopPropagation()}>
         {
           monthsArr.map((months, i) =>
             <g className={classNames('year', {'hidden': i !== props.yearIndex})} key={i}>

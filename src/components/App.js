@@ -15,6 +15,7 @@ import githubLogo from '../icons/github-logo.svg';
 import githubLogoHover from '../icons/github-logo-hover.svg';
 import pdfLogo from '../icons/pdf-logo.svg';
 import pdfLogoHover from '../icons/pdf-logo-hover.svg';
+import {resetShiftSelection} from "../reducers/app";
 
 // import { whyDidYouUpdate } from 'why-did-you-update';
 
@@ -23,7 +24,7 @@ const App = props => {
 
   const renderBarChart = () =>
     <Container
-      data={props.allDays[props.selectedDay]}
+      plotData={props.allDays[props.selectedDay]}
       margin={{ top: 10, right: 30, bottom: 40, left: 50 }}
       height={300}
     />;
@@ -35,7 +36,7 @@ const App = props => {
     </div>;
 
   return (
-    <div className='app'>
+    <div className='app' onClick={props.resetShiftSelection}>
       <header className='header'>
         <div className='title'> Visualizing Time-Series Data </div>
         <div className='icons'>
@@ -73,4 +74,8 @@ const mapStateToProps = state => ({
   isSpinnerVisible: state.app.isSpinnerVisible
 });
 
-export default connect(mapStateToProps)(App);
+const mapDispatchToProps = dispatch => ({
+  resetShiftSelection: val => dispatch(resetShiftSelection(val))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

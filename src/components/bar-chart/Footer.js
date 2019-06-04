@@ -7,6 +7,7 @@ import {
   showWeekOverview,
   onReset
 } from '../../reducers/barChart';
+import {selectDay} from '../../reducers/calendar';
 import {connect} from 'react-redux';
 
 const Footer = props => {
@@ -20,6 +21,7 @@ const Footer = props => {
     props.showWeekdayOverview(!props.isWeekdayOverviewChecked);
   };
   const onRemoveClick = () => {
+    props.selectDay(null);
     props.onReset();
   };
   const renderCheckboxes = () =>
@@ -52,6 +54,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+  selectDay: val => dispatch(selectDay(val)),
   showWeekOverview: val => dispatch(showWeekOverview(val)),
   showMonthOverview: val => dispatch(showMonthOverview(val)),
   showWeekdayOverview: val => dispatch(showWeekdayOverview(val)),

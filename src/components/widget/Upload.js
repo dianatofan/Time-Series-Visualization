@@ -15,6 +15,7 @@ import dataset1 from '../../data/itching_in_nose_tbc.csv';
 import dataset2 from '../../data/itch_tbc.csv';
 import dataset3 from '../../data/ptsd_filtered.csv';
 import dataset4 from '../../data/data.csv';
+import {highlightDay} from "../../reducers/radialChart";
 
 const Upload = props => {
   const onDrop = (acceptedFiles, rejectedFiles) => {
@@ -80,6 +81,7 @@ const Upload = props => {
       weekInsights: []
     });
     props.selectDay(null);
+    props.highlightDay(null);
     props.showWeekOverview(false);
     props.showMonthOverview(false);
     props.showWeekdayOverview(false);
@@ -166,7 +168,8 @@ const mapDispatchToProps = dispatch => ({
   showWeekOverview: val => dispatch(showWeekOverview(val)),
   showMonthOverview: val => dispatch(showMonthOverview(val)),
   showWeekdayOverview: val => dispatch(showWeekdayOverview(val)),
-  resetColors: val => dispatch(resetColors(val))
+  resetColors: val => dispatch(resetColors(val)),
+  highlightDay: val => dispatch(highlightDay(val))
 });
 
 

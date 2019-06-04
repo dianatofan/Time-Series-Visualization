@@ -28,6 +28,7 @@ class Day extends React.Component {
       this.props.selectedWeek !== nextProps.selectedWeek ||
       this.isEqual(nextProps) ||
       this.props.fill !== nextProps.fill ||
+      this.props.highlightedWeekday !== nextProps.highlightedWeekday ||
       this.props.shiftSelection !== nextProps.shiftSelection ||
       this.props.cellSize !== nextProps.cellSize;
   }
@@ -49,8 +50,9 @@ class Day extends React.Component {
     if (ev.shiftKey) {
       this.setState({
         toggle: !this.state.toggle
+      }, () => {
+        this.state.toggle ? this.props.onShiftClick(formattedDay) : this.props.removeItem(formattedDay);
       });
-      this.state.toggle ? this.props.onShiftClick(formattedDay) : this.props.removeItem(formattedDay);
     } else {
       this.props.setMonthInsights({
         selectedMonth: null,
@@ -144,7 +146,8 @@ const mapStateToProps = state => ({
   cellSize: state.calendar.cellSize,
   cellMargin: state.calendar.cellMargin,
   allDays: state.app.allDays,
-  colors: state.calendar.colors
+  colors: state.calendar.colors,
+  highlightedWeekday: state.radialChart.highlightedWeekday
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -20,8 +20,9 @@ class DayLabels extends React.Component {
     if (ev.shiftKey) {
       this.setState({
         toggle: !this.state.toggle
+      }, () => {
+        this.state.toggle ? this.props.onShiftClick(day) : this.props.removeItem(day);
       });
-      this.state.toggle ? this.props.onShiftClick(day) : this.props.removeItem(day);
     } else {
       this.props.selectDay(null);
       this.props.resetShiftSelection();
