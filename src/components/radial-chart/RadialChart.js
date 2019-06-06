@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import * as d3 from 'd3';
 import moment from 'moment';
+import classNames from 'classnames';
 
 import { setWeekdayInsights } from '../../reducers/app';
 import { highlightDay } from '../../reducers/radialChart';
@@ -208,7 +209,7 @@ class RadialChart extends React.PureComponent {
 
   render() {
     return (
-      <svg className='radial-chart' ref='radialChart' width='100%' height={350} />
+      <svg className={classNames('radial-chart', {'behind': this.props.modalData})} ref='radialChart' width='100%' height={350} />
     )
   }
 }
@@ -217,7 +218,8 @@ const mapStateToProps = state => ({
   dayInsights: state.app.dayInsights,
   allDays: state.app.allDays,
   selectedDay: moment(state.calendar.selectedDay).format('YYYY-MM-DD'),
-  highlightedWeekday: state.radialChart.highlightedWeekday
+  highlightedWeekday: state.radialChart.highlightedWeekday,
+  modalData: state.barChart.modalData
 });
 
 const mapDispatchToProps = dispatch => ({

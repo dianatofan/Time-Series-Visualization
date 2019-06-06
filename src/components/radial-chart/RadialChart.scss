@@ -5,6 +5,10 @@
   justify-content: center;
 }
 
+.radial-chart.behind {
+  z-index: -1;
+}
+
 @media screen and (min-width: 1000px) {
   .radial-chart {
     position: relative;

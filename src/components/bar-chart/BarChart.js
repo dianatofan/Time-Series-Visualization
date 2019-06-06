@@ -89,15 +89,15 @@ class BarChart extends React.Component {
 
     const parseTime = d3.timeParse('%H:%M');
     const midnight = parseTime('00:00');
-    const halfPastMidnight = parseTime('00:30');
+    const halfPastMidnight = parseTime('23:30');
 
     xScale
       .domain([midnight, d3.timeDay.offset(midnight)])
       .range([0, this.state.width - this.props.margin.right]);
 
     xScaleArea
-      .domain([halfPastMidnight, d3.timeDay.offset(midnight)])
-      .range([0, this.state.width - 5]);
+      .domain([midnight, d3.timeDay.offset(midnight)])
+      .range([-20, this.state.width - this.props.margin.right + 20]);
 
     yScale
       .domain(yDomain)
@@ -152,6 +152,18 @@ class BarChart extends React.Component {
       }))
     };
 
+    const areaChartData = {
+      plotData: Object.keys(data).map((item, i) => ({
+        id: i,
+        data: item,
+        x: xScaleArea(parseTime(item)),
+        y: yScale(data[item]),
+        width: ((this.state.width - this.props.margin.right) / 24) * 0.8,
+        height: plotHeight - yScale(data[item]) - this.props.margin.top - this.props.margin.bottom,
+        occurrences: data[item]
+      }))
+    };
+
     const transform = `translate(${this.props.margin.left},${this.props.margin.top})`;
     const color = this.props.color || getAverageColor(this.props);
 
@@ -165,7 +177,7 @@ class BarChart extends React.Component {
             <YAxis {...metaData} margin={this.props.margin} height={plotHeight} />
             <Bars {...metaData} {...plotData} color={color}/>
             {this.showAreaChart() &&
-            <AreaChart {...metaData} {...plotData} margin={this.props.margin} insights={this.getInsights()} color={color}/>}
+            <AreaChart {...metaData} {...areaChartData} margin={this.props.margin} insights={this.getInsights()} color={color}/>}
           </g>
         </svg>
         <Footer showFooter={showFooter} />

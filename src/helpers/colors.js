@@ -83,7 +83,8 @@ export const getColors = data => {
   const max = d3.max(Object.values(data));
   return {
     purples: purplePalette(min, max),
-    oranges: orangePalette(min, max)
+    oranges: orangePalette(min, max),
+    blues: bluePalette(min, max)
   }
 };
 
@@ -101,6 +102,13 @@ const orangePalette = (min, max) => {
     .domain([min+d,min+2*d,min+3*d,min+4*d,min+5*d,min+6*d,min+7*d,min+8*d,min+9*d,min+10*d]);
 };
 
+const bluePalette = (min, max) => {
+  const d = (max-min)/10;
+  return d3.scaleThreshold()
+    .range(['#9ecae1','#86bbdb','#6faed5','#599fce','#4190c5','#3581bd','#2a72b3','#2063a9','#15549f','#084594'])
+    .domain([min+d,min+2*d,min+3*d,min+4*d,min+5*d,min+6*d,min+7*d,min+8*d,min+9*d,min+10*d]);
+};
+
 export const getDayColor = (props, isCurrentDay) => {
   const item = Object.keys(props.data).find(key => new Date(key).setHours(0,0,0,0) === props.day.setHours(0,0,0,0));
 
@@ -115,14 +123,16 @@ export const getDayColor = (props, isCurrentDay) => {
       (!!props.shiftSelection.length && props.shiftSelection.indexOf(moment(props.day).format('MMMM')) > -1);
     const isCurrentWeekday = contains(props.currentWeekdays.daysArr, props.showWeekdayOverview, day) ||
       (props.selectedWeekday && props.selectedWeekday === moment(props.day).format('ddd')) ||
-      (!!props.shiftSelection.length && props.shiftSelection.indexOf(moment(props.day).format('ddd')) > -1) ||
-      (props.highlightedWeekday && props.highlightedWeekday === moment(props.day).format('ddd'));
+      (!!props.shiftSelection.length && props.shiftSelection.indexOf(moment(props.day).format('ddd')) > -1);
+    const isHighlightedDay = props.highlightedWeekday && props.highlightedWeekday === moment(props.day).format('ddd');
     const isSelected = !!props.shiftSelection.length &&
       (props.shiftSelection.indexOf(moment(props.day).format('YYYY-MM-DD')) > -1 ||
         props.shiftSelection.indexOf('all') > -1);
 
     const colors = getColors(props.data);
-    const interpolateColor = (isCurrentDay || isSelected || isCurrentWeek || isCurrentMonth || isCurrentWeekday) ? colors.oranges(props.data[item]) : colors.purples(props.data[item]);
+    const interpolateColor = (isCurrentDay || isSelected || isCurrentWeek || isCurrentMonth || isCurrentWeekday || isHighlightedDay)
+      ? (isHighlightedDay ? colors.blues(props.data[item]) : colors.oranges(props.data[item]))
+      : colors.purples(props.data[item]);
 
     return {
       count: props.data[item],
