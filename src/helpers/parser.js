@@ -206,7 +206,7 @@ export const getShiftSelectionInsights = (shiftSelection, data, dayInsights, all
     return acc;
   }, {});
 
-  const length = shiftSelection === 'all' ? Object.keys(allSelectedDays).length : 1;
+  const length = shiftSelection.indexOf('all') > -1 ? Object.keys(allSelectedDays).length : 1;
 
   let selectedDaysObj = {};
   for (let i = 0; i < 24; i++) {
