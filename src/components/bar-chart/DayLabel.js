@@ -65,12 +65,12 @@ class DayLabel extends React.Component {
       <div className='year-label dayTitle'
            tabIndex={0}>
         <i
-          className={classNames('fas fa-chevron-left', {'disabled': !showPreviousArrow})}
+          className={classNames('fas fa-chevron-left')}
           onClick={() => showPreviousArrow && select(-1, this.props)}
         />
         { this.getString(selectedItem) }
         <i
-          className={classNames('fas fa-chevron-right', {'disabled': !showNextArrow})}
+          className={classNames('fas fa-chevron-right')}
           onClick={() => showNextArrow && select(1, this.props)}
         />
       </div>
