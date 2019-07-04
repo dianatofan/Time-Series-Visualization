@@ -206,9 +206,11 @@ export const getShiftSelectionInsights = (shiftSelection, data, dayInsights, all
     return acc;
   }, {});
 
+  const length = shiftSelection === 'all' ? Object.keys(allSelectedDays).length : 1;
+
   let selectedDaysObj = {};
   for (let i = 0; i < 24; i++) {
-    selectedDaysObj[i] = mergedDays[i] ? Number(mergedDays[i] / Object.keys(allSelectedDays).length).toFixed(2) : 0
+    selectedDaysObj[i] = mergedDays[i] ? Number(mergedDays[i] / length).toFixed(2) : 0
   }
 
   return {
