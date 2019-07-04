@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/Time-Series-Visualization/precache-manifest.8ad9e8bdd6a2441ddedf7cdac770ae56.js"
+  "/Time-Series-Visualization/precache-manifest.71e8907781eb947c3b8530e200879bbc.js"
 );
 
 workbox.clientsClaim();
