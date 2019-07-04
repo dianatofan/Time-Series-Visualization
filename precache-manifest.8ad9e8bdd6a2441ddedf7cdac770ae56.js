@@ -1,19 +1,19 @@
 self.__precacheManifest = [
   {
-    "revision": "b6d3d688f9138458304e",
-    "url": "/Time-Series-Visualization/static/css/main.429d18b3.chunk.css"
+    "revision": "951c30104f84bd65a312",
+    "url": "/Time-Series-Visualization/static/css/main.7d5b03ee.chunk.css"
   },
   {
-    "revision": "b6d3d688f9138458304e",
-    "url": "/Time-Series-Visualization/static/js/main.b6d3d688.chunk.js"
+    "revision": "951c30104f84bd65a312",
+    "url": "/Time-Series-Visualization/static/js/main.951c3010.chunk.js"
   },
   {
-    "revision": "7438e960d2dbf683256c",
-    "url": "/Time-Series-Visualization/static/css/1.97e2b5ac.chunk.css"
+    "revision": "f52e1547323770194c43",
+    "url": "/Time-Series-Visualization/static/css/1.041fa695.chunk.css"
   },
   {
-    "revision": "7438e960d2dbf683256c",
-    "url": "/Time-Series-Visualization/static/js/1.7438e960.chunk.js"
+    "revision": "f52e1547323770194c43",
+    "url": "/Time-Series-Visualization/static/js/1.f52e1547.chunk.js"
   },
   {
     "revision": "1baeb39ecad658267a7d",
@@ -56,7 +56,7 @@ self.__precacheManifest = [
     "url": "/Time-Series-Visualization/static/media/pdf-logo-hover.eebd97c5.svg"
   },
   {
-    "revision": "7bc1e11181216ea6a0a65dc8962fd726",
+    "revision": "7d984e175ea0efbc2917fafd4a045150",
     "url": "/Time-Series-Visualization/index.html"
   }
 ];
